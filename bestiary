@@ -1,0 +1,15 @@
+#Example bestiary file required by encounter
+#Lines beginning with "#" are ignored
+#Format to create custom monster is as follows
+#Name, HP, AC
+#Extra values, descriptions, and notes can be included after the required data since encounter.py will ignore it
+#
+#Nature
+Wolf, 11, 13
+Fox, 3, 12, this information will not be read by the script and can be ignored
+Spider, 1, 12, A tiny creepy crawley creature
+#Fantasy
+Skeleton, 13, 13
+Zombie, 16, 15
+#NPC
+Townsfolk, 9, 12
