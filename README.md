@@ -1,11 +1,9 @@
 # encounter
+**Version 3.6.3**
+
 A script that manages a combat encounter for DnD or other like tabletops.
 
 
-
-## Latest Version
-
-3.6
 
 
 

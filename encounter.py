@@ -51,45 +51,39 @@ while validate:
                         lineCount += 1
                         if lineCount == int(m):
                             line = line.rstrip("\n").split(",")
-                            npc = Monster(line[0], line[1], line[2])
-                            encounter.append(npc)
+                            monster = Monster(line[0], line[1], line[2])
+                            encounter.append(monster)
                             c += 1
         validate = False
     except ValueError:
         print("Encountered invalid number. Try input again.")
 
 print("Enemies in encounter:")
-def combatEncounter():
-    battle = True
-    validate = True
-    while validate:
-        try:
-            while battle:
-                c = 0
-                for m in encounter:
-                    if m.hp <= 0:
-                        print("Party has defeated " + str(encounter[c]))
-                        encounter.pop(c)
-                    c += 1
-                
-                c = 0 
-                for m in encounter:
-                    c += 1
-                    print(str(c) + " " + str(m))
+battle = True
+validate = True
+while validate:
+    try:
+        while battle:
+            c = 0
+            for m in encounter:
+                if m.hp <= 0:
+                    print("Party has defeated " + str(encounter[c]))
+                    encounter.pop(c)
+                c += 1
+            
+            c = 0 
+            for m in encounter:
+                c += 1
+                print(str(c) + " " + str(m))
 
-                alive = len(encounter)
-
-                if alive > 1:
-                    print("Number of enemies alive: " + str(alive))
-                    a = input("Enter number of enemy to attack: ")
-                    encounter[int(a) - 1].attack()
-                elif alive == 1:
-                    encounter[0].attack()
-                else:
-                    battle = False
-                validate = False
-        except ValueError:
-            print("Encountered invalid number. Try input again.")
-    print("BATTLE ENDED")
-
-combatEncounter()
+            if len(encounter) > 1:
+                a = input("Enter number of enemy to attack: ")
+                encounter[int(a) - 1].attack()
+            elif len(encounter) == 1:
+                encounter[0].attack()
+            else:
+                battle = False
+            validate = False
+    except ValueError:
+        print("Encountered invalid number. Try input again.")
+print("BATTLE ENDED")
