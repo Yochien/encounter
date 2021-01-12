@@ -1,7 +1,7 @@
 class Monster:
-    def __init__(self, name, hp, ac):
+    def __init__(self, name, maxHP, ac):
         self.name = name
-        self.hp = int(hp)
+        self.maxHP = self.currentHP = int(maxHP)
         self.ac = int(ac)
     
     def __str__(self):
@@ -11,79 +11,231 @@ class Monster:
         return self.name
     
     def status(self):
-        print(str(self) + ": " + str(self.hp))
-    
-    def attack(self):
-        if self.hp > 0:
-            print("Party member attacks " + str(self) + ".")
-            accuracy = input("Roll for hit: ")
-            if int(accuracy) >= self.ac:
-                damage = input("Roll for damage: ")
-                self.hp = self.hp - int(damage)
-            else:
-                print("Attack misses " + self.name + ".")
-        else:
-            print("That enemy is already dead.")
+        print(str(self) + ": " + str(self.currentHP) + " " + str(self.ac))
+        
+    def damage(self, amt):
+        self.currentHP -= int(amt)
 
-print("AVAILIBLE MONSTERS")
-with open("bestiary") as bestiary:
-    count = 1
-    for line in bestiary:
-        if not line.startswith("#"):
-            line = line.split(",")
-            print(str(count) + " " + line[0])
-            count += 1
-
-print("BUILD ENCOUNTER")
-print("Type the number of each monster to include separated by a comma. Duplicates are allowed.")
+#Define important variable lists
 encounter = []
-c = 0
+graveyard = []
 
-validate = True
-while validate:
+def helpEncounter():
+    print("help or ?")
+    print("--prints this premade list of commands that you can use to interact with your list of monsters. \n")
+    print("quit or exit")
+    print("--exits the program. \n")
+    print("list [str]")
+    print("--if [str] is bestiary the function will print a list of availible monsters to add to your encounter.")
+    print("--if [str] is encounter the function will print the monsters in your current encounter.")
+    print("--if [str] is graveyard the function will list the currently defeated monsters in your encounter.")
+    print("--if [str] is left blank the bestiary will be shown. \n")
+    print("add [num1,num2,num3,...]")
+    print("--populates the encounter list with your selected monsters. \n")
+    print("remove [num]")
+    print("--removes a monster at position [num] in your encounter list. \n")
+    print("clear [str]")
+    print("--clears the encounter and graveyard lists of enemies.")
+    print("--if [str] is all the function will clear all lists.")
+    print("--if [str] is encounter the function will clear the encounter list.")
+    print("--if [str] is graveyard the function will clear the graveyard.")
+    print("--If [str] is left blank it will default to all. \n")
+    print("The following commands require a non empty encounter")
+    print("status [num]")
+    print("--prints a monster [num]'s name and the amount of hp they have left from the encounter list. \n")
+    print("attack [num]")
+    print("--attacks a monster from the encounter list at the position [num]. \n")
+    print("smite or kill")
+    print("--instantly sends a monster to the graveyard.\n")
+    print("heal [num1] [num2]")
+    print("--heals a monster at position [num1] in the encounter list by [num2] amount of health points, but won't raise currentHP above maxHP. \n")
+    print("revive or resurrect [num]")
+    print("--revives the monster in position [num] in the graveyard list. \n")
+    print("change-ac [num1] [num2]")
+    print("--adds [num2] to monster's armor class at position [num1] in  the encounter list. A monster's armor class cannot fall below 0.")
+    print("END")
+
+def menu(list):
+    c = 0
+    if list == bestiary:
+        print("BESTIARY:")
+    elif list == encounter:
+        print("ENCOUNTER:")
+    elif list == graveyard:
+        print("GRAVEYARD:")
+    else:
+        pass
+
+    if len(list) > 0:
+        for m in list:
+            c += 1
+            print(str(c) + " " + str(m))
+    else:
+        print("EMPTY")
+
+def bestiary():
+    print("AVAILIBLE MONSTERS")
+    with open("bestiary") as book:
+        count = 1
+        for line in book:
+            if not line.startswith("#"):
+                line = line.split(",")
+                print(str(count) + " " + line[0])
+                count += 1
+
+def list(book = "bestiary"):
+    if arg1 == None:
+        bestiary()
+    else:
+        book == book.strip(" ").lower()
+        if book == "bestiary":
+            bestiary()
+        elif book == "encounter":
+            menu(encounter)
+        elif book == "graveyard":
+            menu(graveyard)
+        else:
+            print("Unknown list selected.")
+
+def add(args):
+    args = args.split(",")
+    c = 0
+    for m in args:
+        with open("bestiary") as bestiary:
+            lineCount = 0
+            for line in bestiary:
+                if not line.startswith("#"):
+                    lineCount += 1
+                    if lineCount == int(m):
+                        line = line.rstrip("\n").split(",")
+                        monster = Monster(line[0], line[1], line[2])
+                        encounter.append(monster)
+                        c += 1
+
+def remove(selector = None, arg = None):
+    if selector == None:
+        print("remove requires two arguments. Check help for more info.")
+    else:
+        if arg == None:
+            print("remove requires two arguments. Check help for more info.")
+        elif arg == "encounter" and len(encounter) > 0:
+            encounter.pop(int(selector) - 1)
+            menu(encounter)
+        elif arg == "graveyard" and len(graveyard) > 0:
+            graveyard.pop(int(selector) - 1)
+            menu(graveyard)
+        else:
+            print("Unknown list selected or selected list is empty.")
+
+def listClear(selector = "all"):
+    if arg1 == None:
+        encounter.clear()
+        graveyard.clear()
+    else:
+        if selector == "all":
+            encounter.clear()
+            graveyard.clear()
+            print("All lists cleared.")
+        elif selector == "encounter":
+            encounter.clear()
+            print("Cleared encounter list.")
+        elif selector == "graveyard":
+            graveyard.clear()
+            print("Cleared graveyard.")
+        else:
+            print("Unknown list selected.")
+
+def attack(monster):
+    if monster.currentHP > 0:
+        print("Party member attacks " + str(monster) + ".")
+        accuracy = input("Roll for hit: ")
+        if int(accuracy) >= monster.ac:
+            amt = input("Roll for damage: ")
+            monster.damage(amt)
+        else:
+            print("Attack misses " + monster.name + ".")
+        
+    if monster.currentHP <= 0:
+        smite(monster)
+    
+    if len(encounter) == 0:
+        print("Party has defeated all enemies.")
+
+def smite(monster):
+    print(str(monster) + " has been defeated.")
+    graveyard.append(monster)
+    encounter.pop(int(arg1) - 1)
+
+def heal(monster, amount):
+    monster.currentHP += amount
+    if monster.currentHP > monster.maxHP: monster.currentHP = monster.maxHP
+    print(str(monster) + " was healed by " + str(amount) + " points.")
+
+def revive(monster):
+    encounter.append(monster)
+    graveyard.pop(int(arg1) - 1)
+    print(str(encounter[-1]) + " has been revived.")
+
+def changeAC (monster, amount):
+    monster.ac += amount
+    if monster.ac < 0: monster.ac = 0
+    print(str(monster) + "'s armor class was changed by " + str(amount) + ".")
+
+print("Type help or ? to get a list of availible commands.")
+wait = True
+while wait:
+    action = input("Type an action to perform: ").lower().split(" ")
+    command = action[0]
     try:
-        monsters = input("Enemies to include: ").split(",")
-        for m in monsters:
-            with open("bestiary") as bestiary:
-                lineCount = 0
-                for line in bestiary:
-                    if not line.startswith("#"):
-                        lineCount += 1
-                        if lineCount == int(m):
-                            line = line.rstrip("\n").split(",")
-                            monster = Monster(line[0], line[1], line[2])
-                            encounter.append(monster)
-                            c += 1
-        validate = False
-    except ValueError:
-        print("Encountered invalid number. Try input again.")
-
-print("Enemies in encounter:")
-battle = True
-validate = True
-while validate:
+        arg1 = action[1]
+    except IndexError:
+        arg1 = None
     try:
-        while battle:
-            c = 0
-            for m in encounter:
-                if m.hp <= 0:
-                    print("Party has defeated " + str(encounter[c]))
-                    encounter.pop(c)
-                c += 1
-            
-            c = 0 
-            for m in encounter:
-                c += 1
-                print(str(c) + " " + str(m))
+        arg2 = action[2]
+    except IndexError:
+        arg2 = None
+    try:
+        arg3 = action[3]
+    except IndexError:
+        arg3 = None
 
-            if len(encounter) > 1:
-                a = input("Enter number of enemy to attack: ")
-                encounter[int(a) - 1].attack()
-            elif len(encounter) == 1:
-                encounter[0].attack()
+    if command == "help" or command == "?":
+        helpEncounter()
+    elif command == "quit" or command == "exit":
+        wait = False
+        exit()
+    elif command == "list":
+        list(arg1)
+    elif command == "add":
+        add(arg1)
+        print("Monsters in encounter:")
+        menu(encounter)
+    elif command == "clear":
+        listClear(arg1)
+    elif command == "revive" or command == "resurrect":
+        if len(graveyard) > 0:
+            revive(graveyard[int(arg1) - 1])
+        else:
+            print("Your graveyard is empty. There is no one to revive.")
+    elif command == "remove":
+        if len(encounter) > 0 or len(graveyard) > 0:
+            remove(arg1, arg2)
+        else:
+            print("Both your encounter and graveyard lists are empty. There is no one to remove.")
+    else:
+        if encounter != []:
+            if command == "status":
+                encounter[int(arg1) - 1].status()
+            elif command == "attack":
+                attack(encounter[int(arg1) - 1])
+            elif command == "kill" or command == "smite":
+                smite(encounter[int(arg1) - 1])
+            elif command == "heal":
+                heal(encounter[int(arg1) - 1], int(arg2))
+            elif command == "change-ac":
+                changeAC(encounter[int(arg1) - 1], int(arg2))
             else:
-                battle = False
-            validate = False
-    except ValueError:
-        print("Encountered invalid number. Try input again.")
-print("BATTLE ENDED")
+                print("Unrecognized command")
+        else:
+            print("An error occured running your selected command. Check your arguments or you may also need to build an encounter before you can use that command.")
+            print("Use the command help or ? to get an availible list of commands and explanations of how to use them.")
