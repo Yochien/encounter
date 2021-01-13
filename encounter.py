@@ -106,8 +106,8 @@ def isValidInt(selector, list):
         for s in selector:
             if int(s) > len(list) or int(s) <= 0:
                 valid = False
-    else valid == False:
-        print("One or more selected numbers is invalid in this context.")
+    else:
+        print("One or more inputs are invalid in this context.")
     
     return valid
 
@@ -124,7 +124,10 @@ def add(args = None, list = None):
             print("One or more selected monsters is outside the range of the bestiary.")
         else:
             for m in args:
-                monster = bestiary[int(m) - 1]
+                name = bestiary[int(m) - 1].name
+                hp = bestiary[int(m) - 1].maxHP
+                ac = bestiary[int(m) - 1].ac
+                monster = Monster(name, hp, ac)
                 if list == "encounter":
                     encounter.append(monster)
                 elif list == "graveyard":
@@ -221,23 +224,34 @@ def remove(selector = None, args = None):
         else:
             print("Unknown list selected or selected list is empty.")
 
-def attack(monster):
+def attack(monster, accuracy = None, amt = None):
     if monster.currentHP > 0:
         print("Party member attacks " + monster.name + ".")
-        accuracy = input("Roll for hit: ")
-        if int(accuracy) >= monster.ac:
-            amt = input("Roll for damage: ")
-            monster.damage(amt)
+        if accuracy != None and amt != None:
+            if int(accuracy) >= monster.ac:
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
+        elif accuracy != None and amt == None:
+            if int(accuracy) >= monster.ac:
+                amt = input("Roll for damage: ")
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
         else:
-            print("Attack misses " + monster.name + ".")
-        
+            accuracy = input("Roll for hit: ")
+            if int(accuracy) >= monster.ac:
+                amt = input("Roll for damage: ")
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
+
     if monster.currentHP <= 0:
         print(monster.name + " has been defeated.")
         graveyard.append(monster)
         encounter.pop(int(arg1) - 1)
-    
-    if len(encounter) == 0:
-        print("Party has defeated all enemies.")
+        if len(encounter) == 0:
+            print("Party has defeated all enemies.")
 
 def smite(monster):
     print(monster.name + " has been defeated.")
@@ -298,15 +312,33 @@ while wait:
         if len(encounter) > 0 or len(graveyard) > 0:
             remove(arg1, arg2)
         else:
-            print("Both your encounter and graveyard lists are empty. There is no one to remove.")
+            print("encounter and graveyard lists are empty. There is no one to remove.")
     else:
         if encounter != []:
             if command == "status":
                 if isValidInt(arg1, encounter) == True:
                     encounter[int(arg1) - 1].status()
             elif command == "attack":
-                if isValidInt(arg1, encounter) == True:
-                    attack(encounter[int(arg1) - 1])
+                valid = True
+                if arg2 == None:
+                    valid = True
+                elif arg2.isnumeric() == True:
+                    valid = True
+                else:
+                    valid = False
+                
+                if valid == True:
+                    if arg3 == None:
+                        valid = True
+                    elif arg3.isnumeric() == True:
+                        valid = True
+                    else:
+                        valid = False
+                if valid == True:
+                    if isValidInt(arg1, encounter) == True:
+                        attack(encounter[int(arg1) - 1], arg2, arg3)
+                    else:
+                        print("One or more inputs are invalid in this context.")
             elif command == "kill" or command == "smite":
                 if isValidInt(arg1, encounter) == True:
                     smite(encounter[int(arg1) - 1])
