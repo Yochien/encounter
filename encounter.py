@@ -3,19 +3,13 @@ class Monster:
         self.name = name
         self.hp = int(hp)
         self.ac = int(ac)
-    
-    def __str__(self):
-        return self.name
-    
-    def __repr__(self):
-        return self.name
-    
+        
     def status(self):
-        print(str(self) + ": " + str(self.hp))
+        print(self.name + ": " + str(self.hp))
     
     def attack(self):
         if self.hp > 0:
-            print("Party member attacks " + str(self) + ".")
+            print("Party member attacks " + self.name + ".")
             accuracy = input("Roll for hit: ")
             if int(accuracy) >= self.ac:
                 damage = input("Roll for damage: ")
@@ -54,7 +48,7 @@ while validate:
                             monster = Monster(line[0], line[1], line[2])
                             encounter.append(monster)
                             c += 1
-        validate = False
+            validate = False
     except ValueError:
         print("Encountered invalid number. Try input again.")
 
@@ -67,23 +61,26 @@ while validate:
             c = 0
             for m in encounter:
                 if m.hp <= 0:
-                    print("Party has defeated " + str(encounter[c]))
+                    print("Party has defeated " + encounter[c].name)
                     encounter.pop(c)
                 c += 1
             
             c = 0 
             for m in encounter:
                 c += 1
-                print(str(c) + " " + str(m))
+                print(str(c) + " " + m.name)
 
             if len(encounter) > 1:
                 a = input("Enter number of enemy to attack: ")
-                encounter[int(a) - 1].attack()
+                if int(a) > 0 and int(a) <= len(encounter):
+                    encounter[int(a) - 1].attack()
+                else:
+                    raise IndexError
             elif len(encounter) == 1:
                 encounter[0].attack()
             else:
                 battle = False
-            validate = False
-    except ValueError:
-        print("Encountered invalid number. Try input again.")
+                validate = False
+    except IndexError:
+        print("Encountered invalid number.")
 print("BATTLE ENDED")
