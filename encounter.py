@@ -4,12 +4,6 @@ class Monster:
         self.maxHP = self.currentHP = int(maxHP)
         self.ac = int(ac)
     
-    def __str__(self):
-        return self.name
-    
-    def __repr__(self):
-        return self.name
-    
     def status(self):
         print("STATUS:")
         print("Name: " + self.name)
@@ -218,7 +212,7 @@ def listClear(selector = "all"):
 
 def attack(monster):
     if monster.currentHP > 0:
-        print("Party member attacks " + str(monster) + ".")
+        print("Party member attacks " + monster.name + ".")
         accuracy = input("Roll for hit: ")
         if int(accuracy) >= monster.ac:
             amt = input("Roll for damage: ")
@@ -227,7 +221,7 @@ def attack(monster):
             print("Attack misses " + monster.name + ".")
         
     if monster.currentHP <= 0:
-        print(str(monster) + " has been defeated.")
+        print(monster.name + " has been defeated.")
         graveyard.append(monster)
         encounter.pop(int(arg1) - 1)
     
@@ -235,7 +229,7 @@ def attack(monster):
         print("Party has defeated all enemies.")
 
 def smite(monster):
-    print(str(monster) + " has been defeated.")
+    print(monster.name + " has been defeated.")
     graveyard.append(monster)
     encounter.pop(int(arg1) - 1)
     
@@ -245,7 +239,7 @@ def smite(monster):
 def heal(monster, amount):
     monster.currentHP += amount
     if monster.currentHP > monster.maxHP: monster.currentHP = monster.maxHP
-    print(str(monster) + " was healed by " + str(amount) + " points.")
+    print(monster.name + " was healed by " + str(amount) + " points.")
 
 def revive(monster):
     encounter.append(monster)
@@ -255,7 +249,7 @@ def revive(monster):
 def changeAC (monster, amount):
     monster.ac += amount
     if monster.ac < 0: monster.ac = 0
-    print(str(monster) + "'s armor class was changed by " + str(amount) + ".")
+    print(monster.name + "'s armor class was changed by " + str(amount) + ".")
 
 print("Type help or ? to get a list of availible commands.")
 wait = True
