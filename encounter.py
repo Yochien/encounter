@@ -102,31 +102,22 @@ def add(args = None, list = None):
         print("Command requires at least one monster.")
     else:
         args = args.split(",")
-        c = 0
         for m in args:
-            with open("bestiary") as bestiary:
-                lineCount = 0
-                for line in bestiary:
-                    if not line.startswith("#"):
-                        lineCount += 1
-                        if lineCount == int(m):
-                            line = line.rstrip("\n").split(",")
-                            monster = Monster(line[0], line[1], line[2])
-                            if list == "encounter":
-                                encounter.append(monster)
-                            elif list == "graveyard":
-                                graveyard.append(monster)
-                            else:
-                                pass
-                            c += 1
+            monster = bestiary[int(m) - 1]
+            if list == "encounter":
+                encounter.append(monster)
+            elif list == "graveyard":
+                graveyard.append(monster)
+            else:
+                pass
     if list == None:
-        print("Command requires two arguments. Check help for more info.")
+        print("No list selected.")
     elif list == "encounter":
         menu(encounter, "encounter")
     elif list == "graveyard":
         menu(graveyard, "graveyard")
     else:
-        print("Referenced unknown list.")
+        print("Referenced an unknown list.")
 
 def remove(selector = None, args = None):
     if selector == None:
@@ -239,7 +230,7 @@ def heal(monster, amount):
 def revive(monster):
     encounter.append(monster)
     graveyard.pop(int(arg1) - 1)
-    print(str(encounter[-1]) + " has been revived.")
+    print(encounter[-1].name + " has been revived.")
 
 def changeAC (monster, amount):
     monster.ac += amount
