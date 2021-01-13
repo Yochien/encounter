@@ -45,6 +45,8 @@ def helpEncounter():
     print("--setting [str] to all will clear the selected list in [list].")
     print("--setting [str] to all and [list] to all will clear all lists of all monsters.")
     print("--providing no list after [str] =  all will do the same as remove all all. \n")
+    print("revive or resurrect [num]")
+    print("--revives the monster in position [num] in the graveyard list. \n")
     print("The following commands require a non empty encounter")
     print("status [num]")
     print("--prints a monster [num]'s name and the amount of hp they have left from the encounter list. \n")
@@ -54,8 +56,6 @@ def helpEncounter():
     print("--instantly sends a monster to the graveyard.\n")
     print("heal [num1] [num2]")
     print("--heals a monster at position [num1] in the encounter list by [num2] amount of health points, but won't raise currentHP above maxHP. \n")
-    print("revive or resurrect [num]")
-    print("--revives the monster in position [num] in the graveyard list. \n")
     print("change-ac [num1] [num2]")
     print("--adds [num2] to monster's armor class at position [num1] in  the encounter list. A monster's armor class cannot fall below 0.")
     print("END")
@@ -293,15 +293,27 @@ while wait:
                 else:
                     print("Selected number is out of range of availible monsters.")
             elif command == "attack":
-                attack(encounter[int(arg1) - 1])
+                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                    attack(encounter[int(arg1) - 1])
+                else:
+                    print("Selected number is out of range of availible monsters.")
             elif command == "kill" or command == "smite":
-                smite(encounter[int(arg1) - 1])
+                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                    smite(encounter[int(arg1) - 1])
+                else:
+                    print("Selected number is out of range of availible monsters.")
             elif command == "heal":
-                heal(encounter[int(arg1) - 1], int(arg2))
+                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                    heal(encounter[int(arg1) - 1], int(arg2))
+                else:
+                    print("Selected number is out of range of availible monsters.")
             elif command == "change-ac":
-                changeAC(encounter[int(arg1) - 1], int(arg2))
+                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                    changeAC(encounter[int(arg1) - 1], int(arg2))
+                else:
+                    print("Selected number is out of range of availible monsters.")
             else:
-                print("Unrecognized command")
+                print("Unrecognized command.")
         else:
             print("An error occured running your selected command. Check your arguments. You may need to build an encounter before using that command.")
             print("Type help or ? to get a list of commands and explanations of how to use them.")
