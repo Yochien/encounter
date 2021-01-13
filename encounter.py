@@ -72,7 +72,7 @@ def menu(list, title = "MENU:"):
     else:
         print("EMPTY")
 
-def list(book = None):
+def listMenu(book = None):
     if arg1 == None:
         print("Add an argument to list command to select a specific list.")
         menu(bestiary, "bestiary")
@@ -96,6 +96,20 @@ def list(book = None):
             menu(graveyard, "graveyard")
         else:
             print("Unknown list selected.")
+
+def isValidInt(selector, list):
+    valid = True
+    for s in selector:
+        if s.isnumeric() == False:
+            valid = False
+    if valid == True:
+        for s in selector:
+            if int(s) > len(list) or int(s) <= 0:
+                valid = False
+    else valid == False:
+        print("One or more selected numbers is invalid in this context.")
+    
+    return valid
 
 def add(args = None, list = None):
     if args == None:
@@ -272,7 +286,7 @@ while wait:
         wait = False
         exit()
     elif command == "list":
-        list(arg1)
+        listMenu(arg1)
     elif command == "add":
         add(arg1, arg2)
     elif command == "revive" or command == "resurrect":
@@ -288,30 +302,20 @@ while wait:
     else:
         if encounter != []:
             if command == "status":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     encounter[int(arg1) - 1].status()
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "attack":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     attack(encounter[int(arg1) - 1])
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "kill" or command == "smite":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     smite(encounter[int(arg1) - 1])
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "heal":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     heal(encounter[int(arg1) - 1], int(arg2))
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "change-ac":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     changeAC(encounter[int(arg1) - 1], int(arg2))
-                else:
-                    print("Selected number is out of range of availible monsters.")
             else:
                 print("Unrecognized command.")
         else:
