@@ -72,7 +72,7 @@ def menu(list, title = "MENU:"):
     else:
         print("EMPTY")
 
-def list(book = None):
+def listMenu(book = None):
     if arg1 == None:
         print("Add an argument to list command to select a specific list.")
         menu(bestiary, "bestiary")
@@ -97,6 +97,20 @@ def list(book = None):
         else:
             print("Unknown list selected.")
 
+def isValidInt(selector, list):
+    valid = True
+    for s in selector:
+        if s.isnumeric() == False:
+            valid = False
+    if valid == True:
+        for s in selector:
+            if int(s) > len(list) or int(s) <= 0:
+                valid = False
+    else:
+        print("One or more inputs are invalid in this context.")
+    
+    return valid
+
 def add(args = None, list = None):
     if args == None:
         print("Command requires at least one monster.")
@@ -110,7 +124,10 @@ def add(args = None, list = None):
             print("One or more selected monsters is outside the range of the bestiary.")
         else:
             for m in args:
-                monster = bestiary[int(m) - 1]
+                name = bestiary[int(m) - 1].name
+                hp = bestiary[int(m) - 1].maxHP
+                ac = bestiary[int(m) - 1].ac
+                monster = Monster(name, hp, ac)
                 if list == "encounter":
                     encounter.append(monster)
                 elif list == "graveyard":
@@ -207,23 +224,34 @@ def remove(selector = None, args = None):
         else:
             print("Unknown list selected or selected list is empty.")
 
-def attack(monster):
+def attack(monster, accuracy = None, amt = None):
     if monster.currentHP > 0:
         print("Party member attacks " + monster.name + ".")
-        accuracy = input("Roll for hit: ")
-        if int(accuracy) >= monster.ac:
-            amt = input("Roll for damage: ")
-            monster.damage(amt)
+        if accuracy != None and amt != None:
+            if int(accuracy) >= monster.ac:
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
+        elif accuracy != None and amt == None:
+            if int(accuracy) >= monster.ac:
+                amt = input("Roll for damage: ")
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
         else:
-            print("Attack misses " + monster.name + ".")
-        
+            accuracy = input("Roll for hit: ")
+            if int(accuracy) >= monster.ac:
+                amt = input("Roll for damage: ")
+                monster.damage(amt)
+            else:
+                print("Attack misses " + monster.name + ".")
+
     if monster.currentHP <= 0:
         print(monster.name + " has been defeated.")
         graveyard.append(monster)
         encounter.pop(int(arg1) - 1)
-    
-    if len(encounter) == 0:
-        print("Party has defeated all enemies.")
+        if len(encounter) == 0:
+            print("Party has defeated all enemies.")
 
 def smite(monster):
     print(monster.name + " has been defeated.")
@@ -272,7 +300,7 @@ while wait:
         wait = False
         exit()
     elif command == "list":
-        list(arg1)
+        listMenu(arg1)
     elif command == "add":
         add(arg1, arg2)
     elif command == "revive" or command == "resurrect":
@@ -284,34 +312,42 @@ while wait:
         if len(encounter) > 0 or len(graveyard) > 0:
             remove(arg1, arg2)
         else:
-            print("Both your encounter and graveyard lists are empty. There is no one to remove.")
+            print("encounter and graveyard lists are empty. There is no one to remove.")
     else:
         if encounter != []:
             if command == "status":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     encounter[int(arg1) - 1].status()
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "attack":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
-                    attack(encounter[int(arg1) - 1])
+                valid = True
+                if arg2 == None:
+                    valid = True
+                elif arg2.isnumeric() == True:
+                    valid = True
                 else:
-                    print("Selected number is out of range of availible monsters.")
+                    valid = False
+                
+                if valid == True:
+                    if arg3 == None:
+                        valid = True
+                    elif arg3.isnumeric() == True:
+                        valid = True
+                    else:
+                        valid = False
+                if valid == True:
+                    if isValidInt(arg1, encounter) == True:
+                        attack(encounter[int(arg1) - 1], arg2, arg3)
+                    else:
+                        print("One or more inputs are invalid in this context.")
             elif command == "kill" or command == "smite":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     smite(encounter[int(arg1) - 1])
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "heal":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     heal(encounter[int(arg1) - 1], int(arg2))
-                else:
-                    print("Selected number is out of range of availible monsters.")
             elif command == "change-ac":
-                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                if isValidInt(arg1, encounter) == True:
                     changeAC(encounter[int(arg1) - 1], int(arg2))
-                else:
-                    print("Selected number is out of range of availible monsters.")
             else:
                 print("Unrecognized command.")
         else:
