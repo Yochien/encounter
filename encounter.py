@@ -142,11 +142,17 @@ def remove(selector = None, arg = None):
         if arg == None:
             print("remove requires two arguments. Check help for more info.")
         elif arg == "encounter" and len(encounter) > 0:
-            encounter.pop(int(selector) - 1)
-            menu(encounter)
+            try:
+                encounter.pop(int(selector) - 1)
+                menu(encounter)
+            except IndexError:
+                print("Selected an invalid monster.")
         elif arg == "graveyard" and len(graveyard) > 0:
-            graveyard.pop(int(selector) - 1)
-            menu(graveyard)
+            try:
+                graveyard.pop(int(selector) - 1)
+                menu(graveyard)
+            except IndexError:
+                print("Selected an invalid monster.")
         else:
             print("Unknown list selected or selected list is empty.")
 
