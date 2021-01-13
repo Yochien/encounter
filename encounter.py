@@ -30,16 +30,13 @@ def helpEncounter():
     print("add [num1,num2,num3,...] [list]")
     print("--populates the encounter list with your selected monsters in the list [str].")
     print("--[list] can either be encounter or graveyard.")
-    print("remove [num1,num2,etc...] [list]")
+    print("remove [num1,num2,etc... or str] [list]")
     print("--removes monsters at positions [num1,num2,etc...] from [list].")
     print("--list can either be encounter or graveyard.")
-    print("--duplicate numbers in list [nums] will only remove one monster. \n")
-    print("clear [str]")
-    print("--clears the encounter and graveyard lists of enemies.")
-    print("--if [str] is all the function will clear all lists.")
-    print("--if [str] is encounter the function will clear the encounter list.")
-    print("--if [str] is graveyard the function will clear the graveyard.")
-    print("--If [str] is left blank it will default to all. \n")
+    print("--duplicate numbers in list [nums] will be ignored.")
+    print("--setting [str] to all will clear the selected list in [list].")
+    print("--setting [str] to all and [list] to all will clear all lists of all monsters.")
+    print("--providing no list after [str] =  all will do the same as remove all all. \n")
     print("The following commands require a non empty encounter")
     print("status [num]")
     print("--prints a monster [num]'s name and the amount of hp they have left from the encounter list. \n")
@@ -137,10 +134,29 @@ def add(args = None, list = None):
 def remove(selector = None, args = None):
     if selector == None:
         print("remove requires two arguments. Check help for more info.")
+    elif selector == "all":
+        if args == None:
+            encounter.clear()
+            graveyard.clear()
+            print("All lists cleared.")
+        elif args == "encounter":
+            encounter.clear()
+            print("Encounter cleared.")
+        elif args == "graveyard":
+            graveyard.clear()
+            print("Graveyard cleared.")
+        elif args == "all":
+            encounter.clear()
+            graveyard.clear()
+            print("All lists cleared.")
+        else:
+            print("Selected an unknown list.")
     else:
         selector = selector.split(",")
+        args = args.lower()
         count = 0
         skip = False
+        
         if args == None:
             print("remove requires two arguments. Check help for more info.")
         elif args == "encounter" and len(encounter) > 0:
@@ -191,24 +207,6 @@ def remove(selector = None, args = None):
                 print("One or more numbers out of range of availible monsters.")
         else:
             print("Unknown list selected or selected list is empty.")
-
-def listClear(selector = "all"):
-    if arg1 == None:
-        encounter.clear()
-        graveyard.clear()
-    else:
-        if selector == "all":
-            encounter.clear()
-            graveyard.clear()
-            print("All lists cleared.")
-        elif selector == "encounter":
-            encounter.clear()
-            print("Cleared encounter list.")
-        elif selector == "graveyard":
-            graveyard.clear()
-            print("Cleared graveyard.")
-        else:
-            print("Unknown list selected.")
 
 def attack(monster):
     if monster.currentHP > 0:
@@ -278,8 +276,6 @@ while wait:
         list(arg1)
     elif command == "add":
         add(arg1, arg2)
-    elif command == "clear":
-        listClear(arg1)
     elif command == "revive" or command == "resurrect":
         if len(graveyard) > 0:
             revive(graveyard[int(arg1) - 1])
