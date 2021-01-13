@@ -36,6 +36,7 @@ def helpEncounter():
     print("remove [num1,num2,etc...] [list]")
     print("--removes monsters at positions [num1,num2,etc...] from [list].")
     print("--list can either be encounter or graveyard.")
+    print("--duplicate numbers in list [nums] will only remove one monster. \n")
     print("clear [str]")
     print("--clears the encounter and graveyard lists of enemies.")
     print("--if [str] is all the function will clear all lists.")
@@ -142,42 +143,55 @@ def remove(selector = None, args = None):
     else:
         selector = selector.split(",")
         count = 0
+        skip = False
         if args == None:
             print("remove requires two arguments. Check help for more info.")
         elif args == "encounter" and len(encounter) > 0:
             length = len(encounter)
-            try:
-                for s in selector:
-                    encounter[int(selector[count]) - 1] = None
-                    count += 1
-                count = 0
-                while count < length:
-                    try:
-                        index = encounter.index(None)
-                        encounter.pop(index)
-                    except ValueError:
-                        pass
-                    count += 1
-                menu(encounter)
-            except IndexError:
-                print("Selected an invalid monster.")
+            for s in selector:
+                if int(s) > length or int(s) < 0:
+                    skip = True
+            if skip == False:
+                try:
+                    for s in selector:
+                        encounter[int(selector[count]) - 1] = None
+                        count += 1
+                    count = 0
+                    while count < length:
+                        try:
+                            index = encounter.index(None)
+                            encounter.pop(index)
+                        except ValueError:
+                            pass
+                        count += 1
+                    menu(encounter)
+                except IndexError:
+                    print("Selected an invalid monster.")
+            else:
+                print("One or more numbers out of range of availible monsters.")
         elif args == "graveyard" and len(graveyard) > 0:
             length = len(graveyard)
-            try:
-                for s in selector:
-                    graveyard[int(selector[count]) - 1] = None
-                    count += 1
-                count = 0
-                while count < length:
-                    try:
-                        index = graveyard.index(None)
-                        graveyard.pop(index)
-                    except ValueError:
-                        pass
-                    count += 1
-                menu(graveyard)
-            except IndexError:
-                print("Selected an invalid monster.")
+            for s in selector:
+                if int(s) > length or int(s) < 0:
+                    skip = True
+            if skip == False:
+                try:
+                    for s in selector:
+                        graveyard[int(selector[count]) - 1] = None
+                        count += 1
+                    count = 0
+                    while count < length:
+                        try:
+                            index = graveyard.index(None)
+                            graveyard.pop(index)
+                        except ValueError:
+                            pass
+                        count += 1
+                    menu(graveyard)
+                except IndexError:
+                    print("Selected an invalid monster.")
+            else:
+                print("One or more numbers out of range of availible monsters.")
         else:
             print("Unknown list selected or selected list is empty.")
 
