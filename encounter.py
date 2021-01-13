@@ -30,8 +30,9 @@ def helpEncounter():
     print("--if [str] is encounter the function will print the monsters in your current encounter.")
     print("--if [str] is graveyard the function will list the currently defeated monsters in your encounter.")
     print("--if [str] is left blank the bestiary will be shown. \n")
-    print("add [num1,num2,num3,...]")
-    print("--populates the encounter list with your selected monsters. \n")
+    print("add [num1,num2,num3,...] [str]")
+    print("--populates the encounter list with your selected monsters in the list [str].")
+    print("--[str] can either be encounter or graveyard.")
     print("remove [num]")
     print("--removes a monster at position [num] in your encounter list. \n")
     print("clear [str]")
@@ -97,20 +98,36 @@ def list(book = "bestiary"):
         else:
             print("Unknown list selected.")
 
-def add(args):
-    args = args.split(",")
-    c = 0
-    for m in args:
-        with open("bestiary") as bestiary:
-            lineCount = 0
-            for line in bestiary:
-                if not line.startswith("#"):
-                    lineCount += 1
-                    if lineCount == int(m):
-                        line = line.rstrip("\n").split(",")
-                        monster = Monster(line[0], line[1], line[2])
-                        encounter.append(monster)
-                        c += 1
+def add(args = None, list = None):
+    if args == None:
+        print("Command requires at least one monster.")
+    else:
+        args = args.split(",")
+        c = 0
+        for m in args:
+            with open("bestiary") as bestiary:
+                lineCount = 0
+                for line in bestiary:
+                    if not line.startswith("#"):
+                        lineCount += 1
+                        if lineCount == int(m):
+                            line = line.rstrip("\n").split(",")
+                            monster = Monster(line[0], line[1], line[2])
+                            if list == "encounter":
+                                encounter.append(monster)
+                            elif list == "graveyard":
+                                graveyard.append(monster)
+                            else:
+                                pass
+                            c += 1
+    if list == None:
+        print("Command requires two arguments. Check help for more info.")
+    elif list == "encounter":
+        menu(encounter)
+    elif list == "graveyard":
+        menu(graveyard)
+    else:
+        print("Referenced unknown list.")
 
 def remove(selector = None, arg = None):
     if selector == None:
@@ -207,9 +224,7 @@ while wait:
     elif command == "list":
         list(arg1)
     elif command == "add":
-        add(arg1)
-        print("Monsters in encounter:")
-        menu(encounter)
+        add(arg1, arg2)
     elif command == "clear":
         listClear(arg1)
     elif command == "revive" or command == "resurrect":
