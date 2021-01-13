@@ -14,8 +14,16 @@ class Monster:
         self.currentHP -= int(amt)
 
 #Define important variables here
+bestiary = []
 encounter = []
 graveyard = []
+
+with open("bestiary") as book:
+    for line in book:
+        if not line.startswith("#"):
+            line = line.rstrip("\n").split(",")
+            monster = Monster(line[0], line[1], line[2])
+            bestiary.append(monster)
 
 def helpEncounter():
     print("help or ?")
@@ -52,16 +60,10 @@ def helpEncounter():
     print("--adds [num2] to monster's armor class at position [num1] in  the encounter list. A monster's armor class cannot fall below 0.")
     print("END")
 
-def menu(list):
+def menu(list, title = "MENU:"):
     c = 0
-    if list == bestiary:
-        print("BESTIARY:")
-    elif list == encounter:
-        print("ENCOUNTER:")
-    elif list == graveyard:
-        print("GRAVEYARD:")
-    else:
-        pass
+    title = title.upper() + ":"
+    print(title)
 
     if len(list) > 0:
         for m in list:
@@ -70,38 +72,28 @@ def menu(list):
     else:
         print("EMPTY")
 
-def bestiary():
-    print("AVAILIBLE MONSTERS")
-    with open("bestiary") as book:
-        count = 1
-        for line in book:
-            if not line.startswith("#"):
-                line = line.split(",")
-                print(str(count) + " " + line[0])
-                count += 1
-
 def list(book = "bestiary"):
     if arg1 == None:
-        print("Add an argument to list command to select a list to disply.")
-        bestiary()
+        print("Add an argument to list command to select a specific list.")
+        menu(bestiary, "bestiary")
         print("")
-        menu(encounter)
+        menu(encounter, "encounter")
         print("")
-        menu(graveyard)
+        menu(graveyard, "graveyard")
     else:
         book == book.strip(" ").lower()
         if book == "bestiary":
-            bestiary()
+            menu(bestiary, "bestiary")
         elif book == "encounter":
-            menu(encounter)
+            menu(encounter, "encounter")
         elif book == "graveyard":
-            menu(graveyard)
+            menu(graveyard, "graveyard")
         elif book == "all":
-            bestiary()
+            menu(bestiary, "bestiary")
             print("")
-            menu(encounter)
+            menu(encounter, "encounter")
             print("")
-            menu(graveyard)
+            menu(graveyard, "graveyard")
         else:
             print("Unknown list selected.")
 
@@ -130,9 +122,9 @@ def add(args = None, list = None):
     if list == None:
         print("Command requires two arguments. Check help for more info.")
     elif list == "encounter":
-        menu(encounter)
+        menu(encounter, "encounter")
     elif list == "graveyard":
-        menu(graveyard)
+        menu(graveyard, "graveyard")
     else:
         print("Referenced unknown list.")
 
@@ -182,7 +174,7 @@ def remove(selector = None, args = None):
                         except ValueError:
                             pass
                         count += 1
-                    menu(encounter)
+                    menu(encounter, "encounter")
                 except IndexError:
                     print("Selected an invalid monster.")
             else:
@@ -205,7 +197,7 @@ def remove(selector = None, args = None):
                         except ValueError:
                             pass
                         count += 1
-                    menu(graveyard)
+                    menu(graveyard, "graveyard")
                 except IndexError:
                     print("Selected an invalid monster.")
             else:
