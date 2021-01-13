@@ -95,6 +95,12 @@ def list(book = "bestiary"):
             menu(encounter)
         elif book == "graveyard":
             menu(graveyard)
+        elif book == "all":
+            bestiary()
+            print("")
+            menu(encounter)
+            print("")
+            menu(graveyard)
         else:
             print("Unknown list selected.")
 
