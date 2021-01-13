@@ -135,21 +135,45 @@ def add(args = None, list = None):
     else:
         print("Referenced unknown list.")
 
-def remove(selector = None, arg = None):
+def remove(selector = None, args = None):
     if selector == None:
         print("remove requires two arguments. Check help for more info.")
     else:
-        if arg == None:
+        selector = selector.split(",")
+        count = 0
+        if args == None:
             print("remove requires two arguments. Check help for more info.")
-        elif arg == "encounter" and len(encounter) > 0:
+        elif args == "encounter" and len(encounter) > 0:
+            length = len(encounter)
             try:
-                encounter.pop(int(selector) - 1)
+                for s in selector:
+                    encounter[int(selector[count]) - 1] = None
+                    count += 1
+                count = 0
+                while count < length:
+                    try:
+                        index = encounter.index(None)
+                        encounter.pop(index)
+                    except ValueError:
+                        pass
+                    count += 1
                 menu(encounter)
             except IndexError:
                 print("Selected an invalid monster.")
-        elif arg == "graveyard" and len(graveyard) > 0:
+        elif args == "graveyard" and len(graveyard) > 0:
+            length = len(graveyard)
             try:
-                graveyard.pop(int(selector) - 1)
+                for s in selector:
+                    graveyard[int(selector[count]) - 1] = None
+                    count += 1
+                count = 0
+                while count < length:
+                    try:
+                        index = graveyard.index(None)
+                        graveyard.pop(index)
+                    except ValueError:
+                        pass
+                    count += 1
                 menu(graveyard)
             except IndexError:
                 print("Selected an invalid monster.")
