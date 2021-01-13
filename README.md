@@ -1,5 +1,5 @@
 # encounter
-**Version 4.9.3**
+**Version 4.9.4**
 
 A script that manages a combat encounter for tabletop rpgs.
 

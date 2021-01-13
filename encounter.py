@@ -11,7 +11,10 @@ class Monster:
         return self.name
     
     def status(self):
-        print(str(self) + ": " + str(self.currentHP) + " " + str(self.ac))
+        print("STATUS:")
+        print("Name: " + self.name)
+        print("HP: " + str(self.currentHP))
+        print("AC: " + str(self.ac))
         
     def damage(self, amt):
         self.currentHP -= int(amt)
@@ -72,7 +75,7 @@ def menu(list):
     if len(list) > 0:
         for m in list:
             c += 1
-            print(str(c) + " " + str(m))
+            print(str(c) + " " + m.name)
     else:
         print("EMPTY")
 
