@@ -72,7 +72,7 @@ def menu(list, title = "MENU:"):
     else:
         print("EMPTY")
 
-def list(book = "bestiary"):
+def list(book = None):
     if arg1 == None:
         print("Add an argument to list command to select a specific list.")
         menu(bestiary, "bestiary")
@@ -101,23 +101,30 @@ def add(args = None, list = None):
     if args == None:
         print("Command requires at least one monster.")
     else:
+        skip = False
         args = args.split(",")
-        for m in args:
-            monster = bestiary[int(m) - 1]
-            if list == "encounter":
-                encounter.append(monster)
+        for n in args:
+            if int(n) > len(bestiary) or int(n) <= 0:
+                skip = True
+        if skip == True:
+            print("One or more selected monsters is outside the range of the bestiary.")
+        else:
+            for m in args:
+                monster = bestiary[int(m) - 1]
+                if list == "encounter":
+                    encounter.append(monster)
+                elif list == "graveyard":
+                    graveyard.append(monster)
+                else:
+                    pass
+            if list == None:
+                print("No list selected.")
+            elif list == "encounter":
+                menu(encounter, "encounter")
             elif list == "graveyard":
-                graveyard.append(monster)
+                menu(graveyard, "graveyard")
             else:
-                pass
-    if list == None:
-        print("No list selected.")
-    elif list == "encounter":
-        menu(encounter, "encounter")
-    elif list == "graveyard":
-        menu(graveyard, "graveyard")
-    else:
-        print("Referenced an unknown list.")
+                print("Referenced an unknown list.")
 
 def remove(selector = None, args = None):
     if selector == None:
@@ -126,17 +133,21 @@ def remove(selector = None, args = None):
         if args == None:
             encounter.clear()
             graveyard.clear()
-            print("All lists cleared.")
+            menu(encounter, "encounter")
+            print(" ")
+            menu(graveyard, "graveyard")
         elif args == "encounter":
             encounter.clear()
-            print("Encounter cleared.")
+            menu(encounter, "encounter")
         elif args == "graveyard":
             graveyard.clear()
-            print("Graveyard cleared.")
+            menu(graveyard, "graveyard")
         elif args == "all":
             encounter.clear()
             graveyard.clear()
-            print("All lists cleared.")
+            menu(encounter, "encounter")
+            print(" ")
+            menu(graveyard, "graveyard")
         else:
             print("Selected an unknown list.")
     else:
