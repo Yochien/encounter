@@ -16,7 +16,7 @@ class Monster:
     def damage(self, amt):
         self.currentHP -= int(amt)
 
-#Define important variable lists
+#Define important variables here
 encounter = []
 graveyard = []
 
@@ -296,7 +296,10 @@ while wait:
     else:
         if encounter != []:
             if command == "status":
-                encounter[int(arg1) - 1].status()
+                if int(arg1) > 0 and int(arg1) <= len(encounter):
+                    encounter[int(arg1) - 1].status()
+                else:
+                    print("Selected number is out of range of availible monsters.")
             elif command == "attack":
                 attack(encounter[int(arg1) - 1])
             elif command == "kill" or command == "smite":
@@ -308,5 +311,5 @@ while wait:
             else:
                 print("Unrecognized command")
         else:
-            print("An error occured running your selected command. Check your arguments or you may also need to build an encounter before you can use that command.")
-            print("Use the command help or ? to get an availible list of commands and explanations of how to use them.")
+            print("An error occured running your selected command. Check your arguments. You may need to build an encounter before using that command.")
+            print("Type help or ? to get a list of commands and explanations of how to use them.")
