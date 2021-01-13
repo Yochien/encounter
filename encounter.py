@@ -26,7 +26,7 @@ def helpEncounter():
     print("--if [str] is bestiary the function will print a list of availible monsters to add to your encounter.")
     print("--if [str] is encounter the function will print the monsters in your current encounter.")
     print("--if [str] is graveyard the function will list the currently defeated monsters in your encounter.")
-    print("--if [str] is left blank the bestiary will be shown. \n")
+    print("--if [str] is left blank the bestiary will be shown with a message explaining how to select a particular list. \n")
     print("add [num1,num2,num3,...] [list]")
     print("--populates the encounter list with your selected monsters in the list [str].")
     print("--[list] can either be encounter or graveyard.")
@@ -82,7 +82,12 @@ def bestiary():
 
 def list(book = "bestiary"):
     if arg1 == None:
+        print("Add an argument to list command to select a list to disply.")
         bestiary()
+        print("")
+        menu(encounter)
+        print("")
+        menu(graveyard)
     else:
         book == book.strip(" ").lower()
         if book == "bestiary":
