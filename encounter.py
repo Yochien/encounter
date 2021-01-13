@@ -179,7 +179,9 @@ def attack(monster):
             print("Attack misses " + monster.name + ".")
         
     if monster.currentHP <= 0:
-        smite(monster)
+        print(str(monster) + " has been defeated.")
+        graveyard.append(monster)
+        encounter.pop(int(arg1) - 1)
     
     if len(encounter) == 0:
         print("Party has defeated all enemies.")
@@ -188,6 +190,9 @@ def smite(monster):
     print(str(monster) + " has been defeated.")
     graveyard.append(monster)
     encounter.pop(int(arg1) - 1)
+    
+    if len(encounter) == 0:
+        print("Party has defeated all enemies.")
 
 def heal(monster, amount):
     monster.currentHP += amount
