@@ -13,17 +13,26 @@ class Monster:
     def damage(self, amt):
         self.currentHP -= int(amt)
 
-#Define important variables here
+#Monster lists
 bestiary = []
 encounter = []
 graveyard = []
 
-with open("bestiary") as book:
-    for line in book:
-        if not line.startswith("#"):
-            line = line.rstrip("\n").split(",")
-            monster = Monster(line[0], line[1], line[2])
-            bestiary.append(monster)
+#Attempt to open the bestiary file. If not found fallback on a default set of monsters
+try:
+    with open("bestiary") as book:
+        for line in book:
+            if not line.startswith("#"):
+                line = line.rstrip("\n").split(",")
+                monster = Monster(line[0], line[1], line[2])
+                bestiary.append(monster)
+except FileNotFoundError:
+    npc = Monster("NPC", 5, 12)
+    animal = Monster("Animal", 3, 10)
+    enemy = Monster("Enemy", 10, 13)
+    bestiary.append(npc)
+    bestiary.append(animal)
+    bestiary.append(enemy)
 
 def helpEncounter():
     print("help or ?")
@@ -253,10 +262,16 @@ def attack(monster, accuracy = None, amt = None):
         if len(encounter) == 0:
             print("Party has defeated all enemies.")
 
-def smite(monster):
-    print(monster.name + " has been defeated.")
-    graveyard.append(monster)
-    encounter.pop(int(arg1) - 1)
+def smite(selector):
+    global graveyard
+    if selector == "all":
+        graveyard = graveyard + encounter
+        encounter.clear()
+        print("All monsters defeated.")
+    else:
+        print(encounter[int(selector) - 1].name + " has been defeated.")
+        graveyard.append(encounter[int(selector) - 1])
+        encounter.pop(int(selector) - 1)
     
     if len(encounter) == 0:
         print("Party has defeated all enemies.")
@@ -340,8 +355,7 @@ while wait:
                     else:
                         print("One or more inputs are invalid in this context.")
             elif command == "kill" or command == "smite":
-                if isValidInt(arg1, encounter) == True:
-                    smite(encounter[int(arg1) - 1])
+                smite(arg1)
             elif command == "heal":
                 if isValidInt(arg1, encounter) == True:
                     heal(encounter[int(arg1) - 1], int(arg2))
