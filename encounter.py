@@ -74,10 +74,10 @@ END
     ),
 
 def menu(list, title = "MENU:"):
-    c = 0
     title = title.upper() + ":"
     print(title)
 
+    c = 0
     if len(list) > 0:
         for m in list:
             c += 1
@@ -85,13 +85,12 @@ def menu(list, title = "MENU:"):
     else:
         print("EMPTY")
 
+    print("")
+
 def listMenu(book = None):
     if arg1 == None:
-        print("Add an argument to list command to select a specific list.")
         menu(bestiary, "bestiary")
-        print("")
         menu(encounter, "encounter")
-        print("")
         menu(graveyard, "graveyard")
     else:
         book == book.strip(" ").lower()
@@ -158,25 +157,18 @@ def add(args = None, list = None):
 
 def remove(selector = None, args = None):
     if selector == None:
-        print("remove requires two arguments. Check help for more info.")
+        print("remove requires one or more arguments. Check help for more info.")
     elif selector == "all":
-        if args == None:
+        if args == None or args == "all":
             encounter.clear()
             graveyard.clear()
             menu(encounter, "encounter")
-            print(" ")
             menu(graveyard, "graveyard")
         elif args == "encounter":
             encounter.clear()
             menu(encounter, "encounter")
         elif args == "graveyard":
             graveyard.clear()
-            menu(graveyard, "graveyard")
-        elif args == "all":
-            encounter.clear()
-            graveyard.clear()
-            menu(encounter, "encounter")
-            print(" ")
             menu(graveyard, "graveyard")
         else:
             print("Selected an unknown list.")
@@ -299,25 +291,31 @@ print("Type help or ? to get a list of availible commands.")
 wait = True
 while wait:
     action = input("Type an action to perform: ").lower().split(" ")
-    command = action[0]
-    try:
+    
+    #default all arguments to None
+    command = arg1 = arg2 = arg3 = None
+    
+    if (len(action) > 3):
+        command = action[0]
         arg1 = action[1]
-    except IndexError:
-        arg1 = None
-    try:
         arg2 = action[2]
-    except IndexError:
-        arg2 = None
-    try:
         arg3 = action[3]
-    except IndexError:
-        arg3 = None
+    elif (len(action) == 3):
+        command = action[0]
+        arg1 = action[1]
+        arg2 = action[2]
+    elif (len(action) == 2):
+        command = action[0]
+        arg1 = action[1]
+    elif (len(action) == 1):
+        command = action[0]
+    else:
+        command = None
 
     if command == "help" or command == "?":
         helpEncounter()
-    elif command == "quit" or command == "exit":
+    elif command == "quit" or command == "q" or command == "exit":
         wait = False
-        exit()
     elif command == "list":
         listMenu(arg1)
     elif command == "add":
@@ -332,27 +330,22 @@ while wait:
             remove(arg1, arg2)
         else:
             print("encounter and graveyard lists are empty. There is no one to remove.")
-    else:
+    elif command == "status" or command == "attack" or command == "kill" or command == "smite" or command == "heal" or command == "change-ac":
         if encounter != []:
             if command == "status":
                 if isValidInt(arg1, encounter) == True:
                     encounter[int(arg1) - 1].status()
             elif command == "attack":
                 valid = True
-                if arg2 == None:
+                if arg2 == None and arg3 == None:
+                    valid = True
+                elif arg2.isnumeric() == True and arg3.isnumeric() == True:
                     valid = True
                 elif arg2.isnumeric() == True:
                     valid = True
                 else:
                     valid = False
                 
-                if valid == True:
-                    if arg3 == None:
-                        valid = True
-                    elif arg3.isnumeric() == True:
-                        valid = True
-                    else:
-                        valid = False
                 if valid == True:
                     if isValidInt(arg1, encounter) == True:
                         attack(encounter[int(arg1) - 1], arg2, arg3)
@@ -366,8 +359,8 @@ while wait:
             elif command == "change-ac":
                 if isValidInt(arg1, encounter) == True:
                     changeAC(encounter[int(arg1) - 1], int(arg2))
-            else:
-                print("Unrecognized command.")
         else:
-            print("An error occured running your selected command. Check your arguments. You may need to build an encounter before using that command.")
-            print("Type help or ? to get a list of commands and explanations of how to use them.")
+            print("You must build an encounter before using that command.")
+    else:
+        print("Unrecognized command.")
+        print("Type help or ? to learn how to use availible commands.")
