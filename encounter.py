@@ -35,39 +35,43 @@ except FileNotFoundError:
     bestiary.append(enemy)
 
 def helpEncounter():
-    print("help or ?")
-    print("--prints this premade list of commands that you can use to interact with your list of monsters. \n")
-    print("quit or exit")
-    print("--exits the program. \n")
-    print("list [str]")
-    print("--if [str] is bestiary the function will print a list of availible monsters to add to your encounter.")
-    print("--if [str] is encounter the function will print the monsters in your current encounter.")
-    print("--if [str] is graveyard the function will list the currently defeated monsters in your encounter.")
-    print("--if [str] is left blank the bestiary will be shown with a message explaining how to select a particular list. \n")
-    print("add [num1,num2,num3,...] [list]")
-    print("--populates the encounter list with your selected monsters in the list [str].")
-    print("--[list] can either be encounter or graveyard.")
-    print("remove [num1,num2,etc... or str] [list]")
-    print("--removes monsters at positions [num1,num2,etc...] from [list].")
-    print("--list can either be encounter or graveyard.")
-    print("--duplicate numbers in list [nums] will be ignored.")
-    print("--setting [str] to all will clear the selected list in [list].")
-    print("--setting [str] to all and [list] to all will clear all lists of all monsters.")
-    print("--providing no list after [str] =  all will do the same as remove all all. \n")
-    print("revive or resurrect [num]")
-    print("--revives the monster in position [num] in the graveyard list. \n")
-    print("The following commands require a non empty encounter")
-    print("status [num]")
-    print("--prints a monster [num]'s name and the amount of hp they have left from the encounter list. \n")
-    print("attack [num]")
-    print("--attacks a monster from the encounter list at the position [num]. \n")
-    print("smite or kill")
-    print("--instantly sends a monster to the graveyard.\n")
-    print("heal [num1] [num2]")
-    print("--heals a monster at position [num1] in the encounter list by [num2] amount of health points, but won't raise currentHP above maxHP. \n")
-    print("change-ac [num1] [num2]")
-    print("--adds [num2] to monster's armor class at position [num1] in  the encounter list. A monster's armor class cannot fall below 0.")
-    print("END")
+    print(
+'''
+help or ?
+--prints this premade list of commands that you can use to interact with your list of monsters.
+quit or exit
+--exits the program.
+list [str]
+--if [str] is bestiary the function will print a list of availible monsters to add to your encounter.
+--if [str] is encounter the function will print the monsters in your current encounter.
+--if [str] is graveyard the function will list the currently defeated monsters in your encounter.
+--if [str] is left blank the bestiary will be shown with a message explaining how to select a particular list.
+add [num1,num2,num3,...] [list]
+--populates the encounter list with your selected monsters in the list [str].
+--[list] can either be encounter or graveyard.
+remove [num1,num2,etc... or str] [list]
+--removes monsters at positions [num1,num2,etc...] from [list].
+--list can either be encounter or graveyard.
+--duplicate numbers in list [nums] will be ignored.
+--setting [str] to all will clear the selected list in [list].
+--setting [str] to all and [list] to all will clear all lists of all monsters.
+--providing no list after [str] =  all will do the same as remove all all.
+revive or resurrect [num]
+--revives the monster in position [num] in the graveyard list.
+The following commands require a non empty encounter
+status [num]
+--prints a monster [num]'s name and the amount of hp they have left from the encounter list.
+attack [num]
+--attacks a monster from the encounter list at the position [num].
+smite or kill
+--instantly sends a monster to the graveyard.
+heal [num1] [num2]
+--heals a monster at position [num1] in the encounter list by [num2] amount of health points, but won't raise currentHP above maxHP.
+change-ac [num1] [num2]
+--adds [num2] to monster's armor class at position [num1] in  the encounter list. A monster's armor class cannot fall below 0.
+END
+'''
+    ),
 
 def menu(list, title = "MENU:"):
     c = 0

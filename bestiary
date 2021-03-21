@@ -1,8 +1,8 @@
-#Example bestiary file required by encounter
+#Example bestiary file for encounter
 #Lines beginning with "#" are ignored
 #Format to create custom monster is as follows
 #Name, Max HP, AC
-#Extra values, descriptions, and notes can be included after the required data since encounter.py will ignore it
+#Extra values, descriptions, and notes can be included after the required data since encounter will ignore it
 #
 #Nature
 Wolf, 11, 13
