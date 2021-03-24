@@ -73,13 +73,13 @@ END
 '''
     ),
 
-def menu(list, title = "MENU:"):
+def menu(monsterList, title = "MENU:"):
     title = title.upper() + ":"
     print(title)
 
     c = 0
-    if len(list) > 0:
-        for m in list:
+    if len(monsterList) > 0:
+        for m in monsterList:
             c += 1
             print(str(c) + " " + m.name)
     else:
@@ -109,21 +109,21 @@ def listMenu(book = None):
         else:
             print("Unknown list selected.")
 
-def isValidInt(selector, list):
+def isValidInt(selector, monsterList):
     valid = True
     for s in selector:
         if s.isnumeric() == False:
             valid = False
     if valid == True:
         for s in selector:
-            if int(s) > len(list) or int(s) <= 0:
+            if int(s) > len(monsterList) or int(s) <= 0:
                 valid = False
     else:
         print("One or more inputs are invalid in this context.")
     
     return valid
 
-def add(args = None, list = None):
+def add(args = None, monsterList = None):
     if args == None:
         print("Command requires at least one monster.")
     else:
@@ -140,94 +140,78 @@ def add(args = None, list = None):
                 hp = bestiary[int(m) - 1].maxHP
                 ac = bestiary[int(m) - 1].ac
                 monster = Monster(name, hp, ac)
-                if list == "encounter":
+                if monsterList == "encounter":
                     encounter.append(monster)
-                elif list == "graveyard":
+                elif monsterList == "graveyard":
                     graveyard.append(monster)
                 else:
                     pass
-            if list == None:
+            if monsterList == None:
                 print("No list selected.")
-            elif list == "encounter":
+            elif monsterList == "encounter":
                 menu(encounter, "encounter")
-            elif list == "graveyard":
+            elif monsterList == "graveyard":
                 menu(graveyard, "graveyard")
             else:
                 print("Referenced an unknown list.")
 
-def remove(selector = None, args = None):
+def delete(selector, monsterList):
+    count = 0
+    skip = False
+    length = len(monsterList)
+
+    for s in selector:
+        if int(s) > length or int(s) < 0:
+            skip = True
+    if skip == False:
+        for s in selector:
+            monsterList[int(s) - 1] = None
+            count += 1
+        count = 0
+        while count < length:                  #####################################
+            try:                               ###Remove dependency on try except###
+                index = monsterList.index(None)#####################################
+                monsterList.pop(index)
+            except ValueError:
+                pass
+            count += 1
+    else:
+        print("One or more numbers out of range of availible monsters.")
+
+def remove(selector = None, monsterList = None):
     if selector == None:
-        print("remove requires one or more arguments. Check help for more info.")
+        print("remove requires at least two arguments.")
     elif selector == "all":
-        if args == None or args == "all":
+        if monsterList == "all":
             encounter.clear()
             graveyard.clear()
             menu(encounter, "encounter")
             menu(graveyard, "graveyard")
-        elif args == "encounter":
+        elif monsterList == "encounter":
             encounter.clear()
             menu(encounter, "encounter")
-        elif args == "graveyard":
+        elif monsterList == "graveyard":
             graveyard.clear()
             menu(graveyard, "graveyard")
         else:
             print("Selected an unknown list.")
     else:
         selector = selector.split(",")
-        args = args.lower()
         count = 0
         skip = False
         
-        if args == None:
-            print("remove requires two arguments. Check help for more info.")
-        elif args == "encounter" and len(encounter) > 0:
-            length = len(encounter)
-            for s in selector:
-                if int(s) > length or int(s) < 0:
-                    skip = True
-            if skip == False:
-                try:
-                    for s in selector:
-                        encounter[int(selector[count]) - 1] = None
-                        count += 1
-                    count = 0
-                    while count < length:
-                        try:
-                            index = encounter.index(None)
-                            encounter.pop(index)
-                        except ValueError:
-                            pass
-                        count += 1
-                    menu(encounter, "encounter")
-                except IndexError:
-                    print("Selected an invalid monster.")
-            else:
-                print("One or more numbers out of range of availible monsters.")
-        elif args == "graveyard" and len(graveyard) > 0:
-            length = len(graveyard)
-            for s in selector:
-                if int(s) > length or int(s) < 0:
-                    skip = True
-            if skip == False:
-                try:
-                    for s in selector:
-                        graveyard[int(selector[count]) - 1] = None
-                        count += 1
-                    count = 0
-                    while count < length:
-                        try:
-                            index = graveyard.index(None)
-                            graveyard.pop(index)
-                        except ValueError:
-                            pass
-                        count += 1
-                    menu(graveyard, "graveyard")
-                except IndexError:
-                    print("Selected an invalid monster.")
-            else:
-                print("One or more numbers out of range of availible monsters.")
+        if monsterList == None:
+            print("remove requires at least two arguments.")
         else:
-            print("Unknown list selected or selected list is empty.")
+            monsterList = monsterList.lower()
+            if monsterList == "encounter" and encounter != []:
+                delete(selector, encounter)
+                menu(encounter, "encounter")
+            elif monsterList == "graveyard" and len(graveyard) > 0:
+                delete(selector, graveyard)
+                menu(graveyard, "graveyard")
+            else:
+                print("Unknown list selected or selected list is empty.")
 
 def attack(monster, accuracy = None, amt = None):
     if monster.currentHP > 0:
