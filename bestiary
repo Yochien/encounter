@@ -1,6 +1,6 @@
 #Example bestiary file for encounter
 #Lines beginning with "#" are ignored
-#Format to create custom monster is as follows
+#Format to create custom NPC instances is as follows
 #Name, Max HP, AC
 #Extra values, descriptions, and notes can be included after the required data since encounter will ignore it
 #
