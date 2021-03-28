@@ -20,7 +20,7 @@ graveyard = []
 
 #Attempt to open the bestiary file. If not found fallback on a default set of NPCs
 try:
-    with open("bestiary") as book:
+    with open("bestiary.txt") as book:
         for line in book:
             if not line.startswith("#"):
                 line = line.rstrip("\n").split(",")
@@ -30,7 +30,7 @@ except FileNotFoundError:
     human = NPC("Human", 5, 12)
     animal = NPC("Animal", 3, 10)
     enemy = NPC("Enemy", 10, 13)
-    bestiary.append(npc)
+    bestiary.append(human)
     bestiary.append(animal)
     bestiary.append(enemy)
 
