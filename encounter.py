@@ -3,16 +3,10 @@ class NPC:
         self.name = name
         self.maxHP = self.currentHP = int(maxHP)
         self.ac = int(ac)
-        
+
         if self.ac < 0 or self.maxHP < 1:
             raise Exception("Attribute out of valid range.")
 
-    def status(self):
-        print("STATUS:")
-        print("Name: " + self.name)
-        print("HP: " + str(self.currentHP))
-        print("AC: " + str(self.ac))
-        
     def damage(self, amt):
         self.currentHP -= int(amt)
 
@@ -20,6 +14,7 @@ class NPC:
 bestiary = []
 encounter = []
 graveyard = []
+searchResults = [] #To be used when command returns multiple options
 
 #Attempt to open the bestiary file. If not found fallback on a default set of NPCs
 try:
@@ -49,7 +44,7 @@ def displayHelp():
         helpFile.close()
 
 ###############################################################################################
-###All functions should allow you to use the name of an NPC as a selector.                  ###
+###         All functions should allow you to use the name of an NPC as a selector.         ###
 ###If more than one of a particular NPC type exists encounter should ask which one you mean.###
 ###############################################################################################
 
@@ -135,6 +130,34 @@ def add(args):
                 menu(graveyard, "graveyard")
             else:
                 print("Referenced an unknown list.")
+
+def info(args):
+    if len(args) >= 2:
+        if int(args[0]) > 0:         #unsafe
+            if args[1] == "bestiary":
+                if isValidInt(args[0], bestiary) == True:
+                    print("INFO:")
+                    print("NAME: " + bestiary[int(args[0]) - 1].name)
+                    print("HP: " + str(bestiary[int(args[0]) - 1].currentHP))
+                    print("AC: " + str(bestiary[int(args[0]) - 1].ac))
+            elif args[1] == "encounter":
+                if isValidInt(args[0], encounter) == True:
+                    print("INFO:")
+                    print("NAME: " + encounter[int(args[0]) - 1].name)
+                    print("HP: " + str(encounter[int(args[0]) - 1].currentHP))
+                    print("AC: " + str(encounter[int(args[0]) - 1].ac))
+            elif args[1] == "graveyard":
+                if isValidInt(args[0], graveyard) == True:
+                    print("INFO:")
+                    print("NAME: " + graveyard[int(args[0]) - 1].name)
+                    print("HP: " + str(graveyard[int(args[0]) - 1].currentHP))
+                    print("AC: " + str(graveyard[int(args[0]) - 1].ac))
+            else:
+                print("Unrecognized list")
+        else:
+            print("First argument must be an integer")
+    else:
+        print("info requires 2 arguments")
 
 def delete(selector, npcList):
     count = 0
@@ -283,7 +306,7 @@ def heal(args): #Should allow for negative healing
                         amt = int(args[1])
                         npc.currentHP += amt
                         if npc.currentHP > npc.maxHP: npc.currentHP = npc.maxHP
-                        print(npc.name + " was healed by " + str(amt) + " points.") #Should display the actual amount restored asopposed to the amount input
+                        print(npc.name + " was healed by " + str(amt) + " points.") #Should display amount restored rather than amount input
                     else:
                         print("Amount must be a number.")
                 else:
@@ -364,15 +387,8 @@ while wait:
             args.append(action[count])
             count += 1
     
-    ###Debug input
-    #print(action)
-    #print(command)
-    #print(args)
-    
     if command == "help" or command == "?":
         displayHelp()
-    elif command == "quit" or command == "q" or command == "exit":
-        wait = False
     elif command == "list":
         displayList(args)
     elif command == "add":
@@ -381,17 +397,8 @@ while wait:
         revive(args)
     elif command == "remove" or command == "clear":
         remove(args)
-    elif command == "status":                    #Status could be rewritten to not be a property of NPCs
-        if len(encounter) > 0:                   #Status should be able to display status of dead enemies
-            if len(args) > 0:
-                if isValidInt(args[0], encounter) == True:
-                    encounter[int(args[0]) - 1].status()
-                else:
-                    print("Selected an invalid NPC.")
-            else:
-                print("status requires 1 argument")
-        else:
-            print("status requires an encounter first.")
+    elif command == "info" or command == "status":
+        info(args)
     elif command == "attack":
         attack(args)
     elif command == "kill" or command == "smite":
@@ -400,6 +407,8 @@ while wait:
         heal(args)
     elif command == "change-ac":
         changeAC(args)
+    elif command == "quit" or command == "q" or command == "exit":
+        wait = False
     else:
         print("Unrecognized command.")
         print("Type help or ? to learn how to use availible commands.")

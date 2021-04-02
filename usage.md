@@ -20,8 +20,9 @@
 # revive or resurrect [num]
 * revives the NPCs in position [num] in the graveyard list.
 **The following commands require a non empty encounter**
-# status [num]
-* prints an NPC's [num]'s name and the amount of hp they have left from the encounter list.
+# info [num] [list]
+# status [num] [list]
+* prints an NPC's [num]'s name and the amount of hp they have left from the any valid list.
 # attack [num]
 * attacks an NPC's from the encounter list at the position [num].
 # smite or kill
