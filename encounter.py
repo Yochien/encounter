@@ -16,23 +16,28 @@ encounter = []
 graveyard = []
 searchResults = [] #To be used when command returns multiple options
 
-#Attempt to open the bestiary file. If not found fallback on a default set of NPCs
-try:
-    bestiaryFile = open("bestiary.txt")
-except FileNotFoundError:
-    human = NPC("Human", 5, 12)
-    animal = NPC("Animal", 3, 10)
-    enemy = NPC("Enemy", 10, 13)
-    bestiary.append(human)
-    bestiary.append(animal)
-    bestiary.append(enemy)
-else:
-    for line in bestiaryFile:
-        if not line.startswith("#"):
-            line = line.rstrip("\n").split(",")
-            npc = NPC(line[0], line[1], line[2])
-            bestiary.append(npc)
-    bestiaryFile.close()
+def load(args):
+    if len(args) > 0:
+        bestiary.clear()
+        try:
+            bestiaryFile = open(args[0])
+        except FileNotFoundError:
+            print("Selected bestiary file could not be found. \n Loading placeholder bestiary.")
+            human = NPC("Human", 5, 12)
+            animal = NPC("Animal", 3, 10)
+            enemy = NPC("Enemy", 10, 13)
+            bestiary.append(human)
+            bestiary.append(animal)
+            bestiary.append(enemy)
+        else:
+            for line in bestiaryFile:
+                if not line.startswith("#"):
+                    line = line.rstrip("\n").split(",")
+                    npc = NPC(line[0], line[1], line[2])
+                    bestiary.append(npc)
+            bestiaryFile.close()
+    else:
+        print("load requires at least one argument.")
 
 def displayHelp():
     try:
@@ -296,7 +301,7 @@ def smite(args):
     else:
         print("smite requires 1 argument.")
         
-def heal(args): #Should allow for negative healing
+def heal(args): #Should allow for negative healing I.E. harm undead
     if len(args) >= 1:
         if args[0].isnumeric() == True:
             if isValidInt(args[0], encounter) == True:
@@ -369,6 +374,9 @@ def changeAC(npc, amount):
     if npc.ac < 0: npc.ac = 0
     print(npc.name + "'s armor class was changed by " + str(amount) + ".")
     '''
+    
+load(['bestiary.txt'])
+    
 print("Type help or ? to get a list of availible commands.")
 wait = True
 while wait:
@@ -407,6 +415,8 @@ while wait:
         heal(args)
     elif command == "change-ac":
         changeAC(args)
+    elif command == "load":
+        load(args)
     elif command == "quit" or command == "q" or command == "exit":
         wait = False
     else:

@@ -1,7 +1,13 @@
 # help or ?
 * prints this premade list of commands that you can use to interact with your list of NPCs.
-# quit or or q or exit
+# quit or q or exit
 * exits the program.
+
+# load [file]
+
+* loads a file in place of the default bestiary
+* [file] should include the file extension
+
 # list [str]
 * if [str] is bestiary the function will print a list of availible NPCs to add to your encounter.
 * if [str] is encounter the function will print the NPCs in your current encounter.
