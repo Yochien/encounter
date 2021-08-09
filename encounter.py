@@ -50,7 +50,7 @@ def displayHelp():
 
 ###############################################################################################
 ###         All functions should allow you to use the name of an NPC as a selector.         ###
-###If more than one of a particular NPC type exists encounter should ask which one you mean.###
+###If more than one of a particular NPC type exists encounter should ask for clarification. ###
 ###############################################################################################
 
 def menu(npcList, title = "MENU:"): #Should be rewritten to be more robust displaying menus for more types of functions
@@ -92,10 +92,21 @@ def displayList(args):
         else:
             print("Unknown list selected.")
 
+def isInt(string):
+    if string.isnumeric():
+        return True
+    else:
+        try:
+            int(string)
+        except:
+            return False
+        else:
+            return True
+
 def isValidInt(selector, npcList):
     valid = True
     for s in selector:
-        if s.isnumeric() == False:
+        if isInt(s) == False:
             valid = False
             break
     if valid == True:
@@ -138,7 +149,7 @@ def add(args):
 
 def info(args):
     if len(args) >= 2:
-        if int(args[0]) > 0:         #unsafe
+        if isInt(args[0]):
             if args[1] == "bestiary":
                 if isValidInt(args[0], bestiary) == True:
                     print("INFO:")
@@ -160,7 +171,7 @@ def info(args):
             else:
                 print("Unrecognized list")
         else:
-            print("First argument must be an integer")
+            print("First argument must be a valid integer")
     else:
         print("info requires 2 arguments")
 
@@ -342,7 +353,7 @@ def revive(args):
         else:
             print("revive requires one argument.")
     else:
-        print("Your graveyard is empty. There is no one to revive.")
+        print("Graveyard is empty. There is no one to revive.")
                     #Should be changed to a generic change command that takes an argument for a particular stat
                     #Should be valid for dead or alive NPCs or even the bestiary
 def changeAC(args): #Should allow one to set stat to a specific value, or change by positive or negative values
