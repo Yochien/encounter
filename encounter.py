@@ -223,7 +223,7 @@ def remove(args):
                 menu(encounter, "encounter")
             elif args[1] == "graveyard":
                 if len(graveyard) > 0:
-                    delete(selector, graveyard)
+                    delete(selected, graveyard)
                 menu(graveyard, "graveyard")
             else:
                 print("Unknown list selected.")
@@ -287,6 +287,22 @@ def attack(args): #for n in selector attack(n)
             encounter.pop(int(args[0]) - 1)
             if len(encounter) == 0:
                 print("Party has defeated all enemies.")
+
+def damage(args):
+    if len(args) >= 2:
+        if isValidInt(args[0], encounter) == True:
+            npc = encounter[int(args[0]) - 1]
+            npc.damage(args[1])
+            if npc.currentHP <= 0:
+                print(npc.name + " has been defeated.")
+                graveyard.append(npc)
+                encounter.pop(int(args[0]) - 1)
+                if len(encounter) == 0:
+                    print("Party has defeated all enemies.")
+        else:
+            print("Selected an invalid NPC.")
+    else:
+        print("damage requires 2 or more arguments")
 
 def smite(args):
     if len(args) > 0:
@@ -420,6 +436,8 @@ while wait:
         info(args)
     elif command == "attack":
         attack(args)
+    elif command == "damage":
+        damage(args)
     elif command == "kill" or command == "smite":
         smite(args)
     elif command == "heal":
