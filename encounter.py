@@ -7,6 +7,21 @@ class NPC:
         if self.ac < 0 or self.maxHP < 1:
             raise Exception("Attribute out of valid range.")
     
+    def equals(self, other):
+        if self == other:
+            return True
+        if other is None:
+            return False
+        if self.name != other.name:
+            return False
+        if self.maxHP != other.maxHP:
+            return False
+        if self.currentHP != other.currentHP:
+            return False
+        if self.ac != other.ac:
+            return False
+        return True
+    
     def toString(self):
         info = ""
         info += "NAME: " + str(self.name) + "\n"
