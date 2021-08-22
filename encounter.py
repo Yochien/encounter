@@ -9,14 +9,9 @@ class NPC:
     
     def toString(self):
         info = ""
-        info += "NAME: "
-        info += str(self.name)
-        info += "\n"
-        info += "HP: "
-        info += str(self.currentHP)
-        info += "\n"
-        info += "AC: "
-        info += str(self.ac)
+        info += "NAME: " + str(self.name) + "\n"
+        info += "HP: " + str(self.currentHP) + "\n"
+        info += "AC: " + str(self.ac)
         return info
     
     def damage(self, amt):
