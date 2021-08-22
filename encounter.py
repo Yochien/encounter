@@ -32,7 +32,7 @@ class NPC:
     def damage(self, amt):
         self.currentHP -= int(amt)
 
-#NPC lists
+#global reference lists
 bestiary = []
 encounter = []
 graveyard = []
@@ -412,59 +412,59 @@ def changeAC(args): #Should allow one to set stat to a specific value, or change
     else:
         print("changeac requires at least 1 argument.")
 
-    '''
-def changeAC(npc, amount): 
-    npc.ac += amount
-    if npc.ac < 0: npc.ac = 0
-    print(npc.name + "'s armor class was changed by " + str(amount) + ".")
-    '''
+def main():
+    #load default bestiary file
+    load(['bestiary.txt'])
+    #print help message
+    print("Type help or ? to get a list of availible commands.")
+    #command loop
+    loop = True
+    while loop:
+        action = input("Type an action to perform: ").lower().split(" ")
+        
+        if action != ['']:
+            command = action[0]
+        else:
+            command = None
+        
+        args = []
+        
+        if (len(action) > 1):
+            count = 1
+            while count < len(action):
+                args.append(action[count])
+                count += 1
+        
+        #command checks
+        if command == "help" or command == "?":
+            displayHelp()
+        elif command == "list":
+            displayList(args)
+        elif command == "add":
+            add(args)
+        elif command == "revive" or command == "resurrect" or command == "save":
+            revive(args)
+        elif command == "remove" or command == "clear":
+            remove(args)
+        elif command == "info" or command == "status":
+            info(args)
+        elif command == "attack":
+            attack(args)
+        elif command == "damage":
+            damage(args)
+        elif command == "kill" or command == "smite":
+            smite(args)
+        elif command == "heal":
+            heal(args)
+        elif command == "changeac":
+            changeAC(args)
+        elif command == "load":
+            load(args)
+        elif command == "quit" or command == "q" or command == "exit":
+            loop = False
+        else:
+            print("Unrecognized command.")
+            print("Type help or ? to learn how to use availible commands.")
 
-load(['bestiary.txt'])
-    
-print("Type help or ? to get a list of availible commands.")
-wait = True
-while wait:
-    action = input("Type an action to perform: ").lower().split(" ")
-    
-    if action != ['']:
-        command = action[0]
-    else:
-        command = None
-    
-    args = []
-    
-    if (len(action) > 1):
-        count = 1
-        while count < len(action):
-            args.append(action[count])
-            count += 1
-    
-    if command == "help" or command == "?":
-        displayHelp()
-    elif command == "list":
-        displayList(args)
-    elif command == "add":
-        add(args)
-    elif command == "revive" or command == "resurrect" or command == "save":
-        revive(args)
-    elif command == "remove" or command == "clear":
-        remove(args)
-    elif command == "info" or command == "status":
-        info(args)
-    elif command == "attack":
-        attack(args)
-    elif command == "damage":
-        damage(args)
-    elif command == "kill" or command == "smite":
-        smite(args)
-    elif command == "heal":
-        heal(args)
-    elif command == "changeac":
-        changeAC(args)
-    elif command == "load":
-        load(args)
-    elif command == "quit" or command == "q" or command == "exit":
-        wait = False
-    else:
-        print("Unrecognized command.")
-        print("Type help or ? to learn how to use availible commands.")
+if __name__ == "__main__":
+    main()
