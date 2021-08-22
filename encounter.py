@@ -3,10 +3,22 @@ class NPC:
         self.name = name
         self.maxHP = self.currentHP = int(maxHP)
         self.ac = int(ac)
-
+    
         if self.ac < 0 or self.maxHP < 1:
             raise Exception("Attribute out of valid range.")
-
+    
+    def toString(self):
+        info = ""
+        info += "NAME: "
+        info += str(self.name)
+        info += "\n"
+        info += "HP: "
+        info += str(self.currentHP)
+        info += "\n"
+        info += "AC: "
+        info += str(self.ac)
+        return info
+    
     def damage(self, amt):
         self.currentHP -= int(amt)
 
@@ -14,7 +26,6 @@ class NPC:
 bestiary = []
 encounter = []
 graveyard = []
-searchResults = [] #To be used when command returns multiple options
 
 def load(args):
     if len(args) > 0:
@@ -119,6 +130,7 @@ def isValidInt(selector, npcList):
 
     return valid
 
+#Default should add to encounter list
 def add(args):
     if len(args) < 2:
         print("Command requires two arguments")
@@ -151,23 +163,17 @@ def info(args):
     if len(args) >= 2:
         if isInt(args[0]):
             if args[1] == "bestiary":
-                if isValidInt(args[0], bestiary) == True:
+                if isValidInt(args[0], bestiary) == True:     #Could be broken into a sub command that could take a list as an argument and be reused here
                     print("INFO:")
-                    print("NAME: " + bestiary[int(args[0]) - 1].name)
-                    print("HP: " + str(bestiary[int(args[0]) - 1].currentHP))
-                    print("AC: " + str(bestiary[int(args[0]) - 1].ac))
+                    print(bestiary[int(args[0])-1].toString())
             elif args[1] == "encounter":
                 if isValidInt(args[0], encounter) == True:
                     print("INFO:")
-                    print("NAME: " + encounter[int(args[0]) - 1].name)
-                    print("HP: " + str(encounter[int(args[0]) - 1].currentHP))
-                    print("AC: " + str(encounter[int(args[0]) - 1].ac))
+                    print(encounter[int(args[0])-1].toString())
             elif args[1] == "graveyard":
                 if isValidInt(args[0], graveyard) == True:
                     print("INFO:")
-                    print("NAME: " + graveyard[int(args[0]) - 1].name)
-                    print("HP: " + str(graveyard[int(args[0]) - 1].currentHP))
-                    print("AC: " + str(graveyard[int(args[0]) - 1].ac))
+                    print(graveyard[int(args[0])-1].toString())
             else:
                 print("Unrecognized list")
         else:
@@ -395,13 +401,14 @@ def changeAC(args): #Should allow one to set stat to a specific value, or change
             print("Selected an invalid monster.")
     else:
         print("change-ac requires at least 1 argument.")
+
     '''
 def changeAC(npc, amount): 
     npc.ac += amount
     if npc.ac < 0: npc.ac = 0
     print(npc.name + "'s armor class was changed by " + str(amount) + ".")
     '''
-    
+
 load(['bestiary.txt'])
     
 print("Type help or ? to get a list of availible commands.")
@@ -442,7 +449,7 @@ while wait:
         smite(args)
     elif command == "heal":
         heal(args)
-    elif command == "change-ac":
+    elif command == "changeac":
         changeAC(args)
     elif command == "load":
         load(args)
