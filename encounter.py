@@ -410,7 +410,7 @@ def changeAC(args): #Should allow one to set stat to a specific value, or change
         else:
             print("Selected an invalid monster.")
     else:
-        print("change-ac requires at least 1 argument.")
+        print("changeac requires at least 1 argument.")
 
     '''
 def changeAC(npc, amount): 
