@@ -69,7 +69,7 @@ def displayHelp():
         print(helpFile.read())
         helpFile.close()
 
-def menu(npcList, title = "MENU:"): #Should be rewritten to be more robust displaying menus for more types of functions
+def menu(npcList, title = "menu"):
     print(title.upper() + ":")
 
     if len(npcList) == 0:
