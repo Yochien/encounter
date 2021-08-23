@@ -70,16 +70,13 @@ def displayHelp():
         helpFile.close()
 
 def menu(npcList, title = "MENU:"): #Should be rewritten to be more robust displaying menus for more types of functions
-    title = title.upper() + ":"
-    print(title)
+    print(title.upper() + ":")
 
-    c = 0
-    if len(npcList) > 0:
-        for m in npcList:
-            c += 1
-            print(str(c) + " " + m.name)
-    else:
+    if len(npcList) == 0:
         print("EMPTY")
+    else:
+        for m in npcList:
+            print(str(npcList.index(m) + 1) + " " + m.name)
 
 def displayList(args):
     if len(args) == 0:
