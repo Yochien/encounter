@@ -69,11 +69,6 @@ def displayHelp():
         print(helpFile.read())
         helpFile.close()
 
-###############################################################################################
-###         All functions should allow you to use the name of an NPC as a selector.         ###
-###If more than one of a particular NPC type exists encounter should ask for clarification. ###
-###############################################################################################
-
 def menu(npcList, title = "MENU:"): #Should be rewritten to be more robust displaying menus for more types of functions
     title = title.upper() + ":"
     print(title)
