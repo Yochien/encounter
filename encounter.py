@@ -3,9 +3,21 @@ class NPC:
         self.name = name
         self.maxHP = self.currentHP = int(maxHP)
         self.ac = int(ac)
+        
+        if type(name) != str:
+            raise TypeError("Argument name must be a string.")
+        if type(maxHP) != int:
+            raise TypeError("Argument HP must be an integer.")
+        if type(ac) != int:
+            raise TypeError("Argument AC must be an integer.")
+        
+        if self.ac < 0:
+            raise ValueError("Argument out of valid range. AC must be at least 0.")
+        if self.maxHP < 1:
+            raise ValueError("Argument out of valid range. HP must be at least 1.")
     
-        if self.ac < 0 or self.maxHP < 1:
-            raise Exception("Attribute out of valid range.")
+    def __str__(self):
+        return self.name
     
     def equals(self, other):
         if self == other:
@@ -32,10 +44,56 @@ class NPC:
     def damage(self, amt):
         self.currentHP -= int(amt)
 
+class Menu:
+    def __init__(self, data, title = "menu"):
+        self.title = title
+        self.data = data
+    
+    def equals(self, other):
+        if self == other:
+            return True
+        if other is None:
+            return False
+        if self.data != other.data:
+            return False
+        if self.title != other.title:
+            return False
+        return True
+    
+    def setData(self, data):
+        self.data = data
+    
+    def getData(self):
+        return self.data
+    
+    def setTitle(self, title):
+        self.title = title
+    
+    def getTitle(self):
+        return self.title
+    
+    def toString(self):
+        info = ""
+        if len(data) == 0:
+            info = "EMPTY"
+        else:
+            for i in data:
+                info += str(data.index(i) + 1) + " " + str(i) + "\n"
+        return info
+
 #global reference lists
 bestiary = []
 encounter = []
 graveyard = []
+
+def displayHelp():
+    try:
+        helpFile = open("usage.md")
+    except FileNotFoundError:
+        print("\"usage.md\" could not be found.")
+    else:
+        print(helpFile.read())
+        helpFile.close()
 
 def load(args):
     if len(args) > 0:
@@ -54,20 +112,11 @@ def load(args):
             for line in bestiaryFile:
                 if not line.startswith("#"):
                     line = line.rstrip("\n").split(",")
-                    npc = NPC(line[0], line[1], line[2])
+                    npc = NPC(line[0], int(line[1]), int(line[2]))
                     bestiary.append(npc)
             bestiaryFile.close()
     else:
         print("load requires at least one argument.")
-
-def displayHelp():
-    try:
-        helpFile = open("usage.md")
-    except FileNotFoundError:
-        print("\"usage.md\" could not be found.")
-    else:
-        print(helpFile.read())
-        helpFile.close()
 
 def menu(npcList, title = "menu"):
     print(title.upper() + ":")
@@ -78,13 +127,16 @@ def menu(npcList, title = "menu"):
         for m in npcList:
             print(str(npcList.index(m) + 1) + " " + m.name)
 
+def temp():
+    menu(bestiary, "bestiary")
+    print("")
+    menu(encounter, "encounter")
+    print("")
+    menu(graveyard, "graveyard")
+
 def displayList(args):
     if len(args) == 0:
-        menu(bestiary, "bestiary")
-        print("")
-        menu(encounter, "encounter")
-        print("")
-        menu(graveyard, "graveyard")
+        temp()
     else:
         if args[0] == "bestiary":
             menu(bestiary, "bestiary")
@@ -97,11 +149,7 @@ def displayList(args):
             print("")
             menu(graveyard, "graveyard")
         elif args[0] == "all":
-            menu(bestiary, "bestiary")
-            print("")
-            menu(encounter, "encounter")
-            print("")
-            menu(graveyard, "graveyard")
+            temp()
         else:
             print("Unknown list selected.")
 
@@ -412,7 +460,7 @@ def main():
     #command loop
     loop = True
     while loop:
-        action = input("Type an action to perform: ").lower().split(" ")
+        action = input("Type a command: ").lower().split(" ")
         
         if action != ['']:
             command = action[0]
