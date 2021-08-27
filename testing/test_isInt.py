@@ -16,13 +16,9 @@ minusLetterAndNumber = "-9a"
 doubleNegative = "--1"
 
 class test_isNumeric(unittest.TestCase):
-    def test_isnumeric_noText(self):
+    def test_isnNumeric_nonIntegerOnly(self):
         self.assertFalse(noText.isnumeric())
-    
-    def test_isnumeric_letter(self):
         self.assertFalse(letter.isnumeric())
-    
-    def test_isnumeric_word(self):
         self.assertFalse(word.isnumeric())
     
     def test_isnumeric_boundaryNegative(self):
@@ -40,16 +36,10 @@ class test_isNumeric(unittest.TestCase):
     def test_isnumeric_negative(self):
         self.assertFalse(negative.isnumeric(), "Is False since it contains a non-digit")
     
-    def test_isnumeric_minusAfter(self):
+    def test_isnumeric_incorrectMinusUse(self):
         self.assertFalse(minusAfter.isnumeric())
-    
-    def test_isnumeric_minusBeforeAndAfter(self):
         self.assertFalse(minusBeforeAndAfter.isnumeric())
-    
-    def test_isnumeric_minusAndLetter(self):
         self.assertFalse(minusAndLetter.isnumeric())
-    
-    def test_isnumeric_minusLetterAndNumber(self):
         self.assertFalse(minusLetterAndNumber.isnumeric())
     
     def test_isnumeric_doubleNegative(self):
@@ -95,13 +85,9 @@ class test_int(unittest.TestCase):
             int(doubleNegative)
 
 class test_isInt(unittest.TestCase):
-    def test_isInt_noText(self):
+    def test_nonIntegerOnly(self):
         self.assertFalse(isInt.isInt(noText))
-    
-    def test_isInt_letter(self):
         self.assertFalse(isInt.isInt(letter))
-    
-    def test_isInt_word(self):
         self.assertFalse(isInt.isInt(word))
     
     def test_isInt_boundaryNegative(self):
@@ -119,16 +105,10 @@ class test_isInt(unittest.TestCase):
     def test_isInt_negative(self):
         self.assertTrue(isInt.isInt(negative))
     
-    def test_isInt_minusAfter(self):
+    def test_isInt_incorrectMinusUse(self):
         self.assertFalse(isInt.isInt(minusAfter), "Contains a minus sign, but is not a proper number format")
-    
-    def test_isInt_minusBeforeAndAfter(self):
         self.assertFalse(isInt.isInt(minusBeforeAndAfter), "Contains a valid number, but isn't as a whole valid")
-    
-    def test_isInt_minusAndLetter(self):
         self.assertFalse(isInt.isInt(minusAndLetter), "Contains a valid number, but isn't as a whole valid")
-    
-    def test_isInt_minusLetterAndNumber(self):
         self.assertFalse(isInt.isInt(minusLetterAndNumber), "Contains a valid number, but isn't as a whole valid")
     
     def test_isInt_doubleNegative(self):
