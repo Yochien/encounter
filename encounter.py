@@ -73,12 +73,13 @@ class Menu:
         return self.title
     
     def toString(self):
-        info = ""
-        if len(data) == 0:
-            info = "EMPTY"
+        info = self.title.upper() + ":\n"
+        if len(self.data) == 0:
+            info += "EMPTY"
         else:
-            for i in data:
-                info += str(data.index(i) + 1) + " " + str(i) + "\n"
+            for i in self.data[:-1]:
+                info += str(self.data.index(i) + 1) + " " + str(i) + "\n"
+            info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
 
 #global reference lists
@@ -118,38 +119,25 @@ def load(args):
     else:
         print("load requires at least one argument.")
 
-def menu(npcList, title = "menu"):
-    print(title.upper() + ":")
-
-    if len(npcList) == 0:
-        print("EMPTY")
-    else:
-        for m in npcList:
-            print(str(npcList.index(m) + 1) + " " + m.name)
-
-def temp():
-    menu(bestiary, "bestiary")
-    print("")
-    menu(encounter, "encounter")
-    print("")
-    menu(graveyard, "graveyard")
-
-def displayList(args):
+def displayMenu(args, bMenu, eMenu, gMenu):
     if len(args) == 0:
-        temp()
+        print(bMenu.toString() + "\n")
+        print(eMenu.toString() + "\n")
+        print(gMenu.toString())
     else:
         if args[0] == "bestiary":
-            menu(bestiary, "bestiary")
+            print(bMenu.toString())
         elif args[0] == "encounter":
-            menu(encounter, "encounter")
+            print(eMenu.toString())
         elif args[0] == "graveyard":
-            menu(graveyard, "graveyard")
+            print(gMenu.toString())
         elif args[0] == "combat":
-            menu(encounter, "encounter")
-            print("")
-            menu(graveyard, "graveyard")
+            print(eMenu.toString() + "\n")
+            print(gMenu.toString())
         elif args[0] == "all":
-            temp()
+            print(bMenu.toString() + "\n")
+            print(eMenu.toString() + "\n")
+            print(gMenu.toString())
         else:
             print("Unknown list selected.")
 
@@ -181,7 +169,7 @@ def isValidInt(selector, npcList):
     return valid
 
 #Default should add to encounter list
-def add(args):
+def add(args, bMenu, eMenu, gMenu):
     if len(args) < 2:
         print("Command requires two arguments")
     else:
@@ -202,12 +190,7 @@ def add(args):
                     encounter.append(npc)
                 elif args[1] == "graveyard":
                     graveyard.append(npc)
-            if args[1] == "encounter":
-                menu(encounter, "encounter")
-            elif args[1] == "graveyard":
-                menu(graveyard, "graveyard")
-            else:
-                print("Referenced an unknown list.")
+            displayMenu([args[1]], bMenu, eMenu, gMenu)
 
 def info(args):
     if len(args) >= 2:
@@ -254,7 +237,7 @@ def delete(selector, npcList):
     else:
         print("One or more numbers out of range of availible NPCs.")
 
-def remove(args):
+def remove(args, bMenu, eMenu, gMenu):
     if len(args) < 2:
         print("remove requires at least two arguments.")
     else:
@@ -262,25 +245,24 @@ def remove(args):
             if args[1] == "all":
                 encounter.clear()
                 graveyard.clear()
-                menu(encounter, "encounter")
-                menu(graveyard, "graveyard")
+                displayMenu(["combat"], bMenu, eMenu, gMenu)
             elif args[1] == "encounter":
                 encounter.clear()
-                menu(encounter, "encounter")
+                displayMenu([args[1]], bMenu, eMenu, gMenu)
             elif args[1] == "graveyard":
                 graveyard.clear()
-                menu(graveyard, "graveyard")
+                displayMenu([args[1]], bMenu, eMenu, gMenu)
         else:
             selected = args[0].split(",")
             
             if args[1] == "encounter":
                 if len(encounter) > 0:
                     delete(selected, encounter)
-                menu(encounter, "encounter")
+                displayMenu([args[1]], bMenu, eMenu, gMenu)
             elif args[1] == "graveyard":
                 if len(graveyard) > 0:
                     delete(selected, graveyard)
-                menu(graveyard, "graveyard")
+                displayMenu([args[1]], bMenu, eMenu, gMenu)
             else:
                 print("Unknown list selected.")
 
@@ -455,6 +437,10 @@ def changeAC(args): #Should allow one to set stat to a specific value, or change
 def main():
     #load default bestiary file
     load(['bestiary.txt'])
+    #create initial menus
+    bestiaryMenu = Menu(bestiary, "bestiary")
+    encounterMenu = Menu(encounter, "encounter")
+    graveyardMenu = Menu(graveyard, "graveyard")
     #print help message
     print("Type help or ? to get a list of availible commands.")
     #command loop
@@ -479,13 +465,13 @@ def main():
         if command == "help" or command == "?":
             displayHelp()
         elif command == "list":
-            displayList(args)
+            displayMenu(args, bestiaryMenu, encounterMenu, graveyardMenu)
         elif command == "add":
-            add(args)
+            add(args, bestiaryMenu, encounterMenu, graveyardMenu)
         elif command == "revive" or command == "resurrect" or command == "save":
             revive(args)
         elif command == "remove" or command == "clear":
-            remove(args)
+            remove(args, bestiaryMenu, encounterMenu, graveyardMenu)
         elif command == "info" or command == "status":
             info(args)
         elif command == "attack":
