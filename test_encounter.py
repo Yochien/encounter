@@ -1,15 +1,26 @@
 import unittest
-import encounter
+from encounter import NPC
 
-human = encounter.NPC("Human", 5, 12)
-bruh = encounter.NPC("Bruh", 1, 1)
-bread = flatbread = encounter.NPC("Human", 5, 12)
-test = encounter.NPC("test", 6, 9)
+class TestEncounter(unittest.TestCase):
+    def test_NPC_creation(self):
+        self.assertEquals(NPC("test", 6, 9).name, "test")
+        self.assertEquals(NPC("test", 6, 9).currentHP, 6)
+        self.assertEquals(NPC("test", 6, 9).maxHP, 6)
+        self.assertEquals(NPC("test", 6, 9).ac, 9)
+        
+        
+    def test_NPC_equals(self):
+        human = NPC("Human", 5, 12)
+        bruh = NPC("Bruh", 1, 1)
+        bread = flatbread = NPC("Human", 5, 12)
+        test = NPC("test", 6, 9)
+        
+        self.assertTrue(human.equals(human))
+        self.assertFalse(bruh.equals(NPC("test", 6, 9)))
+        self.assertFalse(NPC("oh", 1, 0).equals(NPC("test", 6, 9)))
+        self.assertTrue(NPC("test", 6, 9).equals(NPC("test", 6, 9)))
+        self.assertTrue(NPC("test", 6, 9).equals(test))
+        self.assertTrue(bread.equals(flatbread))
 
-print(human.equals(human))
-print(bruh.equals(encounter.NPC("test", 6, 9)))
-print(encounter.NPC("oh", 1, 0).equals(encounter.NPC("test", 6, 9)))
-print(encounter.NPC("test", 6, 9).name, encounter.NPC("test", 6, 9).currentHP, encounter.NPC("test", 6, 9).maxHP, encounter.NPC("test", 6, 9).ac)
-print(encounter.NPC("test", 6, 9).equals(encounter.NPC("test", 6, 9)))
-print(encounter.NPC("test", 6, 9).equals(test))
-print(bread.equals(flatbread))
+if __name__ == "__main__":
+    unittest.main()
