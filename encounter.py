@@ -448,10 +448,10 @@ def main():
     while loop:
         action = input("Type a command: ").lower().split(" ")
         
+        command = None
+        
         if action != ['']:
             command = action[0]
-        else:
-            command = None
         
         args = []
         
