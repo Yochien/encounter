@@ -234,7 +234,7 @@ def delete(selector, npcList):
     else:
         print("One or more numbers out of range of availible NPCs.")
 
-def remove(args, bMenu, eMenu, gMenu):
+def removeNPC(args, bMenu, eMenu, gMenu):
     if len(args) < 2:
         print("remove requires at least two arguments.")
     else:
@@ -468,7 +468,7 @@ def main():
         elif command == "revive" or command == "resurrect" or command == "save":
             revive(args)
         elif command == "remove" or command == "clear":
-            remove(args, bestiaryMenu, encounterMenu, graveyardMenu)
+            removeNPC(args, bestiaryMenu, encounterMenu, graveyardMenu)
         elif command == "info" or command == "status":
             info(args)
         elif command == "attack":
