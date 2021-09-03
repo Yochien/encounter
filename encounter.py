@@ -1,7 +1,7 @@
 class NPC:
     def __init__(self, name, maxHP, ac):
         self.name = name
-        self.maxHP = self.currentHP = int(maxHP)
+        self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
         
         if type(name) != str:
@@ -40,9 +40,6 @@ class NPC:
         info += "HP: " + str(self.currentHP) + "\n"
         info += "AC: " + str(self.ac)
         return info
-    
-    def damage(self, amt):
-        self.currentHP -= int(amt)
 
 class Menu:
     def __init__(self, data, title = "menu"):
@@ -279,7 +276,7 @@ def attack(args): #for n in selector attack(n)
                         if accuracy >= npc.ac:
                             if len(args) >= 3:
                                 if args[2].isnumeric() == True:
-                                    npc.damage(args[2])
+                                    npc.currentHP = npc.currentHP - args[2]
                                     print(npc.name + " took " + args[2] + " damage.")
                                 else:
                                     print("Damage must be a number.")
@@ -287,7 +284,7 @@ def attack(args): #for n in selector attack(n)
                                 damage = input("Roll for damage: ")
                                 if damage.isnumeric() == True:
                                     amt = int(damage)
-                                    npc.damage(amt)
+                                    npc.currentHP = npc.currentHP - amt
                                     print(npc.name + " took " + damage + " damage.")
                                 else:
                                     print("Damage must be a number.")
@@ -303,7 +300,7 @@ def attack(args): #for n in selector attack(n)
                             damage = input("Roll for damage: ")
                             if damage.isnumeric() == True:
                                 amt = int(damage)
-                                npc.damage(amt)
+                                npc.currentHP = npc.currentHP - amt
                                 print(npc.name + " took " + damage + " damage.")
                             else:
                                 print("Damage must be a number.")
@@ -330,7 +327,7 @@ def damage(args):
     if len(args) >= 2:
         if isValidInt(args[0], encounter) == True:
             npc = encounter[int(args[0]) - 1]
-            npc.damage(args[1])
+            npc.currentHP = npc.currentHP - int(args[1])
             if npc.currentHP <= 0:
                 print(npc.name + " has been defeated.")
                 graveyard.append(npc)
