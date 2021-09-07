@@ -57,18 +57,6 @@ class Menu:
             return False
         return True
     
-    def setData(self, data):
-        self.data = data
-    
-    def getData(self):
-        return self.data
-    
-    def setTitle(self, title):
-        self.title = title
-    
-    def getTitle(self):
-        return self.title
-    
     def toString(self):
         info = self.title.upper() + ":\n"
         if len(self.data) == 0:
