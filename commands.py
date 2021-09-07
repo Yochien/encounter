@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 
+#TODO implement description field
+#TODO implement usage field
 class Command(ABC):
-    def __init__(self, nameList, numArgs, args = []):
+    def __init__(self, nameList, numArgs):
         self.nameList = nameList
         self.numArgs = numArgs
-        self.args = args
     
     def nameIs(self, name):
         for n in self.nameList:
@@ -13,133 +14,9 @@ class Command(ABC):
         return False
     
     @abstractmethod
-    def execute(self):
-        pass
-        
-class load(Command):
-    def __init__(self, nameList, numArgs, bList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.bList = bList
-    
-    #Override execute
-    def execute(self):
-        print("load")
-
-class displayHelp(Command):
-    #Override execute
-    def execute(self):
-        print("Help")
-
-class displayMenu(Command):
-    def __init__(self, nameList, numArgs, bMenu, eMenu, gMenu, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.bMenu = bMenu
-        self.eMenu = eMenu
-        self.gMenu = gMenu
-    
-    #Override execute
-    def execute(self):
-        print("displayMenu")
-
-class addNPC(Command):
-    def __init__(self, nameList, numArgs, bList, eList, gList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.bList = bList
-        self.eList = eList
-        self.gList = gList
-
-    #Override execute
-    def execute(self):
-        print("add")
-
-#TODO Could be made more generic with list and menu (perhaps use a helper command?)
-class removeNPC(Command):
-    def __init__(self, nameList, numArgs, eList, gList, eMenu, gMenu, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-        self.gList = gList
-        self.eMenu = eMenu
-        self.gMenu = gMenu
-
-    #Override execute
-    def execute(self):
-        print("remove")
-
-class reorder(Command):
-    def __init__(self, nameList, numArgs, eList, gList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-        self.gList = gList
-    
-    #Override execute
-    def execute(self):
-        print("reorder")
-
-class attack(Command):
-    def __init__(self, nameList, numArgs, eList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-    
-    #Override execute
-    def execute(self):
-        print("attack")
-
-#TODO Check dead helper command?
-class damage(Command):
-    def __init__(self, nameList, numArgs, eList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-    
-    #Override execute
-    def execute(self):
-        print("damage")
-
-class smite(Command):
-    def __init__(self, nameList, numArgs, eList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-    
-    #Override execute
-    def execute(self):
-        print("smite")
-
-class heal(Command):
-    def __init__(self, nameList, numArgs, eList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-    
-    #Override execute
-    def execute(self):
-        print("heal")
-
-class revive(Command):
-    def __init__(self, nameList, numArgs, gList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.gList = gList
-    
-    #Override execute
-    def execute(self):
-        print("revive")
-
-class debuff(Command):
-    def __init__(self, nameList, numArgs, eList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.eList = eList
-    
-    #Override execute
-    def execute(self):
-        print("debuff")
-
-class status(Command):
-    def __init__(self, nameList, numArgs, bList, eList, gList, args = []):
-        super().__init__(nameList, numArgs, args = [])
-        self.bList = bList
-        self.eList = eList
-        self.gList = gList
-    
-    #Override execute
-    def execute(self):
-        print("status")
+    def execute(self, args = []):
+        print("This command has not been implemented yet")
+        print(args)
 
 class Menu:
     def __init__(self, data, title = "menu"):
@@ -157,18 +34,6 @@ class Menu:
             return False
         return True
     
-    def setData(self, data):
-        self.data = data
-    
-    def getData(self):
-        return self.data
-    
-    def setTitle(self, title):
-        self.title = title
-    
-    def getTitle(self):
-        return self.title
-    
     def toString(self):
         info = self.title.upper() + ":\n"
         if len(self.data) == 0:
@@ -178,6 +43,145 @@ class Menu:
                 info += str(self.data.index(i) + 1) + " " + str(i) + "\n"
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
+
+class load(Command):
+    def __init__(self, nameList, numArgs, bList):
+        super().__init__(nameList, numArgs)
+        self.bList = bList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Load")
+        super().execute()
+
+#TODO take arg that searches command names and prints command description
+class displayHelp(Command):
+    #Override execute
+    def execute(self, args = []):
+        print("Help")
+        super().execute()
+
+#TODO clean up redundancy here
+class displayMenu(Command):
+    def __init__(self, nameList, numArgs, bMenu, eMenu, gMenu):
+        super().__init__(nameList, numArgs)
+        self.bMenu = bMenu
+        self.eMenu = eMenu
+        self.gMenu = gMenu
+    
+    #Override execute
+    def execute(self):
+        print("displayMenu")
+
+class addNPC(Command):
+    def __init__(self, nameList, numArgs, bList, eList, gList):
+        super().__init__(nameList, numArgs)
+        self.bList = bList
+        self.eList = eList
+        self.gList = gList
+
+    #Override execute
+    def execute(self, args = []):
+        print("Add")
+        super().execute()
+
+#TODO Could be made more generic with list and menu (perhaps use a helper command?)
+class removeNPC(Command):
+    def __init__(self, nameList, numArgs, eList, gList, eMenu, gMenu):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+        self.gList = gList
+        self.eMenu = eMenu
+        self.gMenu = gMenu
+
+    #Override execute
+    def execute(self, args = []):
+        print("Remove")
+        super().execute()
+
+class reorder(Command):
+    def __init__(self, nameList, numArgs, eList, gList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+        self.gList = gList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Reorder")
+        super().execute()
+
+class attack(Command):
+    def __init__(self, nameList, numArgs, eList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Attack")
+        super().execute()
+
+#TODO Check dead helper command?
+class damage(Command):
+    def __init__(self, nameList, numArgs, eList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Damage")
+        super().execute()
+
+class smite(Command):
+    def __init__(self, nameList, numArgs, eList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Smite")
+        super().execute()
+
+class heal(Command):
+    def __init__(self, nameList, numArgs, eList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Heal")
+        super().execute()
+
+class revive(Command):
+    def __init__(self, nameList, numArgs, gList):
+        super().__init__(nameList, numArgs)
+        self.gList = gList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Revive")
+        super().execute()
+
+class debuff(Command):
+    def __init__(self, nameList, numArgs, eList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Debuff")
+        super().execute()
+
+class status(Command):
+    def __init__(self, nameList, numArgs, bList, eList, gList):
+        super().__init__(nameList, numArgs)
+        self.bList = bList
+        self.eList = eList
+        self.gList = gList
+    
+    #Override execute
+    def execute(self, args = []):
+        print("Status")
+        super().execute()
 
 def main():
     #Initiantiate reference lists
@@ -213,20 +217,28 @@ def main():
     #command loop
     loop = True
     while loop:
-        action = input("Type a command: ").lower().split(" ")
+        usrRequest = input("Type a command: ").lower().split(" ")
         
-        command = None
+        action = None
         
-        if action != ['']:
-            command = action[0]
+        if usrRequest != ['']:
+            action = usrRequest[0]
         
-        if command == "quit" or command == "q" or command == "exit":
+        if action == "quit" or action == "q" or action == "exit":
             break
         
+        args = []
+        
+        if (len(usrRequest) > 1):
+            count = 1
+            while count < len(usrRequest):
+                args.append(usrRequest[count])
+                count += 1
+        
         found = False
-        for c in commands:
-            if c.nameIs(command):
-                c.execute()
+        for command in commands:
+            if command.nameIs(action):
+                command.execute(args)
                 found = True
                 break
         
