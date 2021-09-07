@@ -4,8 +4,8 @@ class Command(ABC):
     def __init__(self, nameList, numArgs):
         self.nameList = nameList
         self.numArgs = numArgs
+        self.description = "This Command has no defined description yet."
         self.usageStr = "This Command has no defined usage yet."
-        self.description = "This Command has  no defined description yet."
     
     def nameIs(self, name):
         for n in self.nameList:
@@ -51,6 +51,7 @@ class load(Command):
     def __init__(self, nameList, numArgs, bList):
         super().__init__(nameList, numArgs)
         self.bList = bList
+        self.description = "Replaces the default bestiary."
         self.usageStr = "load <file_name>"
     
     #Override execute
@@ -61,16 +62,22 @@ class load(Command):
 class displayHelp(Command):
     def __init__(self, nameList, numArgs, commandList):
         super().__init__(nameList, numArgs)
-        self.usageStr = "help [command_name]"
         self.commandList = commandList
         self.description = "Prints a list of availible commands."
+        self.usageStr = "help [command_name]"
     
     #Override execute
     def execute(self, args = []):
         if len(args) == 0:
+            spacing = 0
             for command in self.commandList:
-                print(command.nameList[0] + ": " + command.description)
-            print("> Usage: " + self.usageStr)
+                if len(command.nameList[0]) > spacing:
+                    spacing = len(command.nameList[0])
+            print("quit".ljust(spacing) + ": " + "Exits the program.")
+            for command in self.commandList:
+                print(command.nameList[0].ljust(spacing) + ": " + command.description)
+            print("")
+            print("For more detailed information > Usage: " + self.usageStr)
         elif args[0].lower() in ["quit", "q", "exit"]:
             print("Exits the program.")
             print("Usage: {quit | q | exit}")
@@ -96,6 +103,7 @@ class displayMenu(Command):
         self.bMenu = bMenu
         self.eMenu = eMenu
         self.gMenu = gMenu
+        self.description = "Prints all NPCs in a list."
         self.usageStr = "list [bestiary | encounter | combat | all]"
     
     #Override execute
@@ -129,6 +137,7 @@ class addNPC(Command):
         self.bList = bList
         self.eList = eList
         self.gList = gList
+        self.description = "Adds an NPC to a list."
         self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
     
     #Override execute
@@ -136,7 +145,8 @@ class addNPC(Command):
         print("Add")
         super().execute()
 
-#TODO Could be made more generic with list and menu (perhaps use a helper command?)
+#TODO Could be made more generic with list and menu
+#     (perhaps use a helper command?) for final implementation
 class removeNPC(Command):
     def __init__(self, nameList, numArgs, eList, gList, eMenu, gMenu):
         super().__init__(nameList, numArgs)
@@ -144,6 +154,7 @@ class removeNPC(Command):
         self.gList = gList
         self.eMenu = eMenu
         self.gMenu = gMenu
+        self.description = "Removes an NPC from a list."
         self.usageStr = "remove <bestiary_index,...> {encounter | graveyard}"
     
     #Override execute
@@ -157,6 +168,7 @@ class reorder(Command):
         super().__init__(nameList, numArgs)
         self.eList = eList
         self.gList = gList
+        self.description = "Switches the position of two NPCs."
     
     #Override execute
     def execute(self, args = []):
@@ -167,6 +179,7 @@ class attack(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.description = "Initiantiates D&D like combat with and NPC."
         self.usageStr = "attack <bestiary_index> [hit] [damage]"
     
     #Override execute
@@ -179,6 +192,7 @@ class damage(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.description = "Directly subtracts from an NPC's health."
         self.usageStr = "damage <bestiary_index>"
     
     #Override execute
@@ -190,6 +204,7 @@ class smite(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.description = "Immediately kills an NPC."
         self.usageStr = "smite <bestiary_index>"
     
     #Override execute
@@ -201,6 +216,7 @@ class heal(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.description = "Directly adds to an NPC's health."
         self.usageStr = "heal <bestiary_index> <amount>"
     
     #Override execute
@@ -213,6 +229,7 @@ class revive(Command):
     def __init__(self, nameList, numArgs, gList):
         super().__init__(nameList, numArgs)
         self.gList = gList
+        self.description = "Brings an NPC back from the graveyard."
         self.usageStr = "revive <graveyard_index>"
     
     #Override execute
@@ -236,6 +253,7 @@ class status(Command):
         self.bList = bList
         self.eList = eList
         self.gList = gList
+        self.description = "Displays an NPC's current stats."
         self.usageStr = "status <index> {bestiary | encounter | graveyard}"
     
     #Override execute
