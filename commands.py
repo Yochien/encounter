@@ -70,8 +70,29 @@ class displayMenu(Command):
         self.gMenu = gMenu
     
     #Override execute
-    def execute(self):
-        print("displayMenu")
+    def execute(self, args = []):
+        if len(args) == 0:
+            print(self.bMenu.toString() + "\n")
+            print(self.eMenu.toString() + "\n")
+            print(self.gMenu.toString())
+        elif len(args) == self.numArgs:
+            if args[0] == "bestiary":
+                print(self.bMenu.toString())
+            elif args[0] == "encounter":
+                print(self.eMenu.toString())
+            elif args[0] == "graveyard":
+                print(self.gMenu.toString())
+            elif args[0] == "combat":
+                print(self.eMenu.toString() + "\n")
+                print(self.gMenu.toString())
+            elif args[0] == "all":
+                print(self.bMenu.toString() + "\n")
+                print(self.eMenu.toString() + "\n")
+                print(self.gMenu.toString())
+            else:
+                print(args[0] + " isn't a recognized list.")
+        else:
+            self.usage()
 
 class addNPC(Command):
     def __init__(self, nameList, numArgs, bList, eList, gList):
