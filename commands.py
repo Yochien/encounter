@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
-#TODO implement description field
 class Command(ABC):
     def __init__(self, nameList, numArgs):
         self.nameList = nameList
         self.numArgs = numArgs
         self.usageStr = "This Command has no defined usage yet."
+        self.description = "This Command has  no defined description yet."
     
     def nameIs(self, name):
         for n in self.nameList:
@@ -58,16 +58,36 @@ class load(Command):
         print("Load")
         super().execute()
 
-#TODO take arg that searches command names and prints command description
 class displayHelp(Command):
-    def __init__(self, nameList, numArgs):
+    def __init__(self, nameList, numArgs, commandList):
         super().__init__(nameList, numArgs)
         self.usageStr = "help [command_name]"
+        self.commandList = commandList
+        self.description = "Prints a list of availible commands."
     
     #Override execute
     def execute(self, args = []):
-        print("Help")
-        super().execute()
+        if len(args) == 0:
+            for command in self.commandList:
+                print(command.nameList[0] + ": " + command.description)
+            print("> Usage: " + self.usageStr)
+        elif args[0].lower() in ["quit", "q", "exit"]:
+            print("Exits the program.")
+            print("Usage: {quit | q | exit}")
+        elif len(args) == self.numArgs:
+            found = False
+            for command in self.commandList:
+                if command.nameIs(args[0].lower()):
+                    print(command.description)
+                    command.usage()
+                    found = True
+                    break
+            
+            if not found:
+                print("Unrecognized command.")
+                print("Type help or ? to learn how to use availible commands.")
+        else:
+            self.usage()
 
 #TODO clean up redundancy here
 class displayMenu(Command):
@@ -237,7 +257,6 @@ def main():
     #Instantiate commands
     commands = [
         load(['load'], 1, bestiary),
-        displayHelp(['help', '?'], 0),
         displayMenu(['list', 'display'], 1, bestiaryMenu, encounterMenu, graveyardMenu),
         addNPC(['add'], 2, bestiary, encounter, graveyard),
         removeNPC(['remove', 'clear'], 2, encounter, graveyard, encounterMenu, graveyardMenu),
@@ -250,6 +269,9 @@ def main():
         debuff(['debuff', 'change'], 3, encounter),
         status(['status', 'info'], 2, bestiary, encounter, graveyard)
         ]
+    
+    helpCommand =  displayHelp(['help', '?'], 1, commands)
+    commands.append(helpCommand)
     
     #print help message
     print("Type help or ? to get a list of availible commands.")
