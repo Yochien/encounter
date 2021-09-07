@@ -429,8 +429,7 @@ def main():
     #print help message
     print("Type help or ? to get a list of availible commands.")
     #command loop
-    loop = True
-    while loop:
+    while True:
         action = input("Type a command: ").lower().split(" ")
         
         command = None
@@ -447,23 +446,23 @@ def main():
                 count += 1
         
         #command checks
-        if command == "help" or command == "?":
+        if command in ["help", "?"]:
             displayHelp()
-        elif command == "list":
+        elif command in ["list", "display"]:
             displayMenu(args, bestiaryMenu, encounterMenu, graveyardMenu)
         elif command == "add":
             add(args, bestiaryMenu, encounterMenu, graveyardMenu)
-        elif command == "revive" or command == "resurrect" or command == "save":
+        elif command in ["revive", "resurrect", "save"]:
             revive(args)
-        elif command == "remove" or command == "clear":
+        elif command in ["remove", "clear"]:
             removeNPC(args, bestiaryMenu, encounterMenu, graveyardMenu)
-        elif command == "info" or command == "status":
+        elif command in ["info", "status"]:
             info(args)
         elif command == "attack":
             attack(args)
         elif command == "damage":
             damage(args)
-        elif command == "kill" or command == "smite":
+        elif command in ["kill", "smite"]:
             smite(args)
         elif command == "heal":
             heal(args)
@@ -471,8 +470,8 @@ def main():
             changeAC(args)
         elif command == "load":
             load(args)
-        elif command == "quit" or command == "q" or command == "exit":
-            loop = False
+        elif command in ["quit", "q", "exit"]:
+            break
         else:
             print("Unrecognized command.")
             print("Type help or ? to learn how to use availible commands.")
