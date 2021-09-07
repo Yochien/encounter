@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 #TODO implement description field
-#TODO implement usage field
 class Command(ABC):
     def __init__(self, nameList, numArgs):
         self.nameList = nameList
         self.numArgs = numArgs
+        self.usageStr = "This Command has no defined usage yet."
     
     def nameIs(self, name):
         for n in self.nameList:
@@ -13,9 +13,12 @@ class Command(ABC):
                 return True
         return False
     
+    def usage(self):
+        print("Usage: " + self.usageStr)
+    
     @abstractmethod
     def execute(self, args = []):
-        print("This command has not been implemented yet")
+        print("This Command has not been implemented yet.")
         print(args)
 
 class Menu:
@@ -48,6 +51,7 @@ class load(Command):
     def __init__(self, nameList, numArgs, bList):
         super().__init__(nameList, numArgs)
         self.bList = bList
+        self.usageStr = "load <file_name>"
     
     #Override execute
     def execute(self, args = []):
@@ -56,6 +60,10 @@ class load(Command):
 
 #TODO take arg that searches command names and prints command description
 class displayHelp(Command):
+    def __init__(self, nameList, numArgs):
+        super().__init__(nameList, numArgs)
+        self.usageStr = "help [command_name]"
+    
     #Override execute
     def execute(self, args = []):
         print("Help")
@@ -68,6 +76,7 @@ class displayMenu(Command):
         self.bMenu = bMenu
         self.eMenu = eMenu
         self.gMenu = gMenu
+        self.usageStr = "list [bestiary | encounter | combat | all]"
     
     #Override execute
     def execute(self, args = []):
@@ -100,7 +109,8 @@ class addNPC(Command):
         self.bList = bList
         self.eList = eList
         self.gList = gList
-
+        self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
+    
     #Override execute
     def execute(self, args = []):
         print("Add")
@@ -114,12 +124,14 @@ class removeNPC(Command):
         self.gList = gList
         self.eMenu = eMenu
         self.gMenu = gMenu
-
+        self.usageStr = "remove <bestiary_index,...> {encounter | graveyard}"
+    
     #Override execute
     def execute(self, args = []):
         print("Remove")
         super().execute()
 
+#TODO implement psuedocode
 class reorder(Command):
     def __init__(self, nameList, numArgs, eList, gList):
         super().__init__(nameList, numArgs)
@@ -135,6 +147,7 @@ class attack(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.usageStr = "attack <bestiary_index> [hit] [damage]"
     
     #Override execute
     def execute(self, args = []):
@@ -146,6 +159,7 @@ class damage(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.usageStr = "damage <bestiary_index>"
     
     #Override execute
     def execute(self, args = []):
@@ -156,6 +170,7 @@ class smite(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.usageStr = "smite <bestiary_index>"
     
     #Override execute
     def execute(self, args = []):
@@ -166,16 +181,19 @@ class heal(Command):
     def __init__(self, nameList, numArgs, eList):
         super().__init__(nameList, numArgs)
         self.eList = eList
+        self.usageStr = "heal <bestiary_index> <amount>"
     
     #Override execute
     def execute(self, args = []):
         print("Heal")
         super().execute()
 
+#TODO revive multiple NPCs at once
 class revive(Command):
     def __init__(self, nameList, numArgs, gList):
         super().__init__(nameList, numArgs)
         self.gList = gList
+        self.usageStr = "revive <graveyard_index>"
     
     #Override execute
     def execute(self, args = []):
@@ -198,6 +216,7 @@ class status(Command):
         self.bList = bList
         self.eList = eList
         self.gList = gList
+        self.usageStr = "status <index> {bestiary | encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
@@ -259,6 +278,7 @@ def main():
         found = False
         for command in commands:
             if command.nameIs(action):
+                #command.usage()
                 command.execute(args)
                 found = True
                 break
