@@ -288,8 +288,7 @@ def main():
     print("Type help or ? to get a list of availible commands.")
     
     #command loop
-    loop = True
-    while loop:
+    while True:
         usrRequest = input("Type a command: ").lower().split(" ")
         
         action = None
