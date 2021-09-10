@@ -66,7 +66,7 @@ class displayHelp(Command):
         elif len(args) == self.numArgs:
             found = False
             for command in self.commandList:
-                if command.nameIs(args[0].lower()):
+                if args[0].lower() in command.nameList:
                     print(command.description)
                     command.usage()
                     found = True
