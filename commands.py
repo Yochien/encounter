@@ -19,18 +19,7 @@ class Menu:
         self.title = title
         self.data = data
     
-    def equals(self, other):
-        if self == other:
-            return True
-        if other is None:
-            return False
-        if self.data != other.data:
-            return False
-        if self.title != other.title:
-            return False
-        return True
-    
-    def toString(self):
+    def __str__(self):
         info = self.title.upper() + ":\n"
         if len(self.data) == 0:
             info += "EMPTY"
@@ -102,23 +91,28 @@ class displayMenu(Command):
     #Override execute
     def execute(self, args = []):
         if len(args) == 0:
-            print(self.bMenu.toString() + "\n")
-            print(self.eMenu.toString() + "\n")
-            print(self.gMenu.toString())
+            print(self.bMenu)
+            print("")
+            print(self.eMenu)
+            print("")
+            print(self.gMenu)
         elif len(args) == self.numArgs:
             if args[0] == "bestiary":
-                print(self.bMenu.toString())
+                print(self.bMenu)
             elif args[0] == "encounter":
-                print(self.eMenu.toString())
+                print(self.eMenu)
             elif args[0] == "graveyard":
-                print(self.gMenu.toString())
+                print(self.gMenu)
             elif args[0] == "combat":
-                print(self.eMenu.toString() + "\n")
-                print(self.gMenu.toString())
+                print(self.eMenu)
+                print("")
+                print(self.gMenu)
             elif args[0] == "all":
-                print(self.bMenu.toString() + "\n")
-                print(self.eMenu.toString() + "\n")
-                print(self.gMenu.toString())
+                print(self.bMenu)
+                print("")
+                print(self.eMenu)
+                print("")
+                print(self.gMenu)
             else:
                 print(args[0] + " isn't a recognized list.")
         else:
@@ -310,7 +304,6 @@ def main():
         found = False
         for command in commands:
             if action in command.nameList:
-                #command.usage()
                 command.execute(args)
                 found = True
                 break
