@@ -7,19 +7,12 @@ class Command(ABC):
         self.description = "This Command has no defined description yet."
         self.usageStr = "This Command has no defined usage yet."
     
-    def nameIs(self, name):
-        for n in self.nameList:
-            if name == n:
-                return True
-        return False
-    
     def usage(self):
         print("Usage: " + self.usageStr)
     
     @abstractmethod
-    def execute(self, args = []):
+    def execute(self):
         print("This Command has not been implemented yet.")
-        print(args)
 
 class Menu:
     def __init__(self, data, title = "menu"):
@@ -317,7 +310,7 @@ def main():
         
         found = False
         for command in commands:
-            if command.nameIs(action):
+            if action in command.nameList:
                 #command.usage()
                 command.execute(args)
                 found = True
