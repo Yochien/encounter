@@ -171,11 +171,13 @@ def add(args, bMenu, eMenu, gMenu):
                     graveyard.append(npc)
             displayMenu([args[1]], bMenu, eMenu, gMenu)
 
+#TODO reduce redundancy
+#Default should be encounter list
 def info(args):
-    if len(args) >= 2:
+    if len(args) == 2:
         if isInt(args[0]):
             if args[1] == "bestiary":
-                if isValidInt(args[0], bestiary) == True:     #Could be broken into a sub command that could take a list as an argument and be reused here
+                if isValidInt(args[0], bestiary) == True:
                     print("INFO:")
                     print(bestiary[int(args[0])-1].toString())
             elif args[1] == "encounter":
@@ -190,8 +192,13 @@ def info(args):
                 print("Unrecognized list")
         else:
             print("First argument must be a valid integer")
+    elif len(args) == 1:
+        if isInt(args[0]):
+            if isValidInt(args[0], encounter) == True:
+                print("INFO:")
+                print(encounter[int(args[0])-1].toString())
     else:
-        print("info requires 2 arguments")
+        print("info requires at least 1 argument")
 
 def delete(selector, npcList):
     count = 0
