@@ -46,18 +46,7 @@ class Menu:
         self.title = title
         self.data = data
     
-    def equals(self, other):
-        if self == other:
-            return True
-        if other is None:
-            return False
-        if self.data != other.data:
-            return False
-        if self.title != other.title:
-            return False
-        return True
-    
-    def toString(self):
+    def __str__(self):
         info = self.title.upper() + ":\n"
         if len(self.data) == 0:
             info += "EMPTY"
@@ -106,23 +95,28 @@ def load(args):
 
 def displayMenu(args, bMenu, eMenu, gMenu):
     if len(args) == 0:
-        print(bMenu.toString() + "\n")
-        print(eMenu.toString() + "\n")
-        print(gMenu.toString())
+        print(bMenu)
+        print("")
+        print(eMenu)
+        print("")
+        print(gMenu)
     else:
         if args[0] == "bestiary":
-            print(bMenu.toString())
+            print(bMenu)
         elif args[0] == "encounter":
-            print(eMenu.toString())
+            print(eMenu)
         elif args[0] == "graveyard":
-            print(gMenu.toString())
+            print(gMenu)
         elif args[0] == "combat":
-            print(eMenu.toString() + "\n")
-            print(gMenu.toString())
+            print(eMenu)
+            print("")
+            print(gMenu)
         elif args[0] == "all":
-            print(bMenu.toString() + "\n")
-            print(eMenu.toString() + "\n")
-            print(gMenu.toString())
+            print(bMenu)
+            print("")
+            print(eMenu)
+            print("")
+            print(gMenu)
         else:
             print("Unknown list selected.")
 
@@ -149,7 +143,7 @@ def isValidInt(selector, npcList):
                 valid = False
                 break
     if valid == False:
-        print("One or more inputs are invalid in this context.")
+        print("Selected index is out of range of list.")
 
     return valid
 
