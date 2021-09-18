@@ -199,6 +199,7 @@ def info(args):
     else:
         print("info requires 2 arguments")
 
+#Utilize isValidInt method
 def delete(selector, npcList):
     count = 0
     skip = False

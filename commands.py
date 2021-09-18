@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+#TODO implement settings
 
+#TODO numArgs should be intrinsic property, not passed in arg
 class Command(ABC):
     def __init__(self, nameList, numArgs):
         self.nameList = nameList
@@ -20,6 +22,7 @@ class NPC:
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
         
+        #Type assertions
         if type(name) != str:
             raise TypeError("Argument name must be a string.")
         if type(maxHP) != int:
@@ -27,6 +30,7 @@ class NPC:
         if type(ac) != int:
             raise TypeError("Argument AC must be an integer.")
         
+        #Value assestions
         if self.ac < 0:
             raise ValueError("Argument out of valid range. AC must be at least 0.")
         if self.maxHP < 1:
@@ -57,6 +61,7 @@ class NPC:
         info += "AC: " + str(self.ac)
         return info
 
+#Implement menuPrint method
 class Menu:
     def __init__(self, data, title = "menu"):
         self.title = title
@@ -72,6 +77,7 @@ class Menu:
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
 
+#TODO append option & import folder functionality
 class load(Command):
     def __init__(self, nameList, numArgs, bList):
         super().__init__(nameList, numArgs)
@@ -102,7 +108,7 @@ class load(Command):
                         npc = NPC(line[0], int(line[1]), int(line[2]))
                         self.bList.append(npc)
                 bestiaryFile.close()
-                print("New bestiary loaded.")
+                print("Bestiary loaded.")
         else:
             self.usage()
 
@@ -183,19 +189,76 @@ class displayMenu(Command):
         else:
             self.usage()
 
+def isInt(string):
+    if string.isnumeric():
+        return True
+    else:
+        try:
+            int(string)
+        except:
+            return False
+        else:
+            return True
+
+def isValidInt(selector, npcList):
+    valid = True
+    for s in selector:
+        if isInt(s) == False:
+            valid = False
+            break
+    if valid == True:
+        for s in selector:
+            if int(s) > len(npcList) or int(s) <= 0:
+                valid = False
+                break
+    if valid == False:
+        print("One or more inputs are invalid in this context.")
+
+    return valid
+
+def npcCopy(bestiaryList, index, npcList):
+    name = bestiaryList[int(index) - 1].name
+    hp = bestiaryList[int(index) - 1].maxHP
+    ac = bestiaryList[int(index) - 1].ac
+    npc = NPC(name, hp, ac)
+    npcList.append(npc)
+
+#TODO make more generic
 class addNPC(Command):
     def __init__(self, nameList, numArgs, bList, eList, gList):
         super().__init__(nameList, numArgs)
         self.bList = bList
         self.eList = eList
         self.gList = gList
-        self.description = "Adds an NPC to a list."
+        self.description = "Adds an NPC to a list. Defaults to the encounter list."
         self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
-        print("Add")
-        super().execute()
+        if len(args) == 2 or len(args) == 1:
+            selected = args[0].split(",")
+            valid = True
+            for i in selected:
+                if int(i) > len(self.bList) or int(i) <= 0:
+                    valid = False
+                    break
+            if valid:
+                if len(args) == 2:
+                    if args[1] == "encounter":
+                        for n in selected:
+                            npcCopy(self.bList, n, self.eList)
+                    elif args[1] == "graveyard":
+                        for n in selected:
+                            npcCopy(self.bList, n, self.gList)
+                    else:
+                        self.usage()
+                elif len(args) == 1:
+                    for n in selected:
+                        npcCopy(self.bList, n, self.eList)
+            else:
+                print("One or more selected NPCs is outside of the range of your bestiary.")
+        else:
+            self.usage()
 
 #TODO Could be made more generic with list and menu
 #     (perhaps use a helper command?) for final implementation
