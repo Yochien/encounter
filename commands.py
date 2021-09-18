@@ -11,8 +11,51 @@ class Command(ABC):
         print("Usage: " + self.usageStr)
     
     @abstractmethod
-    def execute(self):
+    def execute(self, args = []):
         print("This Command has not been implemented yet.")
+
+class NPC:
+    def __init__(self, name, maxHP, ac):
+        self.name = name
+        self.maxHP = self.currentHP = maxHP
+        self.ac = int(ac)
+        
+        if type(name) != str:
+            raise TypeError("Argument name must be a string.")
+        if type(maxHP) != int:
+            raise TypeError("Argument HP must be an integer.")
+        if type(ac) != int:
+            raise TypeError("Argument AC must be an integer.")
+        
+        if self.ac < 0:
+            raise ValueError("Argument out of valid range. AC must be at least 0.")
+        if self.maxHP < 1:
+            raise ValueError("Argument out of valid range. HP must be at least 1.")
+    
+    def __str__(self):
+        return self.name
+    
+    def equals(self, other):
+        if self == other:
+            return True
+        if other is None:
+            return False
+        if self.name != other.name:
+            return False
+        if self.maxHP != other.maxHP:
+            return False
+        if self.currentHP != other.currentHP:
+            return False
+        if self.ac != other.ac:
+            return False
+        return True
+    
+    def toString(self):
+        info = ""
+        info += "NAME: " + str(self.name) + "\n"
+        info += "HP: " + str(self.currentHP) + "\n"
+        info += "AC: " + str(self.ac)
+        return info
 
 class Menu:
     def __init__(self, data, title = "menu"):
@@ -38,8 +81,30 @@ class load(Command):
     
     #Override execute
     def execute(self, args = []):
-        print("Load")
-        super().execute()
+        if len(args) == 1:
+            try:
+                bestiaryFile = open(args[0])
+            except FileNotFoundError:
+                print("Selected bestiary file could not be found.")
+                if len(self.bList) == 0:
+                    print("Loading placeholder bestiary.")
+                    human = NPC("Human", 5, 12)
+                    animal = NPC("Animal", 3, 10)
+                    enemy = NPC("Enemy", 10, 13)
+                    self.bList.append(human)
+                    self.bList.append(animal)
+                    self.bList.append(enemy)
+            else:
+                self.bList.clear()
+                for line in bestiaryFile:
+                    if not line.startswith("#"):
+                        line = line.rstrip("\n").split(",")
+                        npc = NPC(line[0], int(line[1]), int(line[2]))
+                        self.bList.append(npc)
+                bestiaryFile.close()
+                print("New bestiary loaded.")
+        else:
+            self.usage()
 
 class displayHelp(Command):
     def __init__(self, nameList, numArgs, commandList):
@@ -277,6 +342,9 @@ def main():
     
     helpCommand =  displayHelp(['help', '?'], 1, commands)
     commands.append(helpCommand)
+    
+    #Load file
+    commands[0].execute(["bestiary.txt"])
     
     #print help message
     print("Type help or ? to get a list of availible commands.")
