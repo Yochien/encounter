@@ -260,6 +260,35 @@ class addNPC(Command):
         else:
             self.usage()
 
+#TODO make more generic
+#TODO setting to make no argument clear all
+class clearNPCList(Command):
+    def __init__(self, nameList, numArgs, eList, gList):
+        super().__init__(nameList, numArgs)
+        self.eList = eList
+        self.gList = gList
+        self.description = "Clears a list of NPCs."
+        self.usageStr = "clear {all | encounter | graveyard}"
+    
+    #Override execute
+    def execute(self, args = []):
+        if len(args) == self.numArgs:
+            npcList = args[0]
+            if npcList == "all":
+                self.eList.clear()
+                self.gList.clear()
+                print("Encounter and graveyard lists cleared.")
+            elif npcList == "encounter":
+                self.eList.clear()
+                print("Encounter list cleared.")
+            elif npcList == "graveyard":
+                self.gList.clear()
+                print("Graveyard list cleared.")
+            else:
+                self.usage()
+        else:
+            self.usage()
+
 #TODO Could be made more generic with list and menu
 #     (perhaps use a helper command?) for final implementation
 class removeNPC(Command):
@@ -392,6 +421,7 @@ def main():
         load(['load'], 1, bestiary),
         displayMenu(['list', 'display'], 1, bestiaryMenu, encounterMenu, graveyardMenu),
         addNPC(['add'], 2, bestiary, encounter, graveyard),
+        clearNPCList(['clear'], 1, encounter, graveyard),
         removeNPC(['remove', 'clear'], 2, encounter, graveyard, encounterMenu, graveyardMenu),
         reorder(['reorder', 'arrange'], 3, encounter, graveyard),
         attack(['attack'], 1, encounter),
