@@ -241,10 +241,17 @@ class addNPC(Command):
         if len(args) == 2 or len(args) == 1:
             selected = args[0].split(",")
             valid = True
+            #Check if the selector is made of all integers
             for i in selected:
-                if int(i) > len(self.bList) or int(i) <= 0:
+                if not isInt(i):
                     valid = False
-                    break
+            #Check if selectors are within range of the bestiary
+            if valid:
+                for i in selected:
+                    if int(i) > len(self.bList) or int(i) <= 0:
+                        valid = False
+                        break
+            #If all above checks are passed, then execute logic
             if valid:
                 if len(args) == 2:
                     if args[1] == "encounter":
@@ -259,7 +266,7 @@ class addNPC(Command):
                     for n in selected:
                         npcCopy(self.bList, n, self.eList)
             else:
-                print("One or more selected NPCs is outside of the range of your bestiary.")
+                self.usage()
         else:
             self.usage()
 
