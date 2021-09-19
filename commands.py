@@ -181,7 +181,7 @@ class displayMenu(Command):
             else:
                 print(args[0] + " isn't a recognized list.")
         else:
-            if numArgs == 0:
+            if len(args) == 0:
                 print(self.bMenu)
                 print("")
                 print(self.eMenu)
@@ -225,6 +225,7 @@ def npcCopy(bestiaryList, index, npcList):
     npcList.append(npc)
 
 #TODO make more generic
+#TODO print who was added to what list
 class addNPC(Command):
     def __init__(self, nameList, bList, eList, gList):
         super().__init__(nameList)
