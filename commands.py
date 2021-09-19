@@ -401,6 +401,20 @@ class debuff(Command):
         print("Debuff")
         super().execute()
 
+class info(Command):
+    def __init__(self, nameList, bList, eList, gList):
+        super().__init__(nameList)
+        self.bList = bList
+        self.eList = eList
+        self.gList = gList
+        self.description = "Displays an NPC's detailed stats."
+        self.usageStr = "info <index> {bestiary | encounter | graveyard}"
+
+    #Override execute
+    def execute(self, args = []):
+        print("Info")
+        super().execute()
+
 class status(Command):
     def __init__(self, nameList, bList, eList, gList):
         super().__init__(nameList)
@@ -440,7 +454,8 @@ def main():
         heal(['heal'], encounter),
         revive(['revive', 'resurrect', 'save'], graveyard),
         debuff(['debuff', 'change'], encounter),
-        status(['status', 'info'], bestiary, encounter, graveyard)
+        status(['status'], bestiary, encounter, graveyard),
+        info(['info'], bestiary, encounter, graveyard)
         ]
     
     helpCommand =  displayHelp(['help', '?'], commands)
