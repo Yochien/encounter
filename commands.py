@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 #TODO implement settings
+#Make lists generic with new type of list (name and other stored info)
 
 class Command(ABC):
     def __init__(self, nameList):
@@ -438,7 +439,7 @@ def main():
     helpCommand =  displayHelp(['help', '?'], commands)
     commands.append(helpCommand)
     
-    #Load file
+    #Load default bestiary
     commands[0].execute(["bestiary.txt"])
     
     #print help message
