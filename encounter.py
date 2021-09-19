@@ -200,28 +200,19 @@ def info(args):
     else:
         print("info requires at least 1 argument")
 
-def delete(selector, npcList):
-    count = 0
-    skip = False
-    length = len(npcList)
+def removeDuplicates(selected):
+    filtered = []
+    for i in selected:
+        if i not in filtered:
+            filtered.append(i)
+    return filtered
 
-    for s in selector:
-        if int(s) > length or int(s) < 0:
-            skip = True
-            break
-    if skip == False:
-        for s in selector:
-            npcList[int(s) - 1] = None
-            count += 1
-        
-        count = 0
-        while count < length:
-            if npcList[count] == None:
-                npcList.pop(count)
-                length -= 1
-            count += 1
-    else:
-        print("One or more numbers out of range of availible NPCs.")
+def reverseSort(filtered):
+    reversed = []
+    for i in filtered:
+        reversed.append(i)
+    reversed.sort(reverse = True)
+    return reversed
 
 def removeNPC(args, bMenu, eMenu, gMenu):
     if len(args) < 2:
@@ -240,17 +231,28 @@ def removeNPC(args, bMenu, eMenu, gMenu):
                 displayMenu([args[1]], bMenu, eMenu, gMenu)
         else:
             selected = args[0].split(",")
-            
-            if args[1] == "encounter":
-                if len(encounter) > 0:
-                    delete(selected, encounter)
-                displayMenu([args[1]], bMenu, eMenu, gMenu)
-            elif args[1] == "graveyard":
-                if len(graveyard) > 0:
-                    delete(selected, graveyard)
-                displayMenu([args[1]], bMenu, eMenu, gMenu)
+            valid = True
+            for i in selected:
+                if not isInt(i):
+                    valid = False
+                    break
+            if valid:
+                selected = removeDuplicates(selected)
+                selected = reverseSort(selected)
+                if args[1].lower() == "encounter":
+                    if isValidInt(selected, encounter):
+                        for i in selected:
+                            encounter.pop(int(i) - 1)
+                        displayMenu([args[1]], bMenu, eMenu, gMenu)
+                elif args[1].lower() == "graveyard":
+                    if isValidInt(selected, graveyard):
+                        for i in selected:
+                            graveyard.pop(int(i) - 1)
+                        displayMenu([args[1]], bMenu, eMenu, gMenu)
+                else:
+                    print("Selected an unknown list.")
             else:
-                print("Unknown list selected.")
+                print("Selected an invalid NPC.")
 
 def attack(args): #for n in selector attack(n)
     npc = None
