@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 #TODO implement settings
 
-#TODO numArgs should be intrinsic property, not passed in arg
 class Command(ABC):
-    def __init__(self, nameList, numArgs):
+    def __init__(self, nameList):
         self.nameList = nameList
-        self.numArgs = numArgs
         self.description = "This Command has no defined description yet."
         self.usageStr = "This Command has no defined usage yet."
     
@@ -79,8 +77,8 @@ class Menu:
 
 #TODO append option & import folder functionality
 class load(Command):
-    def __init__(self, nameList, numArgs, bList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, bList):
+        super().__init__(nameList)
         self.bList = bList
         self.description = "Replaces the default bestiary."
         self.usageStr = "load <file_name>"
@@ -113,46 +111,48 @@ class load(Command):
             self.usage()
 
 class displayHelp(Command):
-    def __init__(self, nameList, numArgs, commandList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, commandList):
+        super().__init__(nameList)
         self.commandList = commandList
         self.description = "Prints a list of availible commands."
         self.usageStr = "help [command_name]"
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 0:
-            spacing = 0
-            for command in self.commandList:
-                if len(command.nameList[0]) > spacing:
-                    spacing = len(command.nameList[0])
-            print("quit".ljust(spacing) + ": " + "Exits the program.")
-            for command in self.commandList:
-                print(command.nameList[0].ljust(spacing) + ": " + command.description)
-            print("")
-            print("For more detailed information > Usage: " + self.usageStr)
-        elif args[0].lower() in ["quit", "q", "exit"]:
-            print("Exits the program.")
-            print("Usage: {quit | q | exit}")
-        elif len(args) == self.numArgs:
-            found = False
-            for command in self.commandList:
-                if args[0].lower() in command.nameList:
-                    print(command.description)
-                    command.usage()
-                    found = True
-                    break
-            
-            if not found:
-                print("Unrecognized command.")
-                print("Type help or ? to learn how to use availible commands.")
+        if len(args) == 1:
+            if args[0].lower() in ["quit", "q", "exit"]:
+                print("Exits the program.")
+                print("Usage: {quit | q | exit}")
+            else:
+                found = False
+                for command in self.commandList:
+                    if args[0].lower() in command.nameList:
+                        print(command.description)
+                        command.usage()
+                        found = True
+                        break
+                
+                if not found:
+                    print("Unrecognized command.")
+                    print("Type help or ? to learn how to use availible commands.")
         else:
-            self.usage()
+            if len(args) == 0:
+                spacing = 0
+                for command in self.commandList:
+                    if len(command.nameList[0]) > spacing:
+                        spacing = len(command.nameList[0])
+                print("quit".ljust(spacing) + ": " + "Exits the program.")
+                for command in self.commandList:
+                    print(command.nameList[0].ljust(spacing) + ": " + command.description)
+                print("")
+                print("For more detailed information > Usage: " + self.usageStr)
+            else:
+                self.usage()
 
 #TODO clean up redundancy here
 class displayMenu(Command):
-    def __init__(self, nameList, numArgs, bMenu, eMenu, gMenu):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, bMenu, eMenu, gMenu):
+        super().__init__(nameList)
         self.bMenu = bMenu
         self.eMenu = eMenu
         self.gMenu = gMenu
@@ -161,13 +161,7 @@ class displayMenu(Command):
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 0:
-            print(self.bMenu)
-            print("")
-            print(self.eMenu)
-            print("")
-            print(self.gMenu)
-        elif len(args) == self.numArgs:
+        if len(args) == 1:
             if args[0] == "bestiary":
                 print(self.bMenu)
             elif args[0] == "encounter":
@@ -187,7 +181,14 @@ class displayMenu(Command):
             else:
                 print(args[0] + " isn't a recognized list.")
         else:
-            self.usage()
+            if numArgs == 0:
+                print(self.bMenu)
+                print("")
+                print(self.eMenu)
+                print("")
+                print(self.gMenu)
+            else:
+                self.usage()
 
 def isInt(string):
     if string.isnumeric():
@@ -225,8 +226,8 @@ def npcCopy(bestiaryList, index, npcList):
 
 #TODO make more generic
 class addNPC(Command):
-    def __init__(self, nameList, numArgs, bList, eList, gList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, bList, eList, gList):
+        super().__init__(nameList)
         self.bList = bList
         self.eList = eList
         self.gList = gList
@@ -263,8 +264,8 @@ class addNPC(Command):
 #TODO make more generic
 #TODO setting to make no argument clear all
 class clearNPCList(Command):
-    def __init__(self, nameList, numArgs, eList, gList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList, gList):
+        super().__init__(nameList)
         self.eList = eList
         self.gList = gList
         self.description = "Clears a list of NPCs."
@@ -272,7 +273,7 @@ class clearNPCList(Command):
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == self.numArgs:
+        if len(args) == 1:
             npcList = args[0]
             if npcList == "all":
                 self.eList.clear()
@@ -285,15 +286,15 @@ class clearNPCList(Command):
                 self.gList.clear()
                 print("Graveyard list cleared.")
             else:
-                self.usage()
+                print("Unknown list selected.")
         else:
             self.usage()
 
 #TODO Could be made more generic with list and menu
 #     (perhaps use a helper command?) for final implementation
 class removeNPC(Command):
-    def __init__(self, nameList, numArgs, eList, gList, eMenu, gMenu):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList, gList, eMenu, gMenu):
+        super().__init__(nameList)
         self.eList = eList
         self.gList = gList
         self.eMenu = eMenu
@@ -308,8 +309,8 @@ class removeNPC(Command):
 
 #TODO implement psuedocode
 class reorder(Command):
-    def __init__(self, nameList, numArgs, eList, gList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList, gList):
+        super().__init__(nameList)
         self.eList = eList
         self.gList = gList
         self.description = "Switches the position of two NPCs."
@@ -320,8 +321,8 @@ class reorder(Command):
         super().execute()
 
 class attack(Command):
-    def __init__(self, nameList, numArgs, eList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList):
+        super().__init__(nameList)
         self.eList = eList
         self.description = "Initiantiates D&D like combat with and NPC."
         self.usageStr = "attack <bestiary_index> [hit] [damage]"
@@ -333,8 +334,8 @@ class attack(Command):
 
 #TODO Check dead helper command?
 class damage(Command):
-    def __init__(self, nameList, numArgs, eList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList):
+        super().__init__(nameList)
         self.eList = eList
         self.description = "Directly subtracts from an NPC's health."
         self.usageStr = "damage <bestiary_index>"
@@ -345,8 +346,8 @@ class damage(Command):
         super().execute()
 
 class smite(Command):
-    def __init__(self, nameList, numArgs, eList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList):
+        super().__init__(nameList)
         self.eList = eList
         self.description = "Immediately kills an NPC."
         self.usageStr = "smite <bestiary_index>"
@@ -357,8 +358,8 @@ class smite(Command):
         super().execute()
 
 class heal(Command):
-    def __init__(self, nameList, numArgs, eList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList):
+        super().__init__(nameList)
         self.eList = eList
         self.description = "Directly adds to an NPC's health."
         self.usageStr = "heal <bestiary_index> <amount>"
@@ -370,8 +371,8 @@ class heal(Command):
 
 #TODO revive multiple NPCs at once
 class revive(Command):
-    def __init__(self, nameList, numArgs, gList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, gList):
+        super().__init__(nameList)
         self.gList = gList
         self.description = "Brings an NPC back from the graveyard."
         self.usageStr = "revive <graveyard_index>"
@@ -382,8 +383,8 @@ class revive(Command):
         super().execute()
 
 class debuff(Command):
-    def __init__(self, nameList, numArgs, eList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, eList):
+        super().__init__(nameList)
         self.eList = eList
     
     #Override execute
@@ -392,8 +393,8 @@ class debuff(Command):
         super().execute()
 
 class status(Command):
-    def __init__(self, nameList, numArgs, bList, eList, gList):
-        super().__init__(nameList, numArgs)
+    def __init__(self, nameList, bList, eList, gList):
+        super().__init__(nameList)
         self.bList = bList
         self.eList = eList
         self.gList = gList
@@ -418,22 +419,22 @@ def main():
     
     #Instantiate commands
     commands = [
-        load(['load'], 1, bestiary),
-        displayMenu(['list', 'display'], 1, bestiaryMenu, encounterMenu, graveyardMenu),
-        addNPC(['add'], 2, bestiary, encounter, graveyard),
-        clearNPCList(['clear'], 1, encounter, graveyard),
-        removeNPC(['remove', 'clear'], 2, encounter, graveyard, encounterMenu, graveyardMenu),
-        reorder(['reorder', 'arrange'], 3, encounter, graveyard),
-        attack(['attack'], 1, encounter),
-        damage(['damage'], 1, encounter),
-        smite(['smite', 'kill'], 1, encounter),
-        heal(['heal'], 1, encounter),
-        revive(['revive', 'resurrect', 'save'], 1, graveyard),
-        debuff(['debuff', 'change'], 3, encounter),
-        status(['status', 'info'], 2, bestiary, encounter, graveyard)
+        load(['load'], bestiary),
+        displayMenu(['list', 'display'], bestiaryMenu, encounterMenu, graveyardMenu),
+        addNPC(['add'], bestiary, encounter, graveyard),
+        clearNPCList(['clear'], encounter, graveyard),
+        removeNPC(['remove', 'clear'], encounter, graveyard, encounterMenu, graveyardMenu),
+        reorder(['reorder', 'arrange'], encounter, graveyard),
+        attack(['attack'], encounter),
+        damage(['damage'], encounter),
+        smite(['smite', 'kill'], encounter),
+        heal(['heal'], encounter),
+        revive(['revive', 'resurrect', 'save'], graveyard),
+        debuff(['debuff', 'change'], encounter),
+        status(['status', 'info'], bestiary, encounter, graveyard)
         ]
     
-    helpCommand =  displayHelp(['help', '?'], 1, commands)
+    helpCommand =  displayHelp(['help', '?'], commands)
     commands.append(helpCommand)
     
     #Load file
