@@ -17,10 +17,6 @@ class Command(ABC):
 
 class NPC:
     def __init__(self, name, maxHP, ac):
-        self.name = name
-        self.maxHP = self.currentHP = maxHP
-        self.ac = int(ac)
-        
         #Type assertions
         if type(name) != str:
             raise TypeError("Argument name must be a string.")
@@ -30,10 +26,15 @@ class NPC:
             raise TypeError("Argument AC must be an integer.")
         
         #Value assestions
-        if self.ac < 0:
+        if ac < 0:
             raise ValueError("Argument out of valid range. AC must be at least 0.")
-        if self.maxHP < 1:
+        if maxHP < 1:
             raise ValueError("Argument out of valid range. HP must be at least 1.")
+        
+        #Value assignment
+        self.name = name
+        self.maxHP = self.currentHP = maxHP
+        self.ac = int(ac)
     
     def __str__(self):
         return self.name
