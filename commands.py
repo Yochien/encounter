@@ -465,6 +465,7 @@ class info(Command):
                             print("INFO:")
                             print("NAME: " + l.data[int(args[0]) - 1].name)
                             print("HP: " + str(l.data[int(args[0]) - 1].currentHP))
+                            print("MAX HP: " + str(l.data[int(args[0]) - 1].maxHP))
                             print("AC: " + str(l.data[int(args[0]) - 1].ac))
                             break
                         else:
