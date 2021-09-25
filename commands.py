@@ -344,16 +344,29 @@ class attack(Command):
         super().execute()
 
 class damage(Command):
-    def __init__(self, nameList, eList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
+        self.referenceLists = referenceLists
         self.description = "Directly subtracts from an NPC's health."
-        self.usageStr = "damage <bestiary_index>"
+        self.usageStr = "damage <encounter_index> <amount>"
     
     #Override execute
     def execute(self, args = []):
-        print("Damage")
-        super().execute()
+        encounter = self.referenceLists[1].data
+        lenArgs = len(args)
+        
+        if lenArgs == 2:
+            if isValidInt(args[0], encounter) == True:
+                npc = encounter[int(args[0]) - 1]
+                npc.currentHP = npc.currentHP - int(args[1])
+                if npc.currentHP <= 0:
+                    print(npc.name + " has been defeated.")
+                    referenceLists[2].data.append(npc)
+                    encounter.pop(int(args[0]) - 1)
+                    if len(encounter) == 0:
+                        print("Party has defeated all enemies.")
+        else:
+            self.usage()
 
 class smite(Command):
     def __init__(self, nameList, eList):
@@ -478,6 +491,7 @@ def main():
         displayMenu(['list', 'display'], referenceLists),
         addNPC(['add'], referenceLists),
         clearNPCList(['clear'], referenceLists),
+        damage(['damage'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
         status(['status'], referenceLists),
         info(['info'], referenceLists)
@@ -485,7 +499,6 @@ def main():
     '''
     removeNPC(['remove', 'clear'], referenceLists),
     attack(['attack'], referenceLists),
-    damage(['damage'], referenceLists),
     smite(['smite', 'kill'], referenceLists),
     heal(['heal'], referenceLists),
     revive(['revive', 'resurrect', 'save'], referenceLists),
@@ -530,6 +543,8 @@ def main():
         if not found:
             print("Unrecognized command.")
             print("Type help or ? to learn how to use availible commands.")
-
+        
+        #TODO Check for deaths in encounter list. Display message and move to graveyard
+        
 if __name__ == "__main__":
     main()
