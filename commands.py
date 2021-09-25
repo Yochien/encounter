@@ -61,14 +61,28 @@ class NPC:
         info += "AC: " + str(self.ac)
         return info
 
-#Implement menuPrint method
-class Menu:
-    def __init__(self, data, title = "menu"):
-        self.title = title
+class NPCList:
+    def __init__(self, nameList, tags, data):
+        #Error Checking
+        if type(nameList) != list:
+            raise TypeError("Argument nameList must be a list of strings.")
+        if type(tags) != list:
+            raise TypeError("Argument tags must be a list of strings.")
+        if type(data) != list:
+            raise TypeError("Argument data must be a list of NPCs.")
+
+        if len(nameList) == 0:
+            raise ValueError("Argument nameList must contain at least one entry.")
+        
+        #Value assignment
+        self.nameList = nameList
+        self.name = nameList[0]
+        self.tags = tags
         self.data = data
-    
-    def __str__(self):
-        info = self.title.upper() + ":\n"
+
+    def toMenu(self):
+        info = self.name.upper() + ":\n"
+        
         if len(self.data) == 0:
             info += "EMPTY"
         else:
@@ -79,34 +93,36 @@ class Menu:
 
 #TODO append option & import folder functionality
 class load(Command):
-    def __init__(self, nameList, bList):
+    def __init__(self, nameList, bestiary):
         super().__init__(nameList)
-        self.bList = bList
+        self.bestiary = bestiary
         self.description = "Replaces the default bestiary."
         self.usageStr = "load <file_name>"
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 1:
+        numArgs = len(args)
+        
+        if numArgs == 1:
             try:
                 bestiaryFile = open(args[0])
             except FileNotFoundError:
                 print("Selected bestiary file could not be found.")
-                if len(self.bList) == 0:
+                if len(self.bestiary.data) == 0:
                     print("Loading placeholder bestiary.")
                     human = NPC("Human", 5, 12)
                     animal = NPC("Animal", 3, 10)
                     enemy = NPC("Enemy", 10, 13)
-                    self.bList.append(human)
-                    self.bList.append(animal)
-                    self.bList.append(enemy)
+                    self.bestiary.data.append(human)
+                    self.bestiary.data.append(animal)
+                    self.bestiary.data.append(enemy)
             else:
-                self.bList.clear()
+                self.bestiary.data.clear()
                 for line in bestiaryFile:
                     if not line.startswith("#"):
                         line = line.rstrip("\n").split(",")
                         npc = NPC(line[0], int(line[1]), int(line[2]))
-                        self.bList.append(npc)
+                        self.bestiary.data.append(npc)
                 bestiaryFile.close()
                 print("Bestiary loaded.")
         else:
@@ -121,7 +137,9 @@ class displayHelp(Command):
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 1:
+        numArgs = len(args)
+        
+        if numArgs == 1:
             if args[0].lower() in ["quit", "q", "exit"]:
                 print("Exits the program.")
                 print("Usage: {quit | q | exit}")
@@ -138,7 +156,7 @@ class displayHelp(Command):
                     print("Unrecognized command.")
                     print("Type help or ? to learn how to use availible commands.")
         else:
-            if len(args) == 0:
+            if numArgs == 0:
                 spacing = 0
                 for command in self.commandList:
                     if len(command.nameList[0]) > spacing:
@@ -151,44 +169,33 @@ class displayHelp(Command):
             else:
                 self.usage()
 
-#TODO clean up redundancy here
 class displayMenu(Command):
-    def __init__(self, nameList, bMenu, eMenu, gMenu):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.bMenu = bMenu
-        self.eMenu = eMenu
-        self.gMenu = gMenu
+        self.referenceLists = referenceLists
         self.description = "Prints all NPCs in a list."
-        self.usageStr = "list [bestiary | encounter | combat | all]"
+        self.usageStr = "list [bestiary | encounter | combat | graveyard | all]"
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 1:
-            if args[0] == "bestiary":
-                print(self.bMenu)
-            elif args[0] == "encounter":
-                print(self.eMenu)
-            elif args[0] == "graveyard":
-                print(self.gMenu)
-            elif args[0] == "combat":
-                print(self.eMenu)
-                print("")
-                print(self.gMenu)
-            elif args[0] == "all":
-                print(self.bMenu)
-                print("")
-                print(self.eMenu)
-                print("")
-                print(self.gMenu)
-            else:
-                print(args[0] + " isn't a recognized list.")
+        numArgs = len(args)
+        
+        if numArgs == 1 and args[0] != "all":
+            found = False
+            
+            for l in self.referenceLists:
+                if args[0] in l.nameList or args[0] in l.tags:
+                    found = True
+                    print(l.toMenu())
+                    print("")
+            
+            if not found:
+                print("Unknown list selected.")
         else:
-            if len(args) == 0:
-                print(self.bMenu)
-                print("")
-                print(self.eMenu)
-                print("")
-                print(self.gMenu)
+            if numArgs == 0 or args[0] == "all":
+                for l in self.referenceLists:
+                    print(l.toMenu())
+                    print("")
             else:
                 self.usage()
 
@@ -226,77 +233,84 @@ def npcCopy(bestiaryList, index, npcList):
     npc = NPC(name, hp, ac)
     npcList.append(npc)
 
-#TODO make more generic
-#TODO print who was added to what list
 class addNPC(Command):
-    def __init__(self, nameList, bList, eList, gList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.bList = bList
-        self.eList = eList
-        self.gList = gList
+        self.referenceLists = referenceLists
         self.description = "Adds an NPC to a list. Defaults to the encounter list."
         self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 2 or len(args) == 1:
+        numArgs = len(args)
+        bestiary = self.referenceLists[0].data
+        
+        if numArgs == 2 or numArgs == 1:
             selected = args[0].split(",")
             valid = True
             #Check if the selector is made of all integers
             for i in selected:
                 if not isInt(i):
                     valid = False
+            
             #Check if selectors are within range of the bestiary
             if valid:
                 for i in selected:
-                    if int(i) > len(self.bList) or int(i) <= 0:
+                    if int(i) > len(bestiary) or int(i) <= 0:
                         valid = False
                         break
+            
             #If all above checks are passed, then execute logic
             if valid:
-                if len(args) == 2:
-                    if args[1] == "encounter":
-                        for n in selected:
-                            npcCopy(self.bList, n, self.eList)
-                    elif args[1] == "graveyard":
-                        for n in selected:
-                            npcCopy(self.bList, n, self.gList)
-                    else:
-                        self.usage()
-                elif len(args) == 1:
+                if numArgs == 2 and args[1].lower() not in self.referenceLists[0].nameList:
+                    for l in self.referenceLists:
+                        if args[1] in l.nameList:
+                            for n in selected:
+                                npcCopy(bestiary, n, l.data)
+                            print(l.toMenu())
+                            print("")
+                elif numArgs == 1:
                     for n in selected:
-                        npcCopy(self.bList, n, self.eList)
+                        npcCopy(bestiary, n, self.referenceLists[1].data)
+                    print(self.referenceLists[1].toMenu())
+                    print("")
             else:
                 self.usage()
         else:
             self.usage()
 
-#TODO make more generic
 #TODO setting to make no argument clear all
 class clearNPCList(Command):
-    def __init__(self, nameList, eList, gList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
-        self.gList = gList
+        self.referenceLists = referenceLists
         self.description = "Clears a list of NPCs."
         self.usageStr = "clear {all | encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
-        if len(args) == 1:
-            npcList = args[0]
-            if npcList == "all":
-                self.eList.clear()
-                self.gList.clear()
-                print("Encounter and graveyard lists cleared.")
-            elif npcList == "encounter":
-                self.eList.clear()
-                print("Encounter list cleared.")
-            elif npcList == "graveyard":
-                self.gList.clear()
-                print("Graveyard list cleared.")
+        lenArgs = len(args)
+        
+        if lenArgs == 1:
+            if args[0] not in self.referenceLists[0].nameList:
+                if args[0].lower() == "all":
+                    for l in self.referenceLists:
+                        if l != self.referenceLists[0]:
+                            l.data.clear()
+                            print(l.toMenu())
+                            print("")
+                else:
+                    found = False
+                    for l in self.referenceLists:
+                        if args[0] in l.nameList or args[0] in l.tags:
+                            found = True
+                            l.data.clear()
+                            print(l.toMenu())
+                            print("")
+                    if not found:
+                        print("Unknown list selected.")
             else:
-                print("Unknown list selected.")
+                self.usage()
         else:
             self.usage()
 
@@ -317,19 +331,6 @@ class removeNPC(Command):
         print("Remove")
         super().execute()
 
-#TODO implement psuedocode
-class reorder(Command):
-    def __init__(self, nameList, eList, gList):
-        super().__init__(nameList)
-        self.eList = eList
-        self.gList = gList
-        self.description = "Switches the position of two NPCs."
-    
-    #Override execute
-    def execute(self, args = []):
-        print("Reorder")
-        super().execute()
-
 class attack(Command):
     def __init__(self, nameList, eList):
         super().__init__(nameList)
@@ -342,7 +343,6 @@ class attack(Command):
         print("Attack")
         super().execute()
 
-#TODO Check dead helper command?
 class damage(Command):
     def __init__(self, nameList, eList):
         super().__init__(nameList)
@@ -393,71 +393,103 @@ class revive(Command):
         super().execute()
 
 class debuff(Command):
-    def __init__(self, nameList, eList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
+        self.referenceLists = referenceLists
     
     #Override execute
     def execute(self, args = []):
         print("Debuff")
         super().execute()
 
-class info(Command):
-    def __init__(self, nameList, bList, eList, gList):
+class status(Command):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.bList = bList
-        self.eList = eList
-        self.gList = gList
+        self.referenceLists = referenceLists
+        self.description = "Displays an NPC's current stats."
+        self.usageStr = "status <index> {encounter | graveyard}"
+    
+    #Override execute
+    def execute(self, args = []):
+        lenArgs = len(args)
+        if lenArgs == 2:
+            if isInt(args[0]):
+                found = False
+                for l in self.referenceLists:
+                    #TODO better error reporting here. currently ambiguous
+                    if args[1].lower() not in self.referenceLists[0].nameList and args[1] in l.nameList:
+                        found = True
+                        if isValidInt([args[0]], l.data):
+                            print("Status:")
+                            print(l.data[int(args[0]) - 1].name + " " + "[" + str(l.data[int(args[0]) - 1].currentHP) + " / " + str(l.data[int(args[0]) - 1].maxHP) + "]")
+                            break
+                        else:
+                            self.usage
+                if not found:
+                    print("Unknown list selected.")
+            else:
+                self.usage()
+        else:
+            self.usage()
+
+class info(Command):
+    def __init__(self, nameList, referenceLists):
+        super().__init__(nameList)
+        self.referenceLists = referenceLists
         self.description = "Displays an NPC's detailed stats."
         self.usageStr = "info <index> {bestiary | encounter | graveyard}"
 
     #Override execute
     def execute(self, args = []):
-        print("Info")
-        super().execute()
-
-class status(Command):
-    def __init__(self, nameList, bList, eList, gList):
-        super().__init__(nameList)
-        self.bList = bList
-        self.eList = eList
-        self.gList = gList
-        self.description = "Displays an NPC's current stats."
-        self.usageStr = "status <index> {bestiary | encounter | graveyard}"
-    
-    #Override execute
-    def execute(self, args = []):
-        print("Status")
-        super().execute()
+        lenArgs = len(args)
+        if lenArgs == 2:
+            if isInt(args[0]):
+                found = False
+                for l in self.referenceLists:
+                    if args[1] in l.nameList:
+                        found = True
+                        if isValidInt([args[0]], l.data):
+                            print("INFO:")
+                            print("NAME: " + l.data[int(args[0]) - 1].name)
+                            print("HP: " + str(l.data[int(args[0]) - 1].currentHP))
+                            print("AC: " + str(l.data[int(args[0]) - 1].ac))
+                            break
+                        else:
+                            self.usage
+                if not found:
+                    print("Unknown list selected.")
+            else:
+                self.usage()
+        else:
+            self.usage()
 
 def main():
-    #Initiantiate reference lists
-    bestiary = []
-    encounter = []
-    graveyard = []
+    referenceLists = [
+        NPCList(['bestiary', 'book', 'b'], [], []),
+        NPCList(['encounter', 'e'], ['combat'], []),
+        NPCList(['graveyard', 'g'], ['combat'], [])
+        ]
     
-    #Instantiate menus
-    bestiaryMenu = Menu(bestiary, "bestiary")
-    encounterMenu = Menu(encounter, "encounter")
-    graveyardMenu = Menu(graveyard, "graveyard")
+    bestiary = referenceLists[0]
     
     #Instantiate commands
     commands = [
         load(['load'], bestiary),
-        displayMenu(['list', 'display'], bestiaryMenu, encounterMenu, graveyardMenu),
-        addNPC(['add'], bestiary, encounter, graveyard),
-        clearNPCList(['clear'], encounter, graveyard),
-        removeNPC(['remove', 'clear'], encounter, graveyard, encounterMenu, graveyardMenu),
-        reorder(['reorder', 'arrange'], encounter, graveyard),
-        attack(['attack'], encounter),
-        damage(['damage'], encounter),
-        smite(['smite', 'kill'], encounter),
-        heal(['heal'], encounter),
-        revive(['revive', 'resurrect', 'save'], graveyard),
-        debuff(['debuff', 'change'], encounter),
-        status(['status'], bestiary, encounter, graveyard),
-        info(['info'], bestiary, encounter, graveyard)
+        displayMenu(['list', 'display'], referenceLists),
+        addNPC(['add'], referenceLists),
+        clearNPCList(['clear'], referenceLists),
+        debuff(['debuff', 'change'], referenceLists),
+        status(['status'], referenceLists),
+        info(['info'], referenceLists)
         ]
+    '''
+    removeNPC(['remove', 'clear'], referenceLists),
+    attack(['attack'], referenceLists),
+    damage(['damage'], referenceLists),
+    smite(['smite', 'kill'], referenceLists),
+    heal(['heal'], referenceLists),
+    revive(['revive', 'resurrect', 'save'], referenceLists),
+    '''
     
     helpCommand =  displayHelp(['help', '?'], commands)
     commands.append(helpCommand)
