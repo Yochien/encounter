@@ -381,16 +381,32 @@ class smite(Command):
         super().execute()
 
 class heal(Command):
-    def __init__(self, nameList, eList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
+        self.referenceLists = referenceLists
         self.description = "Directly adds to an NPC's health."
-        self.usageStr = "heal <bestiary_index> <amount>"
+        self.usageStr = "heal <encounter_index> <amount>"
     
     #Override execute
     def execute(self, args = []):
-        print("Heal")
-        super().execute()
+        encounter = self.referenceLists[1].data
+        lenArgs = len(args)
+        
+        if lenArgs == 2:
+            if isValidInt(args[0], encounter) == True:
+                npc = encounter[int(args[0]) - 1]
+                
+                origHP = npc.currentHP
+                
+                npc.currentHP = npc.currentHP + int(args[1])
+                if npc.currentHP > npc.maxHP:
+                    npc.currentHP = npc.maxHP
+                
+                healedAmt = npc.currentHP - origHP
+                
+                print(npc.name + " was healed by " + str(healedAmt) + " points.")
+        else:
+            self.usage()
 
 #TODO revive multiple NPCs at once
 class revive(Command):
@@ -494,6 +510,7 @@ def main():
         clearNPCList(['clear'], referenceLists),
         damage(['damage'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
+        heal(['heal'], referenceLists),
         status(['status'], referenceLists),
         info(['info'], referenceLists)
         ]
@@ -501,7 +518,6 @@ def main():
     removeNPC(['remove', 'clear'], referenceLists),
     attack(['attack'], referenceLists),
     smite(['smite', 'kill'], referenceLists),
-    heal(['heal'], referenceLists),
     revive(['revive', 'resurrect', 'save'], referenceLists),
     '''
     
