@@ -354,7 +354,7 @@ def smite(args):
     else:
         print("smite requires 1 argument.")
         
-def heal(args): #Should allow for negative healing I.E. harm undead
+def heal(args):
     if len(args) >= 1:
         if args[0].isnumeric() == True:
             if isValidInt(args[0], encounter) == True:
@@ -396,9 +396,8 @@ def revive(args):
             print("revive requires one argument.")
     else:
         print("Graveyard is empty. There is no one to revive.")
-                    #Should be changed to a generic change command that takes an argument for a particular stat
-                    #Should be valid for dead or alive NPCs or even the bestiary
-def changeAC(args): #Should allow one to set stat to a specific value, or change by positive or negative values
+
+def changeAC(args):
     if len(args) > 0:
         if isValidInt(args[0], encounter) == True:
             npc = encounter[int(args[0]) - 1]
