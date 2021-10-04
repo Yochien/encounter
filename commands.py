@@ -368,6 +368,7 @@ class damage(Command):
         else:
             self.usage()
 
+#TODO smite all
 class smite(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
@@ -420,7 +421,7 @@ class heal(Command):
         else:
             self.usage()
 
-#TODO revive multiple NPCs at once
+#TODO revive all
 class revive(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
