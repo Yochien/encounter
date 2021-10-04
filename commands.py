@@ -382,16 +382,19 @@ class smite(Command):
         graveyard = self.referenceLists[2].data
         lenArgs = len(args)
         
-        if lenArgs == 1:
-            if isValidInt(args[0], encounter) == True:
-                print(encounter[int(args[0]) - 1].name + " was defeated.")
-                graveyard.append(encounter[int(args[0]) - 1])
-                encounter.pop(int(args[0]) - 1)
-                
-                if len(encounter) == 0:
-                    print("Party has defeated all enemies.")
+        if len(encounter) > 0:
+            if lenArgs == 1:
+                if isValidInt(args[0], encounter) == True:
+                    print(encounter[int(args[0]) - 1].name + " was defeated.")
+                    graveyard.append(encounter[int(args[0]) - 1])
+                    encounter.pop(int(args[0]) - 1)
+                    
+                    if len(encounter) == 0:
+                        print("Party has defeated all enemies.")
+            else:
+                self.usage()
         else:
-            self.usage()
+            print("Encounter list is empty. There is no one to smite.")
 
 class heal(Command):
     def __init__(self, nameList, referenceLists):
@@ -435,13 +438,16 @@ class revive(Command):
         graveyard = self.referenceLists[2].data
         lenArgs = len(args)
         
-        if lenArgs == 1:
-            if isValidInt(args[0], graveyard) == True:
-                encounter.append(graveyard[int(args[0]) - 1])
-                graveyard.pop(int(args[0]) - 1)
-                print(encounter[-1].name + " has been revived.")
+        if len(graveyard) > 0:
+            if lenArgs == 1:
+                if isValidInt(args[0], graveyard) == True:
+                    encounter.append(graveyard[int(args[0]) - 1])
+                    graveyard.pop(int(args[0]) - 1)
+                    print(encounter[-1].name + " has been revived.")
+            else:
+                self.usage()
         else:
-            self.usage()
+            print("Graveyard list is empty. There is no one to revive.")
 
 class debuff(Command):
     def __init__(self, nameList, referenceLists):
