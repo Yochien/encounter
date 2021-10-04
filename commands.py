@@ -369,16 +369,28 @@ class damage(Command):
             self.usage()
 
 class smite(Command):
-    def __init__(self, nameList, eList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
+        self.referenceLists = referenceLists
         self.description = "Immediately kills an NPC."
         self.usageStr = "smite <bestiary_index>"
     
     #Override execute
     def execute(self, args = []):
-        print("Smite")
-        super().execute()
+        encounter = self.referenceLists[1].data
+        graveyard = self.referenceLists[2].data
+        lenArgs = len(args)
+        
+        if lenArgs == 1:
+            if isValidInt(args[0], encounter) == True:
+                print(encounter[int(args[0]) - 1].name + " was defeated.")
+                graveyard.append(encounter[int(args[0]) - 1])
+                encounter.pop(int(args[0]) - 1)
+                
+                if len(encounter) == 0:
+                    print("Party has defeated all enemies.")
+        else:
+            self.usage()
 
 class heal(Command):
     def __init__(self, nameList, referenceLists):
@@ -508,6 +520,7 @@ def main():
         displayMenu(['list', 'display'], referenceLists),
         addNPC(['add'], referenceLists),
         clearNPCList(['clear'], referenceLists),
+        smite(['smite', 'kill'], referenceLists),
         damage(['damage'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
         heal(['heal'], referenceLists),
@@ -517,7 +530,6 @@ def main():
     '''
     removeNPC(['remove', 'clear'], referenceLists),
     attack(['attack'], referenceLists),
-    smite(['smite', 'kill'], referenceLists),
     revive(['revive', 'resurrect', 'save'], referenceLists),
     '''
     
