@@ -422,16 +422,25 @@ class heal(Command):
 
 #TODO revive multiple NPCs at once
 class revive(Command):
-    def __init__(self, nameList, gList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.gList = gList
+        self.referenceLists = referenceLists
         self.description = "Brings an NPC back from the graveyard."
         self.usageStr = "revive <graveyard_index>"
     
     #Override execute
     def execute(self, args = []):
-        print("Revive")
-        super().execute()
+        encounter = self.referenceLists[1].data
+        graveyard = self.referenceLists[2].data
+        lenArgs = len(args)
+        
+        if lenArgs == 1:
+            if isValidInt(args[0], graveyard) == True:
+                encounter.append(graveyard[int(args[0]) - 1])
+                graveyard.pop(int(args[0]) - 1)
+                print(encounter[-1].name + " has been revived.")
+        else:
+            self.usage()
 
 class debuff(Command):
     def __init__(self, nameList, referenceLists):
@@ -521,6 +530,7 @@ def main():
         addNPC(['add'], referenceLists),
         clearNPCList(['clear'], referenceLists),
         smite(['smite', 'kill'], referenceLists),
+        revive(['revive', 'resurrect', 'save'], referenceLists),
         damage(['damage'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
         heal(['heal'], referenceLists),
@@ -530,7 +540,6 @@ def main():
     '''
     removeNPC(['remove', 'clear'], referenceLists),
     attack(['attack'], referenceLists),
-    revive(['revive', 'resurrect', 'save'], referenceLists),
     '''
     
     helpCommand =  displayHelp(['help', '?'], commands)
