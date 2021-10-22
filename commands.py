@@ -404,6 +404,7 @@ class damage(Command):
     #Override execute
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
+        graveyard = self.referenceLists[2].data
         lenArgs = len(args)
         
         if lenArgs == 2:
@@ -412,7 +413,7 @@ class damage(Command):
                 npc.currentHP = npc.currentHP - int(args[1])
                 if npc.currentHP <= 0:
                     print(npc.name + " has been defeated.")
-                    referenceLists[2].data.append(npc)
+                    graveyard.append(npc)
                     encounter.pop(int(args[0]) - 1)
                     if len(encounter) == 0:
                         print("Party has defeated all enemies.")
