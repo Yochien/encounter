@@ -314,22 +314,73 @@ class clearNPCList(Command):
         else:
             self.usage()
 
-#TODO Could be made more generic with list and menu
-#     (perhaps use a helper command?) for final implementation
+def removeDuplicates(selected):
+    filtered = []
+    for i in selected:
+        if i not in filtered:
+            filtered.append(i)
+    return filtered
+
+def reverseSort(filtered):
+    reversed = []
+    for i in filtered:
+        reversed.append(i)
+    reversed.sort(reverse = True)
+    return reversed
+
 class removeNPC(Command):
-    def __init__(self, nameList, eList, gList, eMenu, gMenu):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
-        self.gList = gList
-        self.eMenu = eMenu
-        self.gMenu = gMenu
+        self.referenceLists = referenceLists
         self.description = "Removes an NPC from a list."
         self.usageStr = "remove <bestiary_index,...> {encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
-        print("Remove")
-        super().execute()
+        lenArgs = len(args)
+        
+        if lenArgs == 2:
+            if args[0] == "all":
+                if args[1] == "all":
+                    for l in self.referenceLists:
+                        l.data.clear()
+                        print(l.toMenu())
+                        print("")
+                else:
+                    for l in self.referenceLists:
+                        if args[1] in l.nameList:
+                            l.data.clear()
+                            break
+            else:
+                selected = args[0].split(",")
+                valid = True
+                
+                for i in selected:
+                    if not isInt(i):
+                        valid = False
+                        break
+                
+                if valid:
+                    selected = removeDuplicates(selected)
+                    selected = reverseSort(selected)
+                    
+                    found = False
+                    
+                    for l in self.referenceLists:
+                        if args[1] in l.nameList:
+                            found = True
+                            if isValidInt(selected, l.data):
+                                for i in selected:
+                                    l.data.pop(int(i) - 1)
+                                print(l.toMenu())
+                                print("")
+                            break
+                    if not found:
+                        print("Selected an unknown list.")
+                else:
+                    print("Selected an invalid NPC.")
+        else:
+            self.usage()
 
 class attack(Command):
     def __init__(self, nameList, eList):
@@ -541,11 +592,11 @@ def main():
         damage(['damage'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
         heal(['heal'], referenceLists),
+        removeNPC(['remove', 'clear'], referenceLists),
         status(['status'], referenceLists),
         info(['info'], referenceLists)
         ]
     '''
-    removeNPC(['remove', 'clear'], referenceLists),
     attack(['attack'], referenceLists),
     '''
     
