@@ -383,16 +383,77 @@ class removeNPC(Command):
             self.usage()
 
 class attack(Command):
-    def __init__(self, nameList, eList):
+    def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
-        self.eList = eList
+        self.referenceLists = referenceLists
         self.description = "Initiantiates D&D like combat with and NPC."
         self.usageStr = "attack <bestiary_index> [hit] [damage]"
     
     #Override execute
     def execute(self, args = []):
-        print("Attack")
-        super().execute()
+        encounter = self.referenceLists[1].data
+        graveyard = self.referenceLists[2].data
+        lenArgs = len(args)
+        npc = None
+
+        if lenArgs == 3:
+            if isValidInt(args[0], encounter) == True:
+                npc = encounter[int(args[0]) - 1]
+                if int(args[1]) >= npc.ac:
+                    if args[2].isnumeric() == True:
+                        npc.currentHP = npc.currentHP - int(args[2])
+                        print(npc.name + " took " + args[2] + " damage.")
+                    else:
+                        print("Damage must be a number.")
+                else:
+                    print("Attack misses " + npc.name + ".")
+            else:
+                self.usage()
+        elif lenArgs == 2:
+            if isValidInt(args[0], encounter) == True:
+                npc = encounter[int(args[0]) - 1]
+                if int(args[1]) >= npc.ac:
+                    damage = input("Roll for damage: ")
+                    if damage.isnumeric() == True:
+                        amt = int(damage)
+                        npc.currentHP = npc.currentHP - amt
+                        print(npc.name + " took " + damage + " damage.")
+                    else:
+                        print("Damage must be a number.")
+                else:
+                    print("Attack misses " + npc.name + ".")
+            else:
+                self.usage()
+        elif lenArgs == 1:
+            if isValidInt(args[0], encounter) == True:
+                npc = encounter[int(args[0]) - 1]
+                accuracy = input("Roll for hit: ")
+                if accuracy.isnumeric() == True:
+                    accuracy = int(accuracy)
+                    if accuracy >= npc.ac:
+                        damage = input("Roll for damage: ")
+                        if damage.isnumeric() == True:
+                            amt = int(damage)
+                            npc.currentHP = npc.currentHP - amt
+                            print(npc.name + " took " + damage + " damage.")
+                        else:
+                            print("Damage must be a number.")
+                    else:
+                        print("Attack misses " + npc.name + ".")
+                else:
+                    print("Accuracy must be a number.")
+            else:
+                self.usage()
+        else:
+            self.usage()
+        
+        if npc != None:
+            if npc.currentHP <= 0:
+                print(npc.name + " has been defeated.")
+                graveyard.append(npc)
+                encounter.pop(int(args[0]) - 1)
+                if len(encounter) == 0:
+                    print("Party has defeated all enemies.")
 
 class damage(Command):
     def __init__(self, nameList, referenceLists):
@@ -591,18 +652,15 @@ def main():
         smite(['smite', 'kill'], referenceLists),
         revive(['revive', 'resurrect', 'save'], referenceLists),
         damage(['damage'], referenceLists),
+        attack(['attack'], referenceLists),
         debuff(['debuff', 'change'], referenceLists),
         heal(['heal'], referenceLists),
         removeNPC(['remove', 'clear'], referenceLists),
         status(['status'], referenceLists),
         info(['info'], referenceLists)
         ]
-    '''
-    attack(['attack'], referenceLists),
-    '''
     
-    helpCommand =  displayHelp(['help', '?'], commands)
-    commands.append(helpCommand)
+    commands.append(displayHelp(['help', '?'], commands))
     
     #Load default bestiary
     commands[0].execute(["bestiary.txt"])
