@@ -1,6 +1,6 @@
 # encounter
 
-**Version 4.13.4**
+**Version 4.13.5**
 
 A script that manages a combat encounter for tabletop rpgs.
 Run with python command in your shell environment.
