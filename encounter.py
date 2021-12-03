@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-#TODO implement settings
-#Make lists generic with new type of list (name and other stored info)
 
 class Command(ABC):
     def __init__(self, nameList):
@@ -91,7 +89,6 @@ class NPCList:
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
 
-#TODO append option & import folder functionality
 class load(Command):
     def __init__(self, nameList, bestiary):
         super().__init__(nameList)
@@ -279,7 +276,6 @@ class addNPC(Command):
         else:
             self.usage()
 
-#TODO setting to make no argument clear all
 class clearNPCList(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
@@ -481,7 +477,6 @@ class damage(Command):
         else:
             self.usage()
 
-#TODO smite all
 class smite(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
@@ -537,7 +532,6 @@ class heal(Command):
         else:
             self.usage()
 
-#TODO revive all
 class revive(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
@@ -698,8 +692,6 @@ def main():
         if not found:
             print("Unrecognized command.")
             print("Type help or ? to learn how to use availible commands.")
-        
-        #TODO Check for deaths in encounter list. Display message and move to graveyard
         
 if __name__ == "__main__":
     main()
