@@ -244,35 +244,38 @@ class addNPC(Command):
         
         if numArgs == 2 or numArgs == 1:
             selected = args[0].split(",")
-            valid = True
             #Check if the selector is made of all integers
             for i in selected:
                 if not isInt(i):
-                    valid = False
+                    self.usage()
+                    return
             
             #Check if selectors are within range of the bestiary
-            if valid:
-                for i in selected:
-                    if int(i) > len(bestiary) or int(i) <= 0:
-                        valid = False
-                        break
+            for i in selected:
+                if int(i) > len(bestiary) or int(i) <= 0:
+                    self.usage()
+                    return
             
             #If all above checks are passed, then execute logic
-            if valid:
-                if numArgs == 2 and args[1].lower() not in self.referenceLists[0].nameList:
-                    for l in self.referenceLists:
-                        if args[1] in l.nameList:
-                            for n in selected:
-                                npcCopy(bestiary, n, l.data)
-                            print(l.toMenu())
-                            print("")
-                elif numArgs == 1:
-                    for n in selected:
-                        npcCopy(bestiary, n, self.referenceLists[1].data)
-                    print(self.referenceLists[1].toMenu())
-                    print("")
-            else:
-                self.usage()
+            if numArgs == 2:
+                if args[1].lower() in self.referenceLists[0].nameList:
+                    self.usage()
+                    return
+                found = False
+                for l in self.referenceLists:
+                    if args[1] in l.nameList:
+                        found = True
+                        for n in selected:
+                            npcCopy(bestiary, n, l.data)
+                        print(l.toMenu())
+                        print("")
+                if not found:
+                    print("Unknown list selected.")
+            elif numArgs == 1:
+                for n in selected:
+                    npcCopy(bestiary, n, self.referenceLists[1].data)
+                print(self.referenceLists[1].toMenu())
+                print("")
         else:
             self.usage()
 
