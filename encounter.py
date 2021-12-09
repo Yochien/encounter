@@ -332,7 +332,7 @@ class removeNPC(Command):
         super().__init__(nameList)
         self.referenceLists = referenceLists
         self.description = "Removes an NPC from a list."
-        self.usageStr = "remove <bestiary_index,...> {encounter | graveyard}"
+        self.usageStr = "remove <list_index,...> {encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
@@ -349,35 +349,33 @@ class removeNPC(Command):
                     for l in self.referenceLists:
                         if args[1] in l.nameList:
                             l.data.clear()
+                            print(l.toMenu())
+                            print("")
                             break
             else:
                 selected = args[0].split(",")
-                valid = True
                 
                 for i in selected:
                     if not isInt(i):
-                        valid = False
-                        break
+                        print("Selected an invalid NPC.")
+                        return
                 
-                if valid:
-                    selected = removeDuplicates(selected)
-                    selected = reverseSort(selected)
-                    
-                    found = False
-                    
-                    for l in self.referenceLists:
-                        if args[1] in l.nameList:
-                            found = True
-                            if isValidInt(selected, l.data):
-                                for i in selected:
-                                    l.data.pop(int(i) - 1)
-                                print(l.toMenu())
-                                print("")
-                            break
-                    if not found:
-                        print("Selected an unknown list.")
-                else:
-                    print("Selected an invalid NPC.")
+                selected = removeDuplicates(selected)
+                selected = reverseSort(selected)
+                
+                found = False
+                
+                for l in self.referenceLists:
+                    if args[1] in l.nameList:
+                        found = True
+                        if isValidInt(selected, l.data):
+                            for i in selected:
+                                l.data.pop(int(i) - 1)
+                            print(l.toMenu())
+                            print("")
+                        break
+                if not found:
+                    print("Selected an unknown list.")
         else:
             self.usage()
 
