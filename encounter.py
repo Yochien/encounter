@@ -556,6 +556,7 @@ class revive(Command):
             if lenArgs == 1:
                 if isValidInt(args[0], graveyard) == True:
                     encounter.append(graveyard[int(args[0]) - 1])
+                    encounter[-1].currentHP = 1
                     graveyard.pop(int(args[0]) - 1)
                     print(encounter[-1].name + " has been revived.")
             else:
