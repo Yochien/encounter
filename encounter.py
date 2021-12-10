@@ -466,6 +466,9 @@ class damage(Command):
         lenArgs = len(args)
         
         if lenArgs == 2:
+            if not isInt(args[1]):
+                self.usage()
+                return
             if isValidInt(args[0], encounter) == True:
                 npc = encounter[int(args[0]) - 1]
                 npc.currentHP = npc.currentHP - int(args[1])
@@ -518,6 +521,9 @@ class heal(Command):
         lenArgs = len(args)
         
         if lenArgs == 2:
+            if not isInt(args[1]):
+                self.usage()
+                return
             if isValidInt(args[0], encounter) == True:
                 npc = encounter[int(args[0]) - 1]
                 
