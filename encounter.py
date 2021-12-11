@@ -173,8 +173,8 @@ class displayMenu(Command):
         super().__init__()
         self.nameList = ['list', 'display']
         self.referenceLists = referenceLists
-        self.description = "Prints all NPCs in a list."
-        self.usageStr = "list [bestiary | encounter | combat | graveyard | all]"
+        self.description = "Displays a list of NPCs, or all lists with a given tag."
+        self.usageStr = "list [all | combat | bestiary | encounter | graveyard]"
     
     #Override execute
     def execute(self, args = []):
@@ -280,8 +280,8 @@ class clearNPCList(Command):
         super().__init__()
         self.nameList = ['clear']
         self.referenceLists = referenceLists
-        self.description = "Clears a list of NPCs."
-        self.usageStr = "clear {all | encounter | graveyard}"
+        self.description = "Clears a list of NPCs, or all lists with a given tag."
+        self.usageStr = "clear {all | combat | encounter | graveyard}"
     
     #Override execute
     def execute(self, args = []):
