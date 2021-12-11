@@ -89,6 +89,12 @@ class NPCList:
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
 
+def findList(name, referenceLists):
+    for l in referenceLists:
+        if name in l.nameList:
+            return l
+    return None
+
 class load(Command):
     def __init__(self, bestiary):
         super().__init__()
@@ -623,7 +629,7 @@ def main():
         NPCList(['graveyard', 'g'], ['combat'], [])
         ]
     
-    bestiary = referenceLists[0]
+    bestiary = findList("bestiary", referenceLists)
     
     #Instantiate commands
     commands = [
