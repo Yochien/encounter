@@ -556,16 +556,6 @@ class revive(Command):
         else:
             print("Graveyard list is empty. There is no one to revive.")
 
-class debuff(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
-        self.referenceLists = referenceLists
-    
-    #Override execute
-    def execute(self, args = []):
-        print("Debuff")
-        super().execute()
-
 class status(Command):
     def __init__(self, nameList, referenceLists):
         super().__init__(nameList)
@@ -647,7 +637,6 @@ def main():
         revive(['revive', 'resurrect', 'save'], referenceLists),
         damage(['damage'], referenceLists),
         attack(['attack'], referenceLists),
-        debuff(['debuff', 'change'], referenceLists),
         heal(['heal'], referenceLists),
         removeNPC(['remove', 'clear'], referenceLists),
         status(['status'], referenceLists),
