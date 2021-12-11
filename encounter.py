@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 class Command(ABC):
-    def __init__(self, nameList):
-        self.nameList = nameList
+    def __init__(self):
+        self.nameList = ["Command","Test"]
         self.description = "This Command has no defined description yet."
         self.usageStr = "This Command has no defined usage yet."
     
@@ -90,8 +90,9 @@ class NPCList:
         return info
 
 class load(Command):
-    def __init__(self, nameList, bestiary):
-        super().__init__(nameList)
+    def __init__(self, bestiary):
+        super().__init__()
+        self.nameList = ['load']
         self.bestiary = bestiary
         self.description = "Replaces the default bestiary."
         self.usageStr = "load <file_name>"
@@ -126,8 +127,9 @@ class load(Command):
             self.usage()
 
 class displayHelp(Command):
-    def __init__(self, nameList, commandList):
-        super().__init__(nameList)
+    def __init__(self, commandList):
+        super().__init__()
+        self.nameList = ['help', '?']
         self.commandList = commandList
         self.description = "Prints a list of availible commands."
         self.usageStr = "help [command_name]"
@@ -167,8 +169,9 @@ class displayHelp(Command):
                 self.usage()
 
 class displayMenu(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['list', 'display']
         self.referenceLists = referenceLists
         self.description = "Prints all NPCs in a list."
         self.usageStr = "list [bestiary | encounter | combat | graveyard | all]"
@@ -223,8 +226,9 @@ def npcCopy(bestiaryList, index, npcList):
     npcList.append(npc)
 
 class addNPC(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['add']
         self.referenceLists = referenceLists
         self.description = "Adds an NPC to a list. Defaults to the encounter list."
         self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
@@ -272,8 +276,9 @@ class addNPC(Command):
             self.usage()
 
 class clearNPCList(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['clear']
         self.referenceLists = referenceLists
         self.description = "Clears a list of NPCs."
         self.usageStr = "clear {all | encounter | graveyard}"
@@ -305,23 +310,10 @@ class clearNPCList(Command):
         else:
             self.usage()
 
-def removeDuplicates(selected):
-    filtered = []
-    for i in selected:
-        if i not in filtered:
-            filtered.append(i)
-    return filtered
-
-def reverseSort(filtered):
-    reversed = []
-    for i in filtered:
-        reversed.append(i)
-    reversed.sort(reverse = True)
-    return reversed
-
 class removeNPC(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['remove', 'clear']
         self.referenceLists = referenceLists
         self.description = "Removes an NPC from a list."
         self.usageStr = "remove <list_index,...> {encounter | graveyard}"
@@ -352,11 +344,10 @@ class removeNPC(Command):
                         print("Selected an invalid NPC.")
                         return
                 
-                selected = removeDuplicates(selected)
-                selected = reverseSort(selected)
+                # Remove duplicates and reverse sort the input
+                selected = sorted(list(set(selected)), reverse = True)
                 
                 found = False
-                
                 for l in self.referenceLists:
                     if args[1] in l.nameList:
                         found = True
@@ -372,8 +363,9 @@ class removeNPC(Command):
             self.usage()
 
 class attack(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['attack']
         self.referenceLists = referenceLists
         self.description = "Initiantiates D&D like combat with and NPC."
         self.usageStr = "attack <bestiary_index> [hit] [damage]"
@@ -445,8 +437,9 @@ class attack(Command):
                     print("Party has defeated all enemies.")
 
 class damage(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['damage']
         self.referenceLists = referenceLists
         self.description = "Directly subtracts from an NPC's health."
         self.usageStr = "damage <encounter_index> <amount>"
@@ -474,8 +467,9 @@ class damage(Command):
             self.usage()
 
 class smite(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['smite', 'kill']
         self.referenceLists = referenceLists
         self.description = "Immediately kills an NPC."
         self.usageStr = "smite <bestiary_index>"
@@ -501,8 +495,9 @@ class smite(Command):
             print("Encounter list is empty. There is no one to smite.")
 
 class heal(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['heal']
         self.referenceLists = referenceLists
         self.description = "Directly adds to an NPC's health."
         self.usageStr = "heal <encounter_index> <amount>"
@@ -532,8 +527,9 @@ class heal(Command):
             self.usage()
 
 class revive(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['revive', 'resurrect', 'save']
         self.referenceLists = referenceLists
         self.description = "Brings an NPC back from the graveyard."
         self.usageStr = "revive <graveyard_index>"
@@ -557,8 +553,9 @@ class revive(Command):
             print("Graveyard list is empty. There is no one to revive.")
 
 class status(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['status']
         self.referenceLists = referenceLists
         self.description = "Displays an NPC's current stats."
         self.usageStr = "status <index> {encounter | graveyard}"
@@ -587,8 +584,9 @@ class status(Command):
             self.usage()
 
 class info(Command):
-    def __init__(self, nameList, referenceLists):
-        super().__init__(nameList)
+    def __init__(self, referenceLists):
+        super().__init__()
+        self.nameList = ['info']
         self.referenceLists = referenceLists
         self.description = "Displays an NPC's detailed stats."
         self.usageStr = "info <index> {bestiary | encounter | graveyard}"
@@ -629,21 +627,21 @@ def main():
     
     #Instantiate commands
     commands = [
-        load(['load'], bestiary),
-        displayMenu(['list', 'display'], referenceLists),
-        addNPC(['add'], referenceLists),
-        clearNPCList(['clear'], referenceLists),
-        smite(['smite', 'kill'], referenceLists),
-        revive(['revive', 'resurrect', 'save'], referenceLists),
-        damage(['damage'], referenceLists),
-        attack(['attack'], referenceLists),
-        heal(['heal'], referenceLists),
-        removeNPC(['remove', 'clear'], referenceLists),
-        status(['status'], referenceLists),
-        info(['info'], referenceLists)
+        load(bestiary),
+        displayMenu(referenceLists),
+        addNPC(referenceLists),
+        removeNPC(referenceLists),
+        clearNPCList(referenceLists),
+        smite(referenceLists),
+        revive(referenceLists),
+        damage(referenceLists),
+        attack(referenceLists),
+        heal(referenceLists),
+        status(referenceLists),
+        info(referenceLists)
         ]
     
-    commands.append(displayHelp(['help', '?'], commands))
+    commands.append(displayHelp(commands))
     
     #Load default bestiary
     commands[0].execute(["bestiary.txt"])
