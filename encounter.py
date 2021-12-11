@@ -386,22 +386,42 @@ class attack(Command):
         npc = None
 
         if lenArgs == 3:
-            if isValidInt(args[0], encounter) == True:
-                npc = encounter[int(args[0]) - 1]
-                if int(args[1]) >= npc.ac:
-                    if args[2].isnumeric() == True:
-                        npc.currentHP = npc.currentHP - int(args[2])
-                        print(npc.name + " took " + args[2] + " damage.")
-                    else:
-                        print("Damage must be a number.")
-                else:
-                    print("Attack misses " + npc.name + ".")
-            else:
+            if not isValidInt(args[0], encounter) or not isInt(args[1]) or not isInt(args[2]):
                 self.usage()
+                return
+            
+            npc = encounter[int(args[0]) - 1]
+            if int(args[1]) >= npc.ac:
+                npc.currentHP = npc.currentHP - int(args[2])
+                print(npc.name + " took " + args[2] + " damage.")
+            else:
+                print("Attack misses " + npc.name + ".")
         elif lenArgs == 2:
-            if isValidInt(args[0], encounter) == True:
-                npc = encounter[int(args[0]) - 1]
-                if int(args[1]) >= npc.ac:
+            if not isValidInt(args[0], encounter) or not isInt(args[1]):
+                self.usage()
+                return
+            
+            npc = encounter[int(args[0]) - 1]
+            if int(args[1]) >= npc.ac:
+                damage = input("Roll for damage: ")
+                if damage.isnumeric() == True:
+                    amt = int(damage)
+                    npc.currentHP = npc.currentHP - amt
+                    print(npc.name + " took " + damage + " damage.")
+                else:
+                    print("Damage must be a number.")
+            else:
+                print("Attack misses " + npc.name + ".")
+        elif lenArgs == 1:
+            if not isValidInt(args[0], encounter):
+                self.usage()
+                return
+            
+            npc = encounter[int(args[0]) - 1]
+            accuracy = input("Roll for hit: ")
+            if accuracy.isnumeric() == True:
+                accuracy = int(accuracy)
+                if accuracy >= npc.ac:
                     damage = input("Roll for damage: ")
                     if damage.isnumeric() == True:
                         amt = int(damage)
@@ -412,27 +432,7 @@ class attack(Command):
                 else:
                     print("Attack misses " + npc.name + ".")
             else:
-                self.usage()
-        elif lenArgs == 1:
-            if isValidInt(args[0], encounter) == True:
-                npc = encounter[int(args[0]) - 1]
-                accuracy = input("Roll for hit: ")
-                if accuracy.isnumeric() == True:
-                    accuracy = int(accuracy)
-                    if accuracy >= npc.ac:
-                        damage = input("Roll for damage: ")
-                        if damage.isnumeric() == True:
-                            amt = int(damage)
-                            npc.currentHP = npc.currentHP - amt
-                            print(npc.name + " took " + damage + " damage.")
-                        else:
-                            print("Damage must be a number.")
-                    else:
-                        print("Attack misses " + npc.name + ".")
-                else:
-                    print("Accuracy must be a number.")
-            else:
-                self.usage()
+                print("Accuracy must be a number.")
         else:
             self.usage()
         
