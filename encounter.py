@@ -606,7 +606,7 @@ class info(Command):
                 for l in self.referenceLists:
                     if args[1] in l.nameList:
                         found = True
-                        if isValidInt([args[0]], l.data):
+                        if isValidInt(args[0], l.data):
                             print("INFO:")
                             print("NAME: " + l.data[int(args[0]) - 1].name)
                             print("HP: " + str(l.data[int(args[0]) - 1].currentHP))
