@@ -208,20 +208,12 @@ def isInt(string):
             return True
 
 def isValidInt(selector, npcList):
-    valid = True
+    selector = selector.split(",")
     for s in selector:
-        if isInt(s) == False:
-            valid = False
-            break
-    if valid == True:
-        for s in selector:
-            if int(s) > len(npcList) or int(s) <= 0:
-                valid = False
-                break
-    if valid == False:
-        print("One or more inputs are invalid in this context.")
-
-    return valid
+        if not isInt(s) or int(s) <= 0 or int(s) > len(npcList) :
+            print("One or more inputs are invalid in this context.")
+            return False
+    return True
 
 def npcCopy(bestiaryList, index, npcList):
     name = bestiaryList[int(index) - 1].name
@@ -591,7 +583,7 @@ class status(Command):
                     #TODO better error reporting here. currently ambiguous
                     if args[1].lower() not in self.referenceLists[0].nameList and args[1] in l.nameList:
                         found = True
-                        if isValidInt([args[0]], l.data):
+                        if isValidInt(args[0], l.data):
                             print("Status:")
                             print(l.data[int(args[0]) - 1].name + " " + "[" + str(l.data[int(args[0]) - 1].currentHP) + " / " + str(l.data[int(args[0]) - 1].maxHP) + "]")
                             break
