@@ -298,7 +298,7 @@ class clearNPCList(Command):
                 else:
                     found = False
                     for l in self.referenceLists:
-                        if args[0] in l.nameList or args[0] in l.tags:
+                        if args[0].lower() in l.nameList or args[0].lower() in l.tags:
                             found = True
                             l.data.clear()
                             print(l.toMenu())
@@ -313,7 +313,7 @@ class clearNPCList(Command):
 class removeNPC(Command):
     def __init__(self, referenceLists):
         super().__init__()
-        self.nameList = ['remove', 'clear']
+        self.nameList = ['remove']
         self.referenceLists = referenceLists
         self.description = "Removes an NPC from a list."
         self.usageStr = "remove <list_index,...> {encounter | graveyard}"
