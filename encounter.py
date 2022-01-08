@@ -581,7 +581,7 @@ class status(Command):
                             print(l.data[int(args[0]) - 1].name + " " + "[" + str(l.data[int(args[0]) - 1].currentHP) + " / " + str(l.data[int(args[0]) - 1].maxHP) + "]")
                             break
                         else:
-                            self.usage
+                            self.usage()
                 if not found:
                     print("Unknown list selected.")
             else:
@@ -614,7 +614,7 @@ class info(Command):
                             print("AC: " + str(l.data[int(args[0]) - 1].ac))
                             break
                         else:
-                            self.usage
+                            self.usage()
                 if not found:
                     print("Unknown list selected.")
             else:
