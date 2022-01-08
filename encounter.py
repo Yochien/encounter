@@ -357,7 +357,7 @@ class removeNPC(Command):
                 for l in self.referenceLists:
                     if args[1] in l.nameList:
                         found = True
-                        if isValidInt(selected, l.data):
+                        if isValidInt(args[0], l.data):
                             for i in selected:
                                 l.data.pop(int(i) - 1)
                             print(l.toMenu())
