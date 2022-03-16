@@ -1,42 +1,44 @@
 from abc import ABC, abstractmethod
 
+
 class Command(ABC):
     def __init__(self):
-        self.nameList = ["Command","Test"]
+        self.nameList = ["Command", "Test"]
         self.description = "This Command has no defined description yet."
         self.usageStr = "This Command has no defined usage yet."
-    
+
     def usage(self):
         print("Usage: " + self.usageStr)
-    
+
     @abstractmethod
     def execute(self, args = []):
         print("This Command has not been implemented yet.")
 
+
 class NPC:
     def __init__(self, name, maxHP, ac):
-        #Type assertions
+        # Type assertions
         if type(name) != str:
             raise TypeError("Argument name must be a string.")
         if type(maxHP) != int:
             raise TypeError("Argument HP must be an integer.")
         if type(ac) != int:
             raise TypeError("Argument AC must be an integer.")
-        
-        #Value assestions
+
+        # Value assestions
         if ac < 0:
             raise ValueError("Argument out of valid range. AC must be at least 0.")
         if maxHP < 1:
             raise ValueError("Argument out of valid range. HP must be at least 1.")
-        
-        #Value assignment
+
+        # Value assignment
         self.name = name
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
-    
+
     def __str__(self):
         return self.name
-    
+
     def equals(self, other):
         if self == other:
             return True
@@ -51,7 +53,7 @@ class NPC:
         if self.ac != other.ac:
             return False
         return True
-    
+
     def toString(self):
         info = ""
         info += "NAME: " + str(self.name) + "\n"
@@ -59,9 +61,10 @@ class NPC:
         info += "AC: " + str(self.ac)
         return info
 
+
 class NPCList:
     def __init__(self, nameList, tags, data):
-        #Error Checking
+        # Error Checking
         if type(nameList) != list:
             raise TypeError("Argument nameList must be a list of strings.")
         if type(tags) != list:
@@ -71,8 +74,8 @@ class NPCList:
 
         if len(nameList) == 0:
             raise ValueError("Argument nameList must contain at least one entry.")
-        
-        #Value assignment
+
+        # Value assignment
         self.nameList = nameList
         self.name = nameList[0]
         self.tags = tags
@@ -80,7 +83,7 @@ class NPCList:
 
     def toMenu(self):
         info = self.name.upper() + ":\n"
-        
+
         if len(self.data) == 0:
             info += "EMPTY"
         else:
@@ -89,11 +92,13 @@ class NPCList:
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
         return info
 
+
 def findList(name, referenceLists):
     for l in referenceLists:
         if name in l.nameList:
             return l
     return None
+
 
 class load(Command):
     def __init__(self, bestiary):
@@ -102,11 +107,10 @@ class load(Command):
         self.bestiary = bestiary
         self.description = "Replaces the default bestiary."
         self.usageStr = "load <file_name>"
-    
-    #Override execute
+
     def execute(self, args = []):
         numArgs = len(args)
-        
+
         if numArgs == 1:
             try:
                 bestiaryFile = open(args[0])
@@ -132,6 +136,7 @@ class load(Command):
         else:
             self.usage()
 
+
 class displayHelp(Command):
     def __init__(self, commandList):
         super().__init__()
@@ -139,11 +144,10 @@ class displayHelp(Command):
         self.commandList = commandList
         self.description = "Prints a list of availible commands."
         self.usageStr = "help [command_name]"
-    
-    #Override execute
+
     def execute(self, args = []):
         numArgs = len(args)
-        
+
         if numArgs == 1:
             if args[0].lower() in ["quit", "q", "exit"]:
                 print("Exits the program.")
@@ -156,7 +160,7 @@ class displayHelp(Command):
                         command.usage()
                         found = True
                         break
-                
+
                 if not found:
                     print("Unrecognized command.")
                     print("Type help or ? to learn how to use availible commands.")
@@ -174,6 +178,7 @@ class displayHelp(Command):
             else:
                 self.usage()
 
+
 class displayMenu(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -181,20 +186,19 @@ class displayMenu(Command):
         self.referenceLists = referenceLists
         self.description = "Displays a list of NPCs, or all lists with a given tag."
         self.usageStr = "list [all | combat | bestiary | encounter | graveyard]"
-    
-    #Override execute
+
     def execute(self, args = []):
         numArgs = len(args)
-        
+
         if numArgs == 1 and args[0] != "all":
             found = False
-            
+
             for l in self.referenceLists:
                 if args[0] in l.nameList or args[0] in l.tags:
                     found = True
                     print(l.toMenu())
                     print("")
-            
+
             if not found:
                 print("Unknown list selected.")
         else:
@@ -204,6 +208,7 @@ class displayMenu(Command):
                     print("")
             else:
                 self.usage()
+
 
 def isInt(string):
     if string.isnumeric():
@@ -216,6 +221,7 @@ def isInt(string):
         else:
             return True
 
+
 def isValidInt(selector, npcList):
     selector = selector.split(",")
     for s in selector:
@@ -224,12 +230,14 @@ def isValidInt(selector, npcList):
             return False
     return True
 
+
 def npcCopy(bestiaryList, index, npcList):
     name = bestiaryList[int(index) - 1].name
     hp = bestiaryList[int(index) - 1].maxHP
     ac = bestiaryList[int(index) - 1].ac
     npc = NPC(name, hp, ac)
     npcList.append(npc)
+
 
 class addNPC(Command):
     def __init__(self, referenceLists):
@@ -238,27 +246,26 @@ class addNPC(Command):
         self.referenceLists = referenceLists
         self.description = "Adds an NPC to a list. Defaults to the encounter list."
         self.usageStr = "add <bestiary_index,...> {encounter | graveyard}"
-    
-    #Override execute
+
     def execute(self, args = []):
         numArgs = len(args)
         bestiary = self.referenceLists[0].data
-        
+
         if numArgs == 2 or numArgs == 1:
             selected = args[0].split(",")
-            #Check if the selector is made of all integers
+            # Check if the selector is made of all integers
             for i in selected:
                 if not isInt(i):
                     self.usage()
                     return
-            
-            #Check if selectors are within range of the bestiary
+
+            # Check if selectors are within range of the bestiary
             for i in selected:
                 if int(i) > len(bestiary) or int(i) <= 0:
                     self.usage()
                     return
-            
-            #If all above checks are passed, then execute logic
+
+            # If all above checks are passed, then execute logic
             if numArgs == 2:
                 if args[1].lower() in self.referenceLists[0].nameList:
                     self.usage()
@@ -281,6 +288,7 @@ class addNPC(Command):
         else:
             self.usage()
 
+
 class clearNPCList(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -288,11 +296,10 @@ class clearNPCList(Command):
         self.referenceLists = referenceLists
         self.description = "Clears a list of NPCs, or all lists with a given tag."
         self.usageStr = "clear {all | combat | encounter | graveyard}"
-    
-    #Override execute
+
     def execute(self, args = []):
         lenArgs = len(args)
-        
+
         if lenArgs == 1:
             if args[0] not in self.referenceLists[0].nameList:
                 if args[0].lower() == "all":
@@ -316,6 +323,7 @@ class clearNPCList(Command):
         else:
             self.usage()
 
+
 class removeNPC(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -323,11 +331,10 @@ class removeNPC(Command):
         self.referenceLists = referenceLists
         self.description = "Removes an NPC from a list."
         self.usageStr = "remove <list_index,...> {encounter | graveyard}"
-    
-    #Override execute
+
     def execute(self, args = []):
         lenArgs = len(args)
-        
+
         if lenArgs == 2:
             if args[0] == "all":
                 if args[1] == "all":
@@ -344,15 +351,15 @@ class removeNPC(Command):
                             break
             else:
                 selected = args[0].split(",")
-                
+
                 for i in selected:
                     if not isInt(i):
                         print("Selected an invalid NPC.")
                         return
-                
+
                 # Remove duplicates and reverse sort the input
                 selected = sorted(list(set(selected)), reverse = True)
-                
+
                 found = False
                 for l in self.referenceLists:
                     if args[1] in l.nameList:
@@ -368,6 +375,7 @@ class removeNPC(Command):
         else:
             self.usage()
 
+
 class attack(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -375,8 +383,7 @@ class attack(Command):
         self.referenceLists = referenceLists
         self.description = "Initiantiates D&D like combat with and NPC."
         self.usageStr = "attack <bestiary_index> [hit] [damage]"
-    
-    #Override execute
+
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
         graveyard = self.referenceLists[2].data
@@ -387,7 +394,7 @@ class attack(Command):
             if not isValidInt(args[0], encounter) or not isInt(args[1]) or not isInt(args[2]):
                 self.usage()
                 return
-            
+
             npc = encounter[int(args[0]) - 1]
             if int(args[1]) >= npc.ac:
                 npc.currentHP = npc.currentHP - int(args[2])
@@ -398,7 +405,7 @@ class attack(Command):
             if not isValidInt(args[0], encounter) or not isInt(args[1]):
                 self.usage()
                 return
-            
+
             npc = encounter[int(args[0]) - 1]
             if int(args[1]) >= npc.ac:
                 damage = input("Roll for damage: ")
@@ -414,7 +421,7 @@ class attack(Command):
             if not isValidInt(args[0], encounter):
                 self.usage()
                 return
-            
+
             npc = encounter[int(args[0]) - 1]
             accuracy = input("Roll for hit: ")
             if accuracy.isnumeric() == True:
@@ -433,7 +440,7 @@ class attack(Command):
                 print("Accuracy must be a number.")
         else:
             self.usage()
-        
+
         if npc != None:
             if npc.currentHP <= 0:
                 print(npc.name + " has been defeated.")
@@ -442,6 +449,7 @@ class attack(Command):
                 if len(encounter) == 0:
                     print("Party has defeated all enemies.")
 
+
 class damage(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -449,13 +457,12 @@ class damage(Command):
         self.referenceLists = referenceLists
         self.description = "Directly subtracts from an NPC's health."
         self.usageStr = "damage <encounter_index> <amount>"
-    
-    #Override execute
+
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
         graveyard = self.referenceLists[2].data
         lenArgs = len(args)
-        
+
         if lenArgs == 2:
             if not isInt(args[1]):
                 self.usage()
@@ -472,6 +479,7 @@ class damage(Command):
         else:
             self.usage()
 
+
 class smite(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -479,26 +487,26 @@ class smite(Command):
         self.referenceLists = referenceLists
         self.description = "Immediately kills an NPC."
         self.usageStr = "smite <bestiary_index>"
-    
-    #Override execute
+
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
         graveyard = self.referenceLists[2].data
         lenArgs = len(args)
-        
+
         if len(encounter) > 0:
             if lenArgs == 1:
                 if isValidInt(args[0], encounter) == True:
                     print(encounter[int(args[0]) - 1].name + " was defeated.")
                     graveyard.append(encounter[int(args[0]) - 1])
                     encounter.pop(int(args[0]) - 1)
-                    
+
                     if len(encounter) == 0:
                         print("Party has defeated all enemies.")
             else:
                 self.usage()
         else:
             print("Encounter list is empty. There is no one to smite.")
+
 
 class heal(Command):
     def __init__(self, referenceLists):
@@ -507,30 +515,30 @@ class heal(Command):
         self.referenceLists = referenceLists
         self.description = "Directly adds to an NPC's health."
         self.usageStr = "heal <encounter_index> <amount>"
-    
-    #Override execute
+
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
         lenArgs = len(args)
-        
+
         if lenArgs == 2:
             if not isInt(args[1]):
                 self.usage()
                 return
             if isValidInt(args[0], encounter) == True:
                 npc = encounter[int(args[0]) - 1]
-                
+
                 origHP = npc.currentHP
-                
+
                 npc.currentHP = npc.currentHP + int(args[1])
                 if npc.currentHP > npc.maxHP:
                     npc.currentHP = npc.maxHP
-                
+
                 healedAmt = npc.currentHP - origHP
-                
+
                 print(npc.name + " was healed by " + str(healedAmt) + " points.")
         else:
             self.usage()
+
 
 class revive(Command):
     def __init__(self, referenceLists):
@@ -539,13 +547,13 @@ class revive(Command):
         self.referenceLists = referenceLists
         self.description = "Brings an NPC back from the graveyard."
         self.usageStr = "revive <graveyard_index>"
-    
-    #Override execute
+
+    # Override execute
     def execute(self, args = []):
         encounter = self.referenceLists[1].data
         graveyard = self.referenceLists[2].data
         lenArgs = len(args)
-        
+
         if len(graveyard) > 0:
             if lenArgs == 1:
                 if isValidInt(args[0], graveyard) == True:
@@ -558,6 +566,7 @@ class revive(Command):
         else:
             print("Graveyard list is empty. There is no one to revive.")
 
+
 class status(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -565,15 +574,14 @@ class status(Command):
         self.referenceLists = referenceLists
         self.description = "Displays an NPC's current stats."
         self.usageStr = "status <index> {encounter | graveyard}"
-    
-    #Override execute
+
     def execute(self, args = []):
         lenArgs = len(args)
         if lenArgs == 2:
             if isInt(args[0]):
                 found = False
                 for l in self.referenceLists:
-                    #TODO better error reporting here. currently ambiguous
+                    # TODO better error reporting here. currently ambiguous
                     if args[1].lower() not in self.referenceLists[0].nameList and args[1] in l.nameList:
                         found = True
                         if isValidInt(args[0], l.data):
@@ -589,6 +597,7 @@ class status(Command):
         else:
             self.usage()
 
+
 class info(Command):
     def __init__(self, referenceLists):
         super().__init__()
@@ -597,7 +606,6 @@ class info(Command):
         self.description = "Displays an NPC's detailed stats."
         self.usageStr = "info <index> {bestiary | encounter | graveyard}"
 
-    #Override execute
     def execute(self, args = []):
         lenArgs = len(args)
         if lenArgs == 2:
@@ -622,16 +630,17 @@ class info(Command):
         else:
             self.usage()
 
+
 def main():
     referenceLists = [
         NPCList(['bestiary', 'book', 'b'], [], []),
         NPCList(['encounter', 'e'], ['combat'], []),
         NPCList(['graveyard', 'g'], ['combat'], [])
         ]
-    
+
     bestiary = findList("bestiary", referenceLists)
-    
-    #Instantiate commands
+
+    # Instantiate commands
     commands = [
         load(bestiary),
         displayMenu(referenceLists),
@@ -646,45 +655,46 @@ def main():
         status(referenceLists),
         info(referenceLists)
         ]
-    
+
     commands.append(displayHelp(commands))
-    
-    #Load default bestiary
+
+    # Load default bestiary
     commands[0].execute(["bestiary.txt"])
-    
-    #print help message
+
+    # print help message
     print("Type help or ? to get a list of availible commands.")
-    
-    #command loop
+
+    # command loop
     while True:
         usrRequest = input("Type a command: ").lower().split(" ")
-        
+
         action = None
-        
+
         if usrRequest != ['']:
             action = usrRequest[0]
-        
+
         if action == "quit" or action == "q" or action == "exit":
             break
-        
+
         args = []
-        
+
         if (len(usrRequest) > 1):
             count = 1
             while count < len(usrRequest):
                 args.append(usrRequest[count])
                 count += 1
-        
+
         found = False
         for command in commands:
             if action in command.nameList:
                 command.execute(args)
                 found = True
                 break
-        
+
         if not found:
             print("Unrecognized command.")
             print("Type help or ? to learn how to use availible commands.")
-        
+
+
 if __name__ == "__main__":
     main()
