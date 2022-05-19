@@ -216,7 +216,7 @@ def isInt(string):
     else:
         try:
             int(string)
-        except:
+        except ValueError:
             return False
         else:
             return True
@@ -225,7 +225,7 @@ def isInt(string):
 def isValidInt(selector, npcList):
     selector = selector.split(",")
     for s in selector:
-        if not isInt(s) or int(s) <= 0 or int(s) > len(npcList) :
+        if not isInt(s) or int(s) <= 0 or int(s) > len(npcList):
             print("One or more inputs are invalid in this context.")
             return False
     return True
@@ -409,7 +409,7 @@ class attack(Command):
             npc = encounter[int(args[0]) - 1]
             if int(args[1]) >= npc.ac:
                 damage = input("Roll for damage: ")
-                if damage.isnumeric() == True:
+                if damage.isnumeric() is True:
                     amt = int(damage)
                     npc.currentHP = npc.currentHP - amt
                     print(npc.name + " took " + damage + " damage.")
@@ -424,11 +424,11 @@ class attack(Command):
 
             npc = encounter[int(args[0]) - 1]
             accuracy = input("Roll for hit: ")
-            if accuracy.isnumeric() == True:
+            if accuracy.isnumeric() is True:
                 accuracy = int(accuracy)
                 if accuracy >= npc.ac:
                     damage = input("Roll for damage: ")
-                    if damage.isnumeric() == True:
+                    if damage.isnumeric() is True:
                         amt = int(damage)
                         npc.currentHP = npc.currentHP - amt
                         print(npc.name + " took " + damage + " damage.")
@@ -441,7 +441,7 @@ class attack(Command):
         else:
             self.usage()
 
-        if npc != None:
+        if npc is not None:
             if npc.currentHP <= 0:
                 print(npc.name + " has been defeated.")
                 graveyard.append(npc)
@@ -467,7 +467,7 @@ class damage(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], encounter) == True:
+            if isValidInt(args[0], encounter) is True:
                 npc = encounter[int(args[0]) - 1]
                 npc.currentHP = npc.currentHP - int(args[1])
                 if npc.currentHP <= 0:
@@ -524,9 +524,8 @@ class heal(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], encounter) == True:
+            if isValidInt(args[0], encounter):
                 npc = encounter[int(args[0]) - 1]
-
                 origHP = npc.currentHP
 
                 npc.currentHP = npc.currentHP + int(args[1])
@@ -636,7 +635,7 @@ def main():
         NPCList(['bestiary', 'book', 'b'], [], []),
         NPCList(['encounter', 'e'], ['combat'], []),
         NPCList(['graveyard', 'g'], ['combat'], [])
-        ]
+    ]
 
     bestiary = findList("bestiary", referenceLists)
 
@@ -654,7 +653,7 @@ def main():
         heal(referenceLists),
         status(referenceLists),
         info(referenceLists)
-        ]
+    ]
 
     commands.append(displayHelp(commands))
 
