@@ -279,22 +279,19 @@ class clearNPCList(Command):
 
     def execute(self, args = []):
         if len(args) == 1:
-            if args[0] not in self.referenceLists[0].nameList:
-                if args[0].lower() == "all":
-                    for list in self.referenceLists:
+            if args[0].lower() == "all":
+                for list in self.referenceLists:
+                    list.data.clear()
+                    print(list.toMenu())
+            else:
+                found = False
+                for list in self.referenceLists:
+                    if args[0].lower() in list.nameList:
+                        found = True
                         list.data.clear()
                         print(list.toMenu())
-                else:
-                    found = False
-                    for list in self.referenceLists:
-                        if args[0].lower() in list.nameList:
-                            found = True
-                            list.data.clear()
-                            print(list.toMenu())
-                    if not found:
-                        print("Unknown list selected.")
-            else:
-                self.usage()
+                if not found:
+                    print("Unknown list selected.")
         else:
             self.usage()
 
