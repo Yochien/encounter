@@ -460,7 +460,8 @@ class smite(Command):
                         print("Enemy already defeated.")
                         return
                     else:
-                        print(encounter[int(args[0]) - 1].name + " was defeated.")
+                        npc.currentHP = 0
+                        print(npc.name + " was defeated.")
 
                         if areAllDefeated(encounter.data):
                             print("Party has defeated all enemies.")
