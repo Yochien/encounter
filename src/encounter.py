@@ -508,7 +508,7 @@ class status(Command):
         encounter = findList("encounter", self.referenceLists)
 
         if len(args) == 1:
-            if isInt(args[0]):
+            if isValidInt(args[0], encounter.data):
                 npc = encounter.data[int(args[0]) - 1]
                 print("Status:")
                 print(npc.name + " [" + str(npc.currentHP) + " / " + str(npc.maxHP) + "]")
