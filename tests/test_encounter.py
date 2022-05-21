@@ -19,8 +19,13 @@ class TestNPCs(unittest.TestCase):
         self.assertEqual(0, npc.ac)
 
     def test_invalid_npc(self):
+        self.assertRaises(TypeError, NPC, 1, 1, 1)
+        self.assertRaises(TypeError, NPC, "Norm", 'err', 1)
+        self.assertRaises(TypeError, NPC, "Norm", 1, 'err')
+
         self.assertRaises(ValueError, NPC, "", 1, 1)
         self.assertRaises(ValueError, NPC, "Whoops", 0, 1)
+        self.assertRaises(ValueError, NPC, "Whoops", 0, -1)
 
 
 # Allows for running the file directly to test
