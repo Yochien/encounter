@@ -179,7 +179,7 @@ class displayHelp(Command):
 class displayMenu(Command):
     def __init__(self, referenceLists):
         super().__init__()
-        self.nameList = ['list', 'display']
+        self.nameList = ['list', 'display', 'show']
         self.referenceLists = referenceLists
         self.description = "Displays a list of NPCs."
         self.usageStr = "list [all | bestiary | encounter]"
