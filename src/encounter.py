@@ -352,11 +352,11 @@ class attack(Command):
             self.usage()
             return
 
-        if not isValidInt(args[0], encounter):
+        if not isValidInt(args[0], encounter.data):
             self.usage()
             return
 
-        npc = encounter[int(args[0]) - 1]
+        npc = encounter.data[int(args[0]) - 1]
         if npc.currentHP <= 0:
             print("Enemy already defeated.")
             return
@@ -406,7 +406,7 @@ class attack(Command):
         if npc is not None:
             if npc.currentHP <= 0:
                 print(npc.name + " has been defeated.")
-                if areAllDefeated(encounter):
+                if areAllDefeated(encounter.data):
                     print("Party has defeated all enemies.")
 
 
@@ -425,8 +425,8 @@ class damage(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], encounter) is True:
-                npc = encounter[int(args[0]) - 1]
+            if isValidInt(args[0], encounter.data) is True:
+                npc = encounter.data[int(args[0]) - 1]
 
                 if npc.currentHP <= 0:
                     print("Enemy already defeated.")
@@ -435,7 +435,7 @@ class damage(Command):
                 npc.currentHP = npc.currentHP - int(args[1])
                 if npc.currentHP <= 0:
                     print(npc.name + " has been defeated.")
-                    if areAllDefeated(encounter):
+                    if areAllDefeated(encounter.data):
                         print("Party has defeated all enemies.")
         else:
             self.usage()
@@ -452,17 +452,17 @@ class smite(Command):
     def execute(self, args = []):
         encounter = findList("encounter", self.referenceLists)
 
-        if len(encounter) > 0:
+        if len(encounter.data) > 0:
             if len(args) == 1:
-                if isValidInt(args[0], encounter) is True:
-                    npc = encounter[int(args[0]) - 1]
+                if isValidInt(args[0], encounter.data) is True:
+                    npc = encounter.data[int(args[0]) - 1]
                     if npc.currentHP <= 0:
                         print("Enemy already defeated.")
                         return
                     else:
                         print(encounter[int(args[0]) - 1].name + " was defeated.")
 
-                        if areAllDefeated(encounter):
+                        if areAllDefeated(encounter.data):
                             print("Party has defeated all enemies.")
             else:
                 self.usage()
@@ -485,8 +485,8 @@ class heal(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], encounter):
-                npc = encounter[int(args[0]) - 1]
+            if isValidInt(args[0], encounter.data):
+                npc = encounter.data[int(args[0]) - 1]
                 origHP = npc.currentHP
 
                 npc.currentHP = npc.currentHP + int(args[1])
@@ -514,7 +514,7 @@ class status(Command):
 
         if len(args) == 1:
             if isInt(args[0]):
-                npc = encounter[int(args[0]) - 1]
+                npc = encounter.data[int(args[0]) - 1]
                 print("Status:")
                 print(npc.name + " [" + str(npc.currentHP) + " / " + str(npc.maxHP) + "]")
             else:
