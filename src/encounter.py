@@ -37,7 +37,10 @@ class NPC:
         self.ac = int(ac)
 
     def __str__(self):
-        return self.name
+        if self.currentHP > 0:
+            return self.name
+        else:
+            return self.name + " [X]"
 
     def equals(self, other):
         if self == other:
