@@ -246,24 +246,18 @@ class addNPC(Command):
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
-        bestiary = self.referenceLists[0].data
+        bestiary = findList("bestiary", self.referenceLists)
 
         if len(args) == 1:
             selected = args[0].split(",")
-            # Check if the selector contains only integers
-            for i in selected:
-                if not isInt(i):
-                    self.usage()
-                    return
 
-            # Check if selectors are within range of the bestiary
             for i in selected:
-                if int(i) > len(bestiary) or int(i) <= 0:
+                if not isInt(i) or int(i) > len(bestiary.data) or int(i) <= 0:
                     self.usage()
                     return
 
             for n in selected:
-                npcCopy(bestiary, n, self.referenceLists[1].data)
+                npcCopy(bestiary.data, n, self.referenceLists[1].data)
             print(self.referenceLists[1].toMenu())
         else:
             self.usage()
