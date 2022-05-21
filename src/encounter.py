@@ -217,10 +217,10 @@ def isInt(string):
             return True
 
 
-def isValidInt(selector, npcList):
+def isValidInt(selector, list):
     selector = selector.split(",")
     for s in selector:
-        if not isInt(s) or int(s) <= 0 or int(s) > len(npcList):
+        if not isInt(s) or int(s) <= 0 or int(s) > len(list):
             print("One or more inputs are invalid in this context.")
             return False
     return True
