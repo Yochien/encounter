@@ -26,6 +26,8 @@ class NPC:
             raise TypeError("Argument AC must be an integer.")
 
         # Value assestions
+        if len(name) < 1:
+            raise ValueError("Name must be at least one character in length.")
         if ac < 0:
             raise ValueError("Argument out of valid range. AC must be at least 0.")
         if maxHP < 1:
