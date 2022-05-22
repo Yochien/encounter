@@ -120,12 +120,9 @@ class load(Command):
                 print("Selected bestiary file could not be found.")
                 if len(self.bestiary.data) == 0:
                     print("Loading placeholder bestiary.")
-                    human = NPC("Human", 5, 12)
-                    animal = NPC("Animal", 3, 10)
-                    enemy = NPC("Enemy", 10, 13)
-                    self.bestiary.data.append(human)
-                    self.bestiary.data.append(animal)
-                    self.bestiary.data.append(enemy)
+                    self.bestiary.data.append(NPC("Human", 5, 12))
+                    self.bestiary.data.append(NPC("Animal", 3, 10))
+                    self.bestiary.data.append(NPC("Enemy", 10, 13))
             else:
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
