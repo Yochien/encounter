@@ -190,14 +190,11 @@ class displayMenu(Command):
         numArgs = len(args)
 
         if numArgs == 1 and args[0] != "all":
-            found = False
+            list = findList(args[0], self.referenceLists)
 
-            for list in self.referenceLists:
-                if args[0] in list.nameList:
-                    found = True
-                    print(list.toMenu())
-
-            if not found:
+            if list is not None:
+                print(list.toMenu())
+            else:
                 print("Unknown list selected.")
         else:
             if numArgs == 0 or args[0] == "all":
@@ -277,13 +274,12 @@ class clearNPCList(Command):
                     list.data.clear()
                     print(list.toMenu())
             else:
-                found = False
-                for list in self.referenceLists:
-                    if args[0].lower() in list.nameList:
-                        found = True
-                        list.data.clear()
-                        print(list.toMenu())
-                if not found:
+                list = findList(args[0], self.referenceLists)
+
+                if list is not None:
+                    list.data.clear()
+                    print(list.toMenu())
+                else:
                     print("Unknown list selected.")
         else:
             self.usage()
@@ -528,20 +524,15 @@ class info(Command):
     def execute(self, args = []):
         if len(args) == 2:
             if isInt(args[0]):
-                found = False
-                for list in self.referenceLists:
-                    if args[1] in list.nameList:
-                        found = True
-                        if isValidInt(args[0], list.data):
-                            print("INFO:")
-                            print("NAME: " + list.data[int(args[0]) - 1].name)
-                            print("HP: " + str(list.data[int(args[0]) - 1].currentHP))
-                            print("MAX HP: " + str(list.data[int(args[0]) - 1].maxHP))
-                            print("AC: " + str(list.data[int(args[0]) - 1].ac))
-                            break
-                        else:
-                            self.usage()
-                if not found:
+                list = findList(args[1], self.referenceLists)
+                if list is not None:
+                    if isValidInt(args[0], list.data):
+                        print("INFO:")
+                        print("NAME: " + list.data[int(args[0]) - 1].name)
+                        print("HP: " + str(list.data[int(args[0]) - 1].currentHP))
+                        print("MAX HP: " + str(list.data[int(args[0]) - 1].maxHP))
+                        print("AC: " + str(list.data[int(args[0]) - 1].ac))
+                else:
                     print("Unknown list selected.")
             else:
                 self.usage()
