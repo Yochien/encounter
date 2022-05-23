@@ -100,7 +100,7 @@ class Command(ABC):
 
     @abstractmethod
     def execute(self, args = []) -> None:
-        print("This command has not been implemented yet.")
+        raise NotImplementedError("This command has not been implemented yet.")
 
 
 class load(Command):
