@@ -2,8 +2,6 @@ import unittest
 from src.encounter import isInt
 from src.encounter import NPC
 
-# python -m unittest
-
 
 class TestSubMethods(unittest.TestCase):
     def test_Encounter(self):
