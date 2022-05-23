@@ -531,6 +531,25 @@ class info(Command):
             self.usage()
 
 
+class make(Command):
+    def __init__(self, bestiary):
+        super().__init__()
+        self.names = ["make"]
+        self.bestiary = bestiary
+        self.description = "Creates an NPC for the bestiary"
+        self.usageStr = "make <name> <max hp> <armor class>"
+
+    def execute(self, args=[]) -> None:
+        if len(args) == 3:
+            if args[0].isnumeric() or not isInt(args[1]) or not isInt(args[2]):
+                self.usage()
+                return
+            self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
+            print(self.bestiary.toMenu())
+        else:
+            self.usage()
+
+
 def main():
     bestiary = NPCList(['bestiary', 'book', 'b'])
     encounter = NPCList(['encounter', 'e', "combat", "c"])
@@ -548,7 +567,8 @@ def main():
         attack(encounter),
         heal(encounter),
         status(encounter),
-        info(referenceLists)
+        info(referenceLists),
+        make(bestiary)
     ]
 
     commands.append(displayHelp(commands))
