@@ -497,7 +497,10 @@ class status(Command):
             if isValidInt(args[0], self.encounter.data):
                 npc = self.encounter.data[int(args[0]) - 1]
                 print("Status:")
-                print(npc.name + " [" + str(npc.currentHP) + " / " + str(npc.maxHP) + "]")
+                if npc.currentHP <= 0:
+                    print(npc.name + " [Dead]")
+                else:
+                    print(npc.name + " [" + str(npc.currentHP) + " / " + str(npc.maxHP) + "]")
             else:
                 self.usage()
         else:
