@@ -1,3 +1,11 @@
 [build-system]
 requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "encounter"
+version = "4.17.0"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
