@@ -5,19 +5,19 @@ class NPC:
     def __init__(self, name: str, maxHP: int, ac: int):
         # Type assertions
         if type(name) != str:
-            raise TypeError("Argument name must be a string.")
+            raise TypeError("Name must be a string.")
         if type(maxHP) != int:
-            raise TypeError("Argument HP must be an integer.")
+            raise TypeError("HP must be an integer.")
         if type(ac) != int:
-            raise TypeError("Argument AC must be an integer.")
+            raise TypeError("AC must be an integer.")
 
-        # Value assestions
+        # Value assertions
         if len(name) < 1:
-            raise ValueError("Name must be at least one character in length.")
-        if ac < 0:
-            raise ValueError("Argument out of valid range. AC must be at least 0.")
+            raise ValueError("Name must be at least length 1.")
         if maxHP < 1:
-            raise ValueError("Argument out of valid range. HP must be at least 1.")
+            raise ValueError("HP must be at least 1.")
+        if ac < 0:
+            raise ValueError("AC must be at least 0.")
 
         # Value assignment
         self.name = name
