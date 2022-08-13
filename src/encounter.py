@@ -45,10 +45,16 @@ class NPC:
             return False
         return True
 
-    def toString(self):
+    def combatStatus(self) -> str:
+        if self.currentHP > 0:
+            return self.name + " [" + str(self.currentHP) + "/" + str(self.maxHP) + "]"
+        else:
+            return self.name + " [Dead]"
+
+    def detailedInfo(self) -> str:
         info = ""
         info += "NAME: " + str(self.name) + "\n"
-        info += "HP: " + str(self.currentHP) + "\n"
+        info += "MAX HP: " + str(self.maxHP) + "\n"
         info += "AC: " + str(self.ac)
         return info
 
@@ -494,13 +500,14 @@ class status(Command):
 
     def execute(self, args = []):
         if len(args) == 1:
-            if isValidInt(args[0], self.encounter.data):
+            if isinstance(args[0], str) and args[0].lower() == "all":
+                print("Status:")
+                for npc in self.encounter.data:
+                    print(npc.combatStatus())
+            elif isValidInt(args[0], self.encounter.data):
                 npc = self.encounter.data[int(args[0]) - 1]
                 print("Status:")
-                if npc.currentHP <= 0:
-                    print(npc.name + " [Dead]")
-                else:
-                    print(npc.name + " [" + str(npc.currentHP) + " / " + str(npc.maxHP) + "]")
+                print(npc.combatStatus())
             else:
                 self.usage()
         else:
@@ -508,26 +515,19 @@ class status(Command):
 
 
 class info(Command):
-    def __init__(self, referenceLists):
+    def __init__(self, bestiary):
         super().__init__()
-        self.names = ['info']
-        self.referenceLists = referenceLists
-        self.description = "Displays an NPC's detailed stats."
-        self.usageStr = "info <index> {bestiary | encounter}"
+        self.names = ['info', 'details']
+        self.bestiary = bestiary
+        self.description = "Displays detailed stats for a bestiary entry."
+        self.usageStr = "info <index>"
 
     def execute(self, args = []):
-        if len(args) == 2:
+        if len(args) == 1:
             if isInt(args[0]):
-                list = findList(args[1], self.referenceLists)
-                if list is not None:
-                    if isValidInt(args[0], list.data):
-                        print("INFO:")
-                        print("NAME: " + list.data[int(args[0]) - 1].name)
-                        print("HP: " + str(list.data[int(args[0]) - 1].currentHP))
-                        print("MAX HP: " + str(list.data[int(args[0]) - 1].maxHP))
-                        print("AC: " + str(list.data[int(args[0]) - 1].ac))
-                else:
-                    print("Unknown list selected.")
+                if isValidInt(args[0], self.bestiary.data):
+                    print("INFO:")
+                    print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
             else:
                 self.usage()
         else:
@@ -570,7 +570,7 @@ def main():
         attack(encounter),
         heal(encounter),
         status(encounter),
-        info(referenceLists),
+        info(bestiary),
         make(bestiary)
     ]
 
