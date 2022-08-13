@@ -91,7 +91,7 @@ def findList(name: str, referenceLists: list[NPCList]) -> NPCList | None:
 
 class Command(ABC):
     def __init__(self):
-        self.names: list[str] = ["Command", "Test"]
+        self.names: list[str] = ['Command', 'Test']
         self.description: str = "This Command has no defined description yet."
         self.usageStr: str = "This command has no defined usage yet."
 
