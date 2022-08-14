@@ -63,10 +63,10 @@ class NPCList:
     def __init__(self, names: list[str]):
         # Error Checking
         if type(names) != list:
-            raise TypeError("Argument names must be a list of strings.")
+            raise TypeError("Names must be a list of strings.")
 
         if len(names) < 1:
-            raise ValueError("Argument names must contain at least one entry.")
+            raise ValueError("List must contain at least one entry.")
 
         # Value assignment
         self.names = names
