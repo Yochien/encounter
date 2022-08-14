@@ -361,7 +361,7 @@ class attack(Command):
                 return
 
             if int(args[1]) >= npc.ac:
-                npc.currentHP = npc.currentHP - int(args[2])
+                npc.currentHP = max(0, npc.currentHP - int(args[2]))
                 print(npc.name + " took " + args[2] + " damage.")
             else:
                 print("Attack misses " + npc.name + ".")
@@ -374,7 +374,7 @@ class attack(Command):
                 damage = input("Roll for damage: ")
                 if damage.isnumeric() is True:
                     amt = int(damage)
-                    npc.currentHP = npc.currentHP - amt
+                    npc.currentHP = max(0, npc.currentHP - amt)
                     print(npc.name + " took " + damage + " damage.")
                 else:
                     print("Damage must be a number.")
@@ -388,7 +388,7 @@ class attack(Command):
                     damage = input("Roll for damage: ")
                     if damage.isnumeric() is True:
                         amt = int(damage)
-                        npc.currentHP = npc.currentHP - amt
+                        npc.currentHP = max(0, npc.currentHP - amt)
                         print(npc.name + " took " + damage + " damage.")
                     else:
                         print("Damage must be a number.")
@@ -424,7 +424,7 @@ class damage(Command):
                     print("Enemy already defeated.")
                     return
 
-                npc.currentHP = npc.currentHP - int(args[1])
+                npc.currentHP = max(0, npc.currentHP - int(args[1]))
                 if npc.currentHP <= 0:
                     print(npc.name + " has been defeated.")
                     if areAllDefeated(self.encounter.data):
