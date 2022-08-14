@@ -591,7 +591,7 @@ def main():
         if usrRequest != ['']:
             action = usrRequest[0]
 
-        if action == "quit" or action == "q" or action == "exit":
+        if action in ['quit', 'q', 'exit']:
             break
 
         args = []
