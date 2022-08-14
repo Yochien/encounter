@@ -186,7 +186,7 @@ class displayHelp(Command):
 
 
 class displayMenu(Command):
-    def __init__(self, referenceLists):
+    def __init__(self, referenceLists: list[NPCList]):
         super().__init__()
         self.names = ['list', 'display', 'show']
         self.referenceLists = referenceLists
