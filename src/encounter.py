@@ -233,11 +233,9 @@ def isValidInt(selector: str, list: list[NPC]) -> bool:
 
 
 def copyNPC(bestiaryList, index: int, list: list[NPC]) -> None:
-    name = bestiaryList[index - 1].name
-    hp = bestiaryList[index - 1].maxHP
-    ac = bestiaryList[index - 1].ac
-    npc = NPC(name, hp, ac)
-    list.append(npc)
+    npc = bestiaryList[index - 1]
+    copy = NPC(npc.name, npc.maxHP, npc.ac)
+    list.append(copy)
 
 
 class addNPC(Command):
