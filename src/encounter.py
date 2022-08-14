@@ -310,7 +310,7 @@ class removeNPC(Command):
                 selected = args[0].split(",")
 
                 for index in selected:
-                    if not isValidInt(index, self.encounter):
+                    if not isValidInt(index, self.encounter.data):
                         return
 
                 # Remove duplicates and reverse sort the input
