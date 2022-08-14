@@ -245,7 +245,7 @@ class addNPC(Command):
         super().__init__()
         self.names = ['add']
         self.referenceLists = referenceLists
-        self.description = "Adds an NPC to a the encounter."
+        self.description = "Adds an NPC to the encounter."
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
