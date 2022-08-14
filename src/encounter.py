@@ -227,7 +227,6 @@ def isValidInt(selector: str, list: list[NPC]) -> bool:
     selected = selector.split(",")
     for index in selected:
         if not isInt(index) or int(index) <= 0 or int(index) > len(list):
-            print("One or more inputs are invalid in this context.")
             return False
     return True
 
