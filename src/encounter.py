@@ -596,10 +596,8 @@ def main():
         args = []
 
         if (len(usrRequest) > 1):
-            count = 1
-            while count < len(usrRequest):
-                args.append(usrRequest[count])
-                count += 1
+            for index in range(1, len(usrRequest)):
+                args.append(usrRequest[index])
 
         found = False
         for command in commands:
