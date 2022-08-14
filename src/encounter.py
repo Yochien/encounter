@@ -83,7 +83,6 @@ class NPCList:
                 info += str(self.data.index(i) + 1) + " " + str(i) + "\n"
             info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
 
-        info += "\n"
         return info
 
 
@@ -207,6 +206,8 @@ class displayMenu(Command):
             if numArgs == 0 or args[0] == "all":
                 for list in self.referenceLists:
                     print(list.toMenu())
+                    if list is not self.referenceLists[-1]:
+                        print()
             else:
                 self.usage()
 
@@ -280,6 +281,8 @@ class clearNPCList(Command):
                 for list in self.referenceLists:
                     list.data.clear()
                     print(list.toMenu())
+                    if list is not self.referenceLists[-1]:
+                        print()
             else:
                 list = findList(args[0], self.referenceLists)
 
@@ -582,6 +585,7 @@ def main():
 
     # command loop
     while True:
+        print()
         usrRequest = input("Type a command: ").lower().split(" ")
 
         action = None
