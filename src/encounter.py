@@ -121,7 +121,7 @@ class load(Command):
 
         if numArgs == 1:
             try:
-                bestiaryFile = open(args[0])
+                bestiaryFile = open(args[0].strip())
             except FileNotFoundError:
                 print("Selected bestiary file could not be found.")
                 if len(self.bestiary.data) == 0:
