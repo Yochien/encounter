@@ -584,12 +584,12 @@ def main():
     # command loop
     while True:
         print()
-        usrRequest = input("Type a command: ").lower().split(" ")
+        usrRequest = input("Type a command: ").split(" ")
 
         action = None
 
         if usrRequest != ['']:
-            action = usrRequest[0]
+            action = usrRequest[0].lower()
 
         if action in ['quit', 'q', 'exit']:
             break
