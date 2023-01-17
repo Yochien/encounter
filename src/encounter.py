@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class NPC:
-    def __init__(self, name: str, maxHP: int, ac: int):
+    def __init__(self, name: str, maxHP: int, ac: int, nick: str|None = None):
         # Type assertions
         if type(name) != str:
             raise TypeError("Name must be a string.")
@@ -21,14 +21,24 @@ class NPC:
 
         # Value assignment
         self.name = name
+        if nick is None:
+            self.nick = name
+        else:
+            self.nick = nick
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
 
     def __str__(self):
         if self.currentHP > 0:
-            return self.name
+            if self.nick is not self.name:
+                return self.nick + " (" + self.name + ")"
+            else:
+                return self.name
         else:
-            return self.name + " [X]"
+            if self.nick is not self.name:
+                return self.nick + " (" + self.name + ") [X]"
+            else:
+                return self.name + " [X]"
 
     def equals(self, other):
         if self == other:
@@ -36,6 +46,8 @@ class NPC:
         if other is None:
             return False
         if self.name != other.name:
+            return False
+        if self.nick != other.nick:
             return False
         if self.maxHP != other.maxHP:
             return False
@@ -46,10 +58,21 @@ class NPC:
         return True
 
     def combatStatus(self) -> str:
+        status = ""
         if self.currentHP > 0:
-            return self.name + " [" + str(self.currentHP) + "/" + str(self.maxHP) + "]"
+            if self.name is not self.nick:
+                status += self.nick + " (" + self.name + ")"
+            else:
+                status += self.name
+            status += " [" + str(self.currentHP) + "/" + str(self.maxHP) + "]"
         else:
-            return self.name + " [Dead]"
+            if self.name is not self.nick:
+                status += self.nick + " (" + self.name + ")"
+            else:
+                status += self.name
+            status += " [Dead]"
+
+        return status
 
     def detailedInfo(self) -> str:
         info = ""
@@ -362,9 +385,9 @@ class attack(Command):
 
             if int(args[1]) >= npc.ac:
                 npc.currentHP = max(0, npc.currentHP - int(args[2]))
-                print(npc.name + " took " + args[2] + " damage.")
+                print(npc.nick + " took " + args[2] + " damage.")
             else:
-                print("Attack misses " + npc.name + ".")
+                print("Attack misses " + npc.nick + ".")
         elif lenArgs == 2:
             if not isInt(args[1]):
                 self.usage()
@@ -375,11 +398,11 @@ class attack(Command):
                 if damage.isnumeric() is True:
                     amt = int(damage)
                     npc.currentHP = max(0, npc.currentHP - amt)
-                    print(npc.name + " took " + damage + " damage.")
+                    print(npc.nick + " took " + damage + " damage.")
                 else:
                     print("Damage must be a number.")
             else:
-                print("Attack misses " + npc.name + ".")
+                print("Attack misses " + npc.nick + ".")
         elif lenArgs == 1:
             accuracy = input("Roll for hit: ")
             if accuracy.isnumeric() is True:
@@ -389,17 +412,17 @@ class attack(Command):
                     if damage.isnumeric() is True:
                         amt = int(damage)
                         npc.currentHP = max(0, npc.currentHP - amt)
-                        print(npc.name + " took " + damage + " damage.")
+                        print(npc.nick + " took " + damage + " damage.")
                     else:
                         print("Damage must be a number.")
                 else:
-                    print("Attack misses " + npc.name + ".")
+                    print("Attack misses " + npc.nick + ".")
             else:
                 print("Accuracy must be a number.")
 
         if npc is not None:
             if npc.currentHP <= 0:
-                print(npc.name + " has been defeated.")
+                print(npc.nick + " has been defeated.")
                 if areAllDefeated(self.encounter.data):
                     print("Party has defeated all enemies.")
 
@@ -426,7 +449,7 @@ class damage(Command):
 
                 npc.currentHP = max(0, npc.currentHP - int(args[1]))
                 if npc.currentHP <= 0:
-                    print(npc.name + " has been defeated.")
+                    print(npc.nick + " has been defeated.")
                     if areAllDefeated(self.encounter.data):
                         print("Party has defeated all enemies.")
         else:
@@ -451,7 +474,7 @@ class smite(Command):
                         return
                     else:
                         npc.currentHP = 0
-                        print(npc.name + " was defeated.")
+                        print(npc.nick + " was defeated.")
 
                         if areAllDefeated(self.encounter.data):
                             print("Party has defeated all enemies.")
@@ -485,7 +508,7 @@ class heal(Command):
 
                 healedAmt = npc.currentHP - origHP
 
-                print(npc.name + " was healed " + str(healedAmt) + " points.")
+                print(npc.nick + " was healed " + str(healedAmt) + " points.")
         else:
             self.usage()
 
@@ -537,7 +560,7 @@ class info(Command):
 class make(Command):
     def __init__(self, bestiary):
         super().__init__()
-        self.names = ["make"]
+        self.names = ['make']
         self.bestiary = bestiary
         self.description = "Creates an NPC for the bestiary"
         self.usageStr = "make <name> <max hp> <armor class>"
@@ -549,6 +572,27 @@ class make(Command):
                 return
             self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
             print(self.bestiary.toMenu())
+        else:
+            self.usage()
+
+
+class name(Command):
+    def __init__(self, encounter):
+        super().__init__()
+        self.names = ['name', 'nick']
+        self.encounter = encounter
+        self.description = "Gives a specific name to an NPC in the encounter"
+        self.usageStr = "name <index> <nickname>"
+
+    def execute(self, args=[]) -> None:
+        if len(args) == 2:
+            if not args[0].isnumeric():
+                self.usage()
+                return
+            if isValidInt(args[0], self.encounter.data) is True:
+                self.encounter.data[int(args[0]) - 1].nick = args[1]
+            else:
+                self.usage()
         else:
             self.usage()
 
@@ -571,7 +615,8 @@ def main():
         heal(encounter),
         status(encounter),
         info(bestiary),
-        make(bestiary)
+        make(bestiary),
+        name(encounter)
     ]
 
     commands.append(displayHelp(commands))
