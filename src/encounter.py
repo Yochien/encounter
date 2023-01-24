@@ -155,7 +155,7 @@ class load(Command):
             else:
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
-                    if not line.startswith("#"):
+                    if not (line.startswith("#") or line.isspace()):
                         line = line.rstrip("\n").split(",")
                         npc = NPC(line[0], int(line[1]), int(line[2]))
                         self.bestiary.data.append(npc)

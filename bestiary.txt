@@ -1,15 +1,16 @@
-#Example bestiary file for encounter
-#Lines beginning with "#" are comments
-#Format to create custom NPC instances is as follows
-#Name, Max HP, AC
-#Extra values, descriptions, and notes separated with a comma will be ignored
-#
-#Nature
+# Example bestiary file for encounter
+# Lines beginning with "#" are comments
+# Blank lines are ignored
+# Format for custom NPC types:
+# Name, Max HP, AC
+# Extra values, descriptions, and notes separated with a comma will be ignored
+
+# Nature
 Wolf, 11, 13
 Fox, 3, 12, this note will be ignored
 Spider, 1, 12, A tiny creepy crawley creature
-#Fantasy
+# Fantasy
 Skeleton, 13, 13
 Zombie, 16, 15
-#Human
+# Human
 Townsfolk, 9, 12
