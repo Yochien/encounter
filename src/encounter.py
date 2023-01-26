@@ -643,7 +643,7 @@ class unmark(Command):
 
 def main():
     bestiary = NPCList(['bestiary', 'book', 'b'])
-    encounter = NPCList(['encounter', 'e', "combat", "c"])
+    encounter = NPCList(['encounter', 'e', 'combat', 'c'])
     referenceLists = [bestiary, encounter]
 
     # Instantiate commands
