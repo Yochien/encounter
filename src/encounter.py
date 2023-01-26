@@ -14,6 +14,12 @@ class NPC:
         # Value assertions
         if len(name) < 1:
             raise ValueError("Name must be at least length 1.")
+        if name.isspace():
+            raise ValueError("Name must not be blank.")
+        if nick is not None and len(nick) < 1:
+            raise ValueError("Nickname must be at least length 1.")
+        if nick is not None and nick.isspace():
+            raise ValueError("Nickname must not be blank.")
         if maxHP < 1:
             raise ValueError("HP must be at least 1.")
         if ac < 0:
