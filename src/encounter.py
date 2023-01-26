@@ -597,6 +597,50 @@ class name(Command):
             self.usage()
 
 
+class mark(Command):
+    def __init__(self, encounter):
+        super().__init__()
+        self.names = ['mark', 'note']
+        self.encounter = encounter
+        self.description = "Mark an NPC with a symbol and note"
+        self.usageStr = "mark <index> [note]"
+
+    def execute(self, args=[]) -> None:
+        if len(args) == 2:
+            if not args[0].isnumeric():
+                self.usage()
+                return
+            if isValidInt(args[0], self.encounter.data) is True:
+                self.encounter.data[int(args[0]) - 1].marked = True
+                self.encounter.data[int(args[0]) - 1].note = args[1]
+            else:
+                self.usage()
+        else:
+            self.usage()
+
+
+class unmark(Command):
+    def __init__(self, encounter):
+        super().__init__()
+        self.names = ['unmark']
+        self.encounter = encounter
+        self.description = "Remove mark and symbol from an NPC"
+        self.usageStr = "unmark <index>"
+
+    def execute(self, args=[]) -> None:
+        if len(args) == 1:
+            if not args[0].isnumeric():
+                self.usage()
+                return
+            if isValidInt(args[0], self.encounter.data) is True:
+                self.encounter.data[int(args[0]) - 1].marked = False
+                self.encounter.data[int(args[0]) - 1].note = ""
+            else:
+                self.usage()
+        else:
+            self.usage()
+
+
 def main():
     bestiary = NPCList(['bestiary', 'book', 'b'])
     encounter = NPCList(['encounter', 'e', "combat", "c"])
@@ -616,7 +660,9 @@ def main():
         status(encounter),
         info(bestiary),
         make(bestiary),
-        name(encounter)
+        name(encounter),
+        mark(encounter),
+        unmark(encounter)
     ]
 
     commands.append(displayHelp(commands))
