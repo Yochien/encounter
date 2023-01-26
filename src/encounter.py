@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class NPC:
-    def __init__(self, name: str, maxHP: int, ac: int, nick: str|None = None):
+    def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
             raise TypeError("Name must be a string.")
