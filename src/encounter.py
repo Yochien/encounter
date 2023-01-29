@@ -63,6 +63,8 @@ class NPC:
             return False
         if self.ac != other.ac:
             return False
+        if self.note != other.note:
+            return False
         return True
 
     def combatStatus(self) -> str:
