@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class NPC:
-    def __init__(self, name: str, maxHP: int, ac: int, nick: str|None = None):
+    def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
             raise TypeError("Name must be a string.")
@@ -14,12 +14,20 @@ class NPC:
         # Value assertions
         if len(name) < 1:
             raise ValueError("Name must be at least length 1.")
+        if name.isspace():
+            raise ValueError("Name must not be blank.")
+        if nick is not None and len(nick) < 1:
+            raise ValueError("Nickname must be at least length 1.")
+        if nick is not None and nick.isspace():
+            raise ValueError("Nickname must not be blank.")
         if maxHP < 1:
             raise ValueError("HP must be at least 1.")
         if ac < 0:
             raise ValueError("AC must be at least 0.")
 
         # Value assignment
+        self.marked = False
+        self.note = ""
         self.name = name
         if nick is None:
             self.nick = name
@@ -29,16 +37,19 @@ class NPC:
         self.ac = int(ac)
 
     def __str__(self):
-        if self.currentHP > 0:
-            if self.nick is not self.name:
-                return self.nick + " (" + self.name + ")"
-            else:
-                return self.name
+        output = ""
+        if self.nick is not self.name:
+            output += self.nick + " (" + self.name + ")"
         else:
-            if self.nick is not self.name:
-                return self.nick + " (" + self.name + ") [X]"
-            else:
-                return self.name + " [X]"
+            output += self.name
+
+        if self.marked:
+            output += "*"
+
+        if self.currentHP <= 0:
+            output += " [X]"
+
+        return output
 
     def equals(self, other):
         if self == other:
@@ -54,6 +65,8 @@ class NPC:
         if self.currentHP != other.currentHP:
             return False
         if self.ac != other.ac:
+            return False
+        if self.note != other.note:
             return False
         return True
 
@@ -71,6 +84,13 @@ class NPC:
             else:
                 status += self.name
             status += " [Dead]"
+
+        if self.marked:
+            status += "\nNote:\n"
+            if not self.note.isspace() and len(self.note) > 0:
+                status += self.note
+            else:
+                status += "EMPTY"
 
         return status
 
@@ -101,12 +121,12 @@ class NPCList:
 
         if len(self.data) == 0:
             info += "EMPTY"
+            return info
         else:
-            for i in self.data[:-1]:
+            for i in self.data:
                 info += str(self.data.index(i) + 1) + " " + str(i) + "\n"
-            info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
 
-        return info
+        return info[:-1]
 
 
 def findList(name: str, referenceLists: list[NPCList]) -> NPCList | None:
@@ -155,7 +175,7 @@ class load(Command):
             else:
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
-                    if not line.startswith("#"):
+                    if not (line.startswith("#") or line.isspace()):
                         line = line.rstrip("\n").split(",")
                         npc = NPC(line[0], int(line[1]), int(line[2]))
                         self.bestiary.data.append(npc)
@@ -597,9 +617,56 @@ class name(Command):
             self.usage()
 
 
+class mark(Command):
+    def __init__(self, encounter):
+        super().__init__()
+        self.names = ['mark', 'note']
+        self.encounter = encounter
+        self.description = "Mark an NPC with a symbol and note"
+        self.usageStr = "mark <index> [note]"
+
+    def execute(self, args=[]) -> None:
+        if len(args) >= 1:
+            if not args[0].isnumeric():
+                self.usage()
+                return
+            if isValidInt(args[0], self.encounter.data) is True:
+                self.encounter.data[int(args[0]) - 1].marked = True
+                if len(args) > 1:
+                    self.encounter.data[int(args[0]) - 1].note = " ".join(args[1:])
+                else:
+                    self.encounter.data[int(args[0]) - 1].note = ""
+            else:
+                self.usage()
+        else:
+            self.usage()
+
+
+class unmark(Command):
+    def __init__(self, encounter):
+        super().__init__()
+        self.names = ['unmark']
+        self.encounter = encounter
+        self.description = "Remove mark and symbol from an NPC"
+        self.usageStr = "unmark <index>"
+
+    def execute(self, args=[]) -> None:
+        if len(args) == 1:
+            if not args[0].isnumeric():
+                self.usage()
+                return
+            if isValidInt(args[0], self.encounter.data) is True:
+                self.encounter.data[int(args[0]) - 1].marked = False
+                self.encounter.data[int(args[0]) - 1].note = ""
+            else:
+                self.usage()
+        else:
+            self.usage()
+
+
 def main():
     bestiary = NPCList(['bestiary', 'book', 'b'])
-    encounter = NPCList(['encounter', 'e', "combat", "c"])
+    encounter = NPCList(['encounter', 'e', 'combat', 'c'])
     referenceLists = [bestiary, encounter]
 
     # Instantiate commands
@@ -616,7 +683,9 @@ def main():
         status(encounter),
         info(bestiary),
         make(bestiary),
-        name(encounter)
+        name(encounter),
+        mark(encounter),
+        unmark(encounter)
     ]
 
     commands.append(displayHelp(commands))
