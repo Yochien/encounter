@@ -634,6 +634,8 @@ class mark(Command):
                 self.encounter.data[int(args[0]) - 1].marked = True
                 if len(args) > 1:
                     self.encounter.data[int(args[0]) - 1].note = " ".join(args[1:])
+                else:
+                    self.encounter.data[int(args[0]) - 1].note = ""
             else:
                 self.usage()
         else:
