@@ -87,7 +87,7 @@ class NPC:
 
         if self.marked:
             status += "\nNote:\n"
-            if not self.note.isspace():
+            if not self.note.isspace() and len(self.note) > 0:
                 status += self.note
             else:
                 status += "EMPTY"
