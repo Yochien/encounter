@@ -26,6 +26,8 @@ class NPC:
             raise ValueError("AC must be at least 0.")
 
         # Value assignment
+        self.marked = False
+        self.note = ""
         self.name = name
         if nick is None:
             self.nick = name
