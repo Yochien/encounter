@@ -85,6 +85,13 @@ class NPC:
                 status += self.name
             status += " [Dead]"
 
+        if self.marked:
+            status += "\nNote:\n"
+            if not self.note.isspace():
+                status += self.note
+            else:
+                status += "EMPTY"
+
         return status
 
     def detailedInfo(self) -> str:
