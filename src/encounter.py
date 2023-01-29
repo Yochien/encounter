@@ -114,12 +114,12 @@ class NPCList:
 
         if len(self.data) == 0:
             info += "EMPTY"
+            return info
         else:
-            for i in self.data[:-1]:
+            for i in self.data:
                 info += str(self.data.index(i) + 1) + " " + str(i) + "\n"
-            info += str(self.data.index(self.data[-1]) + 1) + " " + str(self.data[-1])
 
-        return info
+        return info[:-1]
 
 
 def findList(name: str, referenceLists: list[NPCList]) -> NPCList | None:
