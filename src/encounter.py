@@ -43,6 +43,9 @@ class NPC:
         else:
             output += self.name
 
+        if self.marked:
+            output += "*"
+
         if self.currentHP <= 0:
             output += " [X]"
 
