@@ -37,16 +37,16 @@ class NPC:
         self.ac = int(ac)
 
     def __str__(self):
-        if self.currentHP > 0:
-            if self.nick is not self.name:
-                return self.nick + " (" + self.name + ")"
-            else:
-                return self.name
+        output = ""
+        if self.nick is not self.name:
+            output += self.nick + " (" + self.name + ")"
         else:
-            if self.nick is not self.name:
-                return self.nick + " (" + self.name + ") [X]"
-            else:
-                return self.name + " [X]"
+            output += self.name
+
+        if self.currentHP <= 0:
+            output += " [X]"
+
+        return output
 
     def equals(self, other):
         if self == other:
