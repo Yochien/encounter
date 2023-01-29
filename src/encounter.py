@@ -626,14 +626,14 @@ class mark(Command):
         self.usageStr = "mark <index> [note]"
 
     def execute(self, args=[]) -> None:
-        if len(args) == 1 or len(args) == 2:
+        if len(args) >= 1:
             if not args[0].isnumeric():
                 self.usage()
                 return
             if isValidInt(args[0], self.encounter.data) is True:
                 self.encounter.data[int(args[0]) - 1].marked = True
-                if len(args) == 2:
-                    self.encounter.data[int(args[0]) - 1].note = args[1]
+                if len(args) > 1:
+                    self.encounter.data[int(args[0]) - 1].note = " ".join(args[1:])
             else:
                 self.usage()
         else:
