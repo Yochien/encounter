@@ -653,7 +653,12 @@ class unmark(Command):
     def execute(self, args=[]) -> None:
         if len(args) == 1:
             if not args[0].isnumeric():
-                self.usage()
+                if args[0].lower() == "all":
+                    for npc in self.encounter.data:
+                        npc.marked = False
+                        npc.note = ""
+                else:
+                    self.usage()
                 return
             if isValidInt(args[0], self.encounter.data) is True:
                 self.encounter.data[int(args[0]) - 1].marked = False
