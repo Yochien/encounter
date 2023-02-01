@@ -498,6 +498,8 @@ class smite(Command):
 
                         if areAllDefeated(self.encounter.data):
                             print("Party has defeated all enemies.")
+                else:
+                    self.usage()
             else:
                 self.usage()
         else:
