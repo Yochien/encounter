@@ -487,6 +487,12 @@ class smite(Command):
     def execute(self, args = []):
         if len(self.encounter.data) > 0:
             if len(args) == 1:
+                if args[0] == "all":
+                    for npc in self.encounter.data:
+                        if npc.currentHP > 0:
+                            npc.currentHP = 0
+                    print("All enemies have been defeated.")
+                    return
                 if isValidInt(args[0], self.encounter.data) is True:
                     npc = self.encounter.data[int(args[0]) - 1]
                     if npc.currentHP <= 0:
