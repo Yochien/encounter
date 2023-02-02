@@ -548,7 +548,16 @@ class heal(Command):
             if int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
-            if isValidInt(args[0], self.encounter.data):
+            if args[0] == "all":
+                if len(self.encounter.data) > 0:
+                    for npc in self.encounter.data:
+                        healedAmt = self.__healNPC(npc, int(args[1]))
+                        output = "{} was healed {} points.".format(npc.nick, healedAmt)
+                        print(output)
+                else:
+                    print("Encounter is empty. There is noone to heal.")
+                    return
+            elif isValidInt(args[0], self.encounter.data):
                 npc = self.encounter.data[int(args[0]) - 1]
                 origHP = npc.currentHP
 
