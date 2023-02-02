@@ -291,7 +291,11 @@ class addNPC(Command):
 
     def execute(self, args = []):
         bestiary = findList("bestiary", self.referenceLists)
+        if bestiary is None:
+            raise TypeError("Bestiary list must be an NPCList.")
         encounter = findList("encounter", self.referenceLists)
+        if encounter is None:
+            raise TypeError("Encounter list must be an NPCList.")
 
         if len(args) == 1:
             selected = args[0].split(",")
