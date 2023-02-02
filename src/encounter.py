@@ -534,6 +534,12 @@ class heal(Command):
         self.description = "Directly adds to an NPC's health."
         self.usageStr = "heal <index> <amount>"
 
+    def __healNPC(self, npc: NPC, amount: int) -> int:
+        originalHP = npc.currentHP
+        npc.currentHP = originalHP + amount
+        npc.currentHP = min(npc.maxHP, npc.currentHP)
+        return npc.currentHP - originalHP
+
     def execute(self, args = []):
         if len(args) == 2:
             if not isInt(args[1]):
