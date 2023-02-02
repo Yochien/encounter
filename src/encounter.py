@@ -534,6 +534,9 @@ class heal(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
+            if int(args[1]) < 1:
+                print("Amount must be more than zero.")
+                return
             if isValidInt(args[0], self.encounter.data):
                 npc = self.encounter.data[int(args[0]) - 1]
                 origHP = npc.currentHP
