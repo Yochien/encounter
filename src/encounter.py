@@ -546,6 +546,8 @@ class heal(Command):
                 healedAmt = npc.currentHP - origHP
 
                 print(npc.nick + " was healed " + str(healedAmt) + " points.")
+            else:
+                self.usage()
         else:
             self.usage()
 
