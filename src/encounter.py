@@ -559,15 +559,7 @@ class heal(Command):
                     return
             elif isValidInt(args[0], self.encounter.data):
                 npc = self.encounter.data[int(args[0]) - 1]
-                origHP = npc.currentHP
-
-                npc.currentHP = npc.currentHP + int(args[1])
-
-                if npc.currentHP > npc.maxHP:
-                    npc.currentHP = npc.maxHP
-
-                healedAmt = npc.currentHP - origHP
-
+                healedAmt = self.__healNPC(npc, int(args[1]))
                 print(npc.nick + " was healed " + str(healedAmt) + " points.")
             else:
                 self.usage()
