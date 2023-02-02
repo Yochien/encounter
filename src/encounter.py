@@ -496,20 +496,25 @@ class smite(Command):
                         if npc.currentHP > 0:
                             npc.currentHP = 0
                     print("All enemies have been defeated.")
-                    return
-                if isValidInt(args[0], self.encounter.data) is True:
-                    npc = self.encounter.data[int(args[0]) - 1]
-                    if npc.currentHP <= 0:
-                        print("Enemy already defeated.")
-                        return
-                    else:
-                        npc.currentHP = 0
-                        print(npc.nick + " was defeated.")
-
-                        if areAllDefeated(self.encounter.data):
-                            print("Party has defeated all enemies.")
                 else:
-                    self.usage()
+                    selected = args[0].split(",")
+
+                    for index in selected:
+                        if isValidInt(args[0], self.encounter.data) is False:
+                            self.usage()
+                            return
+
+                    for index in selected:
+                        npc = self.encounter.data[int(index) - 1]
+                        if npc.currentHP <= 0:
+                            print("Enemy already defeated.")
+                            return
+                        else:
+                            npc.currentHP = 0
+                            print(npc.nick + " was defeated.")
+
+                            if areAllDefeated(self.encounter.data):
+                                print("Party has defeated all enemies.")
             else:
                 self.usage()
         else:
