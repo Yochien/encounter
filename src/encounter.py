@@ -491,7 +491,7 @@ class smite(Command):
         self.names = ['smite', 'kill']
         self.encounter = encounter
         self.description = "Immediately kills an NPC."
-        self.usageStr = "smite <bestiary_index>"
+        self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
         if len(self.encounter.data) > 0:
