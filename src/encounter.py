@@ -306,7 +306,6 @@ class addNPC(Command):
 
             for index in selected:
                 copyNPC(bestiary.data, int(index), encounter.data)
-            print(encounter.toMenu())
         else:
             self.usage()
 
