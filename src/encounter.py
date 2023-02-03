@@ -116,6 +116,9 @@ class NPCList:
         self.name = names[0]
         self.data: list[NPC] = []
 
+    def __len__(self):
+        return len(self.data)
+
     def toMenu(self):
         info = self.name.upper() + ":\n"
 
