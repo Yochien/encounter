@@ -569,12 +569,18 @@ class heal(Command):
                 else:
                     print("Encounter is empty. There is noone to heal.")
                     return
-            elif isValidInt(args[0], self.encounter.data):
-                npc = self.encounter.data[int(args[0]) - 1]
-                healedAmt = self.__healNPC(npc, int(args[1]))
-                print(npc.nick + " was healed " + str(healedAmt) + " points.")
             else:
-                self.usage()
+                if not isValidInt(args[0], self.encounter.data):
+                    self.usage()
+                    return
+
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    healedAmt = self.__healNPC(npc, int(args[1]))
+                    print(npc.nick + " was healed " + str(healedAmt) + " points.")
         else:
             self.usage()
 
