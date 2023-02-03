@@ -514,6 +514,7 @@ class smite(Command):
                     print("All enemies have been defeated.")
                 else:
                     selected = args[0].split(",")
+                    selected = list(set(selected))  # Remove duplicates from the selection
 
                     for index in selected:
                         if isValidInt(args[0], self.encounter.data) is False:
