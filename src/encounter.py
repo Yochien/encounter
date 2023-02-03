@@ -298,12 +298,11 @@ class addNPC(Command):
             raise TypeError("Encounter list must be an NPCList.")
 
         if len(args) == 1:
-            selected = args[0].split(",")
+            if not isValidInt(args[0], bestiary.data):
+                self.usage()
+                return
 
-            for index in selected:
-                if not isInt(index) or int(index) > len(bestiary.data) or int(index) <= 0:
-                    self.usage()
-                    return
+            selected = args[0].split(",")
 
             for index in selected:
                 copyNPC(bestiary.data, int(index), encounter.data)
