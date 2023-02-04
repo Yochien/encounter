@@ -465,7 +465,7 @@ class damage(Command):
             if not isInt(args[1]):
                 self.usage()
                 return
-            if int(args[1]) < 1:
+            elif int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
             if args[0] == "all":
@@ -479,20 +479,27 @@ class damage(Command):
                             print(npc.nick + " has been defeated.")
                             if areAllDefeated(self.encounter.data):
                                 print("Party has defeated all enemies.")
-            elif isValidInt(args[0], self.encounter.data) is True:
-                npc = self.encounter.data[int(args[0]) - 1]
-
-                if npc.currentHP <= 0:
-                    print("Enemy already defeated.")
+            else:
+                if not isValidInt(args[0], self.encounter.data):
+                    self.usage()
                     return
 
-                npc.currentHP = max(0, npc.currentHP - int(args[1]))
-                if npc.currentHP <= 0:
-                    print(npc.nick + " has been defeated.")
-                    if areAllDefeated(self.encounter.data):
-                        print("Party has defeated all enemies.")
-            else:
-                self.usage()
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+
+                    if npc.currentHP <= 0:
+                        print(npc.nick + " already defeated.")
+
+                    npc.currentHP = max(0, npc.currentHP - int(args[1]))
+
+                    if npc.currentHP <= 0:
+                        print(npc.nick + " has been defeated.")
+                        if areAllDefeated(self.encounter.data):
+                            print("Party has defeated all enemies.")
+                            return
         else:
             self.usage()
 
