@@ -353,6 +353,10 @@ class removeNPC(Command):
         self.usageStr = "remove <index,...>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
             if args[0].lower() == "all":
                 self.encounter.data.clear()
@@ -387,6 +391,10 @@ class attack(Command):
         self.usageStr = "attack <index> [hit] [damage]"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         lenArgs = len(args)
         npc = None
 
@@ -461,6 +469,10 @@ class damage(Command):
         self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not isInt(args[1]):
                 self.usage()
@@ -469,9 +481,6 @@ class damage(Command):
                 print("Amount must be more than zero.")
                 return
             if args[0].lower() == "all":
-                if len(self.encounter.data) < 1:
-                    print("Encoutner is empty. Noone to damage.")
-                    return
                 for npc in self.encounter.data:
                     if npc.currentHP > 0:
                         npc.currentHP = max(0, npc.currentHP - int(args[1]))
@@ -513,37 +522,38 @@ class smite(Command):
         self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
-        if len(self.encounter.data) > 0:
-            if len(args) == 1:
-                if args[0].lower() == "all":
-                    for npc in self.encounter.data:
-                        if npc.currentHP > 0:
-                            npc.currentHP = 0
-                    print("All enemies have been defeated.")
-                else:
-                    selected = args[0].split(",")
-                    selected = list(set(selected))  # Remove duplicates from the selection
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
 
-                    for index in selected:
-                        if isValidInt(args[0], self.encounter.data) is False:
-                            self.usage()
-                            return
-
-                    for index in selected:
-                        npc = self.encounter.data[int(index) - 1]
-                        if npc.currentHP <= 0:
-                            print("Enemy already defeated.")
-                            return
-                        else:
-                            npc.currentHP = 0
-                            print(npc.nick + " was defeated.")
-
-                            if areAllDefeated(self.encounter.data):
-                                print("Party has defeated all enemies.")
+        if len(args) == 1:
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    if npc.currentHP > 0:
+                        npc.currentHP = 0
+                print("All enemies have been defeated.")
             else:
-                self.usage()
+                selected = args[0].split(",")
+                selected = list(set(selected))  # Remove duplicates from the selection
+
+                for index in selected:
+                    if isValidInt(args[0], self.encounter.data) is False:
+                        self.usage()
+                        return
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    if npc.currentHP <= 0:
+                        print("Enemy already defeated.")
+                        return
+                    else:
+                        npc.currentHP = 0
+                        print(npc.nick + " was defeated.")
+
+                        if areAllDefeated(self.encounter.data):
+                            print("Party has defeated all enemies.")
         else:
-            print("Encounter is empty. There is no one to smite.")
+            self.usage()
 
 
 class heal(Command):
@@ -561,6 +571,10 @@ class heal(Command):
         return npc.currentHP - originalHP
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not isInt(args[1]):
                 self.usage()
@@ -569,14 +583,10 @@ class heal(Command):
                 print("Amount must be more than zero.")
                 return
             if args[0].lower() == "all":
-                if len(self.encounter.data) > 0:
-                    for npc in self.encounter.data:
-                        healedAmt = self.__healNPC(npc, int(args[1]))
-                        output = "{} was healed {} points.".format(npc.nick, healedAmt)
-                        print(output)
-                else:
-                    print("Encounter is empty. There is noone to heal.")
-                    return
+                for npc in self.encounter.data:
+                    healedAmt = self.__healNPC(npc, int(args[1]))
+                    output = "{} was healed {} points.".format(npc.nick, healedAmt)
+                    print(output)
             else:
                 if not isValidInt(args[0], self.encounter.data):
                     self.usage()
@@ -602,12 +612,12 @@ class status(Command):
         self.usageStr = "status <encounter_index,...>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
             if args[0].lower() == "all":
-                if len(self.encounter) < 1:
-                    print("Encounter is empty. Noone's status to display.")
-                    return
-
                 print("Status:")
                 for npc in self.encounter.data:
                     print(npc.combatStatus())
@@ -615,8 +625,7 @@ class status(Command):
                 selected = args[0].split(",")
                 selected = list(set(selected))
 
-                if len(self.encounter) > 0:
-                    print("Status:")
+                print("Status:")
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
 
@@ -675,6 +684,10 @@ class name(Command):
         self.usageStr = "name <index> <nickname>"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not args[0].isnumeric():
                 self.usage()
@@ -696,12 +709,12 @@ class mark(Command):
         self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) >= 1:
             if args[0].lower() == "all":
-                if (len(self.encounter) < 1):
-                    print("Encounter is empty. Noone to mark.")
-                    return
-
                 for npc in self.encounter.data:
                     npc.marked = True
                     if len(args) > 1:
@@ -736,12 +749,12 @@ class unmark(Command):
         self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
             if args[0].lower() == "all":
-                if (len(self.encounter) < 1):
-                    print("Encounter is empty. Noone to unmark.")
-                    return
-
                 for npc in self.encounter.data:
                     npc.marked = False
                     npc.note = ""
