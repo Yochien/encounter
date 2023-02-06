@@ -353,7 +353,6 @@ class removeNPC(Command):
         if len(args) == 1:
             if args[0].lower() == "all":
                 self.encounter.data.clear()
-                print(self.encounter.toMenu())
             else:
                 selected = args[0].split(",")
 
@@ -366,7 +365,6 @@ class removeNPC(Command):
 
                 for index in selected:
                     self.encounter.data.pop(int(index) - 1)
-                print(self.encounter.toMenu())
         else:
             self.usage()
 
