@@ -458,7 +458,7 @@ class damage(Command):
         self.names = ['damage']
         self.encounter = encounter
         self.description = "Directly subtracts from an NPC's health."
-        self.usageStr = "damage <index> <amount>"
+        self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
         if len(args) == 2:
@@ -552,7 +552,7 @@ class heal(Command):
         self.names = ['heal']
         self.encounter = encounter
         self.description = "Directly adds to an NPC's health."
-        self.usageStr = "heal <index> <amount>"
+        self.usageStr = "heal <encounter_index,...> <amount>"
 
     def __healNPC(self, npc: NPC, amount: int) -> int:
         originalHP = npc.currentHP
@@ -693,7 +693,7 @@ class mark(Command):
         self.names = ['mark', 'note']
         self.encounter = encounter
         self.description = "Mark an NPC with a symbol and note"
-        self.usageStr = "mark <index> [note]"
+        self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
         if len(args) >= 1:
@@ -733,7 +733,7 @@ class unmark(Command):
         self.names = ['unmark']
         self.encounter = encounter
         self.description = "Remove mark and symbol from an NPC"
-        self.usageStr = "unmark <index>"
+        self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
         if len(args) == 1:
