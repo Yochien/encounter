@@ -178,7 +178,7 @@ class load(Command):
                 bestiaryFile = open(args[0].strip())
             except FileNotFoundError:
                 print("Selected bestiary file could not be found.")
-                if len(self.bestiary.data) == 0:
+                if len(self.bestiary) == 0:
                     print("Loading placeholder bestiary.")
                     self.bestiary.data.append(NPC("Human", 5, 12))
                     self.bestiary.data.append(NPC("Animal", 3, 10))
