@@ -688,6 +688,10 @@ class mark(Command):
     def execute(self, args=[]) -> None:
         if len(args) >= 1:
             if args[0].lower() == "all":
+                if (len(self.encounter) < 1):
+                    print("Encounter is empty. Noone to mark.")
+                    return
+
                 for npc in self.encounter.data:
                     npc.marked = True
                     if len(args) > 1:
