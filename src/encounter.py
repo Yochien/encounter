@@ -380,8 +380,8 @@ class removeNPC(Command):
             self.usage()
 
 
-def areAllDefeated(encounter):
-    for npc in encounter:
+def areAllDefeated(encounter: NPCList):
+    for npc in encounter.data:
         if npc.currentHP > 0:
             return False
     return True
@@ -461,7 +461,7 @@ class attack(Command):
         if npc is not None:
             if npc.currentHP <= 0:
                 print(npc.nick + " has been defeated.")
-                if areAllDefeated(self.encounter.data):
+                if areAllDefeated(self.encounter):
                     print("Party has defeated all enemies.")
 
 
@@ -491,7 +491,7 @@ class damage(Command):
                         npc.currentHP = max(0, npc.currentHP - int(args[1]))
                         if npc.currentHP <= 0:
                             print(npc.nick + " has been defeated.")
-                            if areAllDefeated(self.encounter.data):
+                            if areAllDefeated(self.encounter):
                                 print("Party has defeated all enemies.")
             else:
                 if not isValidInt(args[0], self.encounter):
@@ -511,7 +511,7 @@ class damage(Command):
 
                     if npc.currentHP <= 0:
                         print(npc.nick + " has been defeated.")
-                        if areAllDefeated(self.encounter.data):
+                        if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
                             return
         else:
@@ -555,7 +555,7 @@ class smite(Command):
                         npc.currentHP = 0
                         print(npc.nick + " was defeated.")
 
-                        if areAllDefeated(self.encounter.data):
+                        if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
         else:
             self.usage()
