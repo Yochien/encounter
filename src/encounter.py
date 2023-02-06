@@ -727,19 +727,26 @@ class unmark(Command):
 
     def execute(self, args=[]) -> None:
         if len(args) == 1:
-            if not args[0].isnumeric():
-                if args[0].lower() == "all":
-                    for npc in self.encounter.data:
-                        npc.marked = False
-                        npc.note = ""
-                else:
-                    self.usage()
-                return
-            if isValidInt(args[0], self.encounter.data) is True:
-                self.encounter.data[int(args[0]) - 1].marked = False
-                self.encounter.data[int(args[0]) - 1].note = ""
+            if args[0].lower() == "all":
+                if (len(self.encounter) < 1):
+                    print("Encounter is empty. Noone to unmark.")
+                    return
+
+                for npc in self.encounter.data:
+                    npc.marked = False
+                    npc.note = ""
             else:
-                self.usage()
+                if not isValidInt(args[0], self.encounter.data):
+                    self.usage()
+                    return
+
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    npc.marked = False
+                    npc.note = ""
         else:
             self.usage()
 
