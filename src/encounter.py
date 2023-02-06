@@ -354,12 +354,11 @@ class removeNPC(Command):
             if args[0].lower() == "all":
                 self.encounter.data.clear()
             else:
+                if not isValidInt(args[0], self.encounter.data):
+                    self.usage()
+                    return
+
                 selected = args[0].split(",")
-
-                for index in selected:
-                    if not isValidInt(index, self.encounter.data):
-                        return
-
                 # Remove duplicates and reverse sort the input
                 selected = sorted(list(set(selected)), reverse = True)
 
