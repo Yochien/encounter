@@ -149,6 +149,9 @@ class Command(ABC):
     def usage(self) -> None:
         print("Usage: " + self.usageStr)
 
+    def encounterEmpty(self) -> None:
+        print("The encounter is empty. Add some NPCs to it and try again.")
+
     @abstractmethod
     def execute(self, args = []) -> None:
         raise NotImplementedError("This command has not been implemented yet.")
