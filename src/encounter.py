@@ -599,18 +599,28 @@ class status(Command):
         self.names = ['status']
         self.encounter = encounter
         self.description = "Displays an NPC's current stats."
-        self.usageStr = "status <index>"
+        self.usageStr = "status <encounter_index,...>"
 
     def execute(self, args = []):
         if len(args) == 1:
             if args[0].lower() == "all":
+                if len(self.encounter) < 1:
+                    print("Encounter is empty. Noone's status to display.")
+                    return
+
                 print("Status:")
                 for npc in self.encounter.data:
                     print(npc.combatStatus())
             elif isValidInt(args[0], self.encounter.data):
-                npc = self.encounter.data[int(args[0]) - 1]
-                print("Status:")
-                print(npc.combatStatus())
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                if len(self.encounter) > 0:
+                    print("Status:")
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+
+                    print(npc.combatStatus())
             else:
                 self.usage()
         else:
