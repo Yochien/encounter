@@ -153,6 +153,10 @@ class Command(ABC):
     def encounterEmpty(self) -> None:
         print("The encounter is empty. Add some NPCs to it and try again.")
 
+    def OOBSelection(self, referenceList: NPCList) -> None:
+        print("Your selection contains values out of range for the " + referenceList.name)
+        print("Adjust your selection and try again.")
+
     @abstractmethod
     def execute(self, args = []) -> None:
         raise NotImplementedError("This command has not been implemented yet.")
