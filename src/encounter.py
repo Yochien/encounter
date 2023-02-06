@@ -310,7 +310,7 @@ class addNPC(Command):
 
         if len(args) == 1:
             if not isValidInt(args[0], bestiary.data):
-                self.usage()
+                self.OOBSelection(bestiary)
                 return
 
             selected = args[0].split(",")
@@ -367,7 +367,7 @@ class removeNPC(Command):
                 self.encounter.data.clear()
             else:
                 if not isValidInt(args[0], self.encounter.data):
-                    self.usage()
+                    self.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -408,7 +408,7 @@ class attack(Command):
             return
 
         if not isValidInt(args[0], self.encounter.data):
-            self.usage()
+            self.OOBSelection(self.encounter)
             return
 
         npc = self.encounter.data[int(args[0]) - 1]
@@ -495,7 +495,7 @@ class damage(Command):
                                 print("Party has defeated all enemies.")
             else:
                 if not isValidInt(args[0], self.encounter.data):
-                    self.usage()
+                    self.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -543,7 +543,7 @@ class smite(Command):
 
                 for index in selected:
                     if isValidInt(args[0], self.encounter.data) is False:
-                        self.usage()
+                        self.OOBSelection(self.encounter)
                         return
 
                 for index in selected:
@@ -594,7 +594,7 @@ class heal(Command):
                     print(output)
             else:
                 if not isValidInt(args[0], self.encounter.data):
-                    self.usage()
+                    self.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -636,7 +636,7 @@ class status(Command):
 
                     print(npc.combatStatus())
             else:
-                self.usage()
+                self.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -655,6 +655,8 @@ class info(Command):
                 if isValidInt(args[0], self.bestiary.data):
                     print("INFO:")
                     print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
+                else:
+                    self.OOBSelection(self.bestiary)
             else:
                 self.usage()
         else:
@@ -700,7 +702,7 @@ class name(Command):
             if isValidInt(args[0], self.encounter.data) is True:
                 self.encounter.data[int(args[0]) - 1].nick = args[1]
             else:
-                self.usage()
+                self.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -728,7 +730,7 @@ class mark(Command):
                         npc.note = ""
             else:
                 if not isValidInt(args[0], self.encounter.data):
-                    self.usage()
+                    self.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -765,7 +767,7 @@ class unmark(Command):
                     npc.note = ""
             else:
                 if not isValidInt(args[0], self.encounter.data):
-                    self.usage()
+                    self.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
