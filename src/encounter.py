@@ -249,7 +249,7 @@ class displayMenu(Command):
             else:
                 print("Unknown list selected.")
         else:
-            if numArgs == 0 or args[0] == "all":
+            if numArgs == 0 or args[0].lower() == "all":
                 for list in self.referenceLists:
                     print(list.toMenu())
                     if list is not self.referenceLists[-1]:
@@ -351,7 +351,7 @@ class removeNPC(Command):
 
     def execute(self, args = []):
         if len(args) == 1:
-            if args[0] == "all":
+            if args[0].lower() == "all":
                 self.encounter.data.clear()
                 print(self.encounter.toMenu())
             else:
@@ -468,7 +468,7 @@ class damage(Command):
             elif int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
-            if args[0] == "all":
+            if args[0].lower() == "all":
                 if len(self.encounter.data) < 1:
                     print("Encoutner is empty. Noone to damage.")
                     return
@@ -515,7 +515,7 @@ class smite(Command):
     def execute(self, args = []):
         if len(self.encounter.data) > 0:
             if len(args) == 1:
-                if args[0] == "all":
+                if args[0].lower() == "all":
                     for npc in self.encounter.data:
                         if npc.currentHP > 0:
                             npc.currentHP = 0
@@ -568,7 +568,7 @@ class heal(Command):
             if int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
-            if args[0] == "all":
+            if args[0].lower() == "all":
                 if len(self.encounter.data) > 0:
                     for npc in self.encounter.data:
                         healedAmt = self.__healNPC(npc, int(args[1]))
@@ -603,7 +603,7 @@ class status(Command):
 
     def execute(self, args = []):
         if len(args) == 1:
-            if isinstance(args[0], str) and args[0].lower() == "all":
+            if args[0].lower() == "all":
                 print("Status:")
                 for npc in self.encounter.data:
                     print(npc.combatStatus())
