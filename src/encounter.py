@@ -86,8 +86,9 @@ class NPC:
             status += " [Dead]"
 
         if self.marked:
-            status += "\nNote:\n"
+            status += "\n  Note:\n"
             if not self.note.isspace() and len(self.note) > 0:
+                status += "    "
                 status += self.note
             else:
                 status += "EMPTY"
