@@ -652,7 +652,7 @@ class make(Command):
         super().__init__()
         self.names = ['make']
         self.bestiary = bestiary
-        self.description = "Creates an NPC for the bestiary"
+        self.description = "Creates an NPC for the bestiary."
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
@@ -671,7 +671,7 @@ class name(Command):
         super().__init__()
         self.names = ['name', 'nick']
         self.encounter = encounter
-        self.description = "Gives a specific name to an NPC in the encounter"
+        self.description = "Gives a specific name to an NPC in the encounter."
         self.usageStr = "name <index> <nickname>"
 
     def execute(self, args=[]) -> None:
@@ -692,7 +692,7 @@ class mark(Command):
         super().__init__()
         self.names = ['mark', 'note']
         self.encounter = encounter
-        self.description = "Mark an NPC with a symbol and note"
+        self.description = "Mark an NPC with a symbol and note."
         self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
@@ -732,7 +732,7 @@ class unmark(Command):
         super().__init__()
         self.names = ['unmark']
         self.encounter = encounter
-        self.description = "Remove mark and symbol from an NPC"
+        self.description = "Remove mark and symbol from an NPC."
         self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
