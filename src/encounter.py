@@ -278,10 +278,10 @@ def isInt(string: str) -> bool:
             return True
 
 
-def isValidInt(selector: str, list: list[NPC]) -> bool:
+def isValidInt(selector: str, referencList: NPCList) -> bool:
     selected = selector.split(",")
     for index in selected:
-        if not isInt(index) or int(index) <= 0 or int(index) > len(list):
+        if not isInt(index) or int(index) <= 0 or int(index) > len(referencList):
             return False
     return True
 
@@ -309,7 +309,7 @@ class addNPC(Command):
             raise TypeError("Encounter list must be an NPCList.")
 
         if len(args) == 1:
-            if not isValidInt(args[0], bestiary.data):
+            if not isValidInt(args[0], bestiary):
                 self.OOBSelection(bestiary)
                 return
 
@@ -366,7 +366,7 @@ class removeNPC(Command):
             if args[0].lower() == "all":
                 self.encounter.data.clear()
             else:
-                if not isValidInt(args[0], self.encounter.data):
+                if not isValidInt(args[0], self.encounter):
                     self.OOBSelection(self.encounter)
                     return
 
@@ -407,7 +407,7 @@ class attack(Command):
             self.usage()
             return
 
-        if not isValidInt(args[0], self.encounter.data):
+        if not isValidInt(args[0], self.encounter):
             self.OOBSelection(self.encounter)
             return
 
@@ -494,7 +494,7 @@ class damage(Command):
                             if areAllDefeated(self.encounter.data):
                                 print("Party has defeated all enemies.")
             else:
-                if not isValidInt(args[0], self.encounter.data):
+                if not isValidInt(args[0], self.encounter):
                     self.OOBSelection(self.encounter)
                     return
 
@@ -542,7 +542,7 @@ class smite(Command):
                 selected = list(set(selected))  # Remove duplicates from the selection
 
                 for index in selected:
-                    if isValidInt(args[0], self.encounter.data) is False:
+                    if not isValidInt(args[0], self.encounter):
                         self.OOBSelection(self.encounter)
                         return
 
@@ -593,7 +593,7 @@ class heal(Command):
                     output = "{} was healed {} points.".format(npc.nick, healedAmt)
                     print(output)
             else:
-                if not isValidInt(args[0], self.encounter.data):
+                if not isValidInt(args[0], self.encounter):
                     self.OOBSelection(self.encounter)
                     return
 
@@ -626,7 +626,7 @@ class status(Command):
                 print("Status:")
                 for npc in self.encounter.data:
                     print(npc.combatStatus())
-            elif isValidInt(args[0], self.encounter.data):
+            elif isValidInt(args[0], self.encounter):
                 selected = args[0].split(",")
                 selected = list(set(selected))
 
@@ -652,7 +652,7 @@ class info(Command):
     def execute(self, args = []):
         if len(args) == 1:
             if isInt(args[0]):
-                if isValidInt(args[0], self.bestiary.data):
+                if isValidInt(args[0], self.bestiary):
                     print("INFO:")
                     print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
                 else:
@@ -699,7 +699,7 @@ class name(Command):
             if not args[0].isnumeric():
                 self.usage()
                 return
-            if isValidInt(args[0], self.encounter.data) is True:
+            if isValidInt(args[0], self.encounter):
                 self.encounter.data[int(args[0]) - 1].nick = args[1]
             else:
                 self.OOBSelection(self.encounter)
@@ -729,7 +729,7 @@ class mark(Command):
                     else:
                         npc.note = ""
             else:
-                if not isValidInt(args[0], self.encounter.data):
+                if not isValidInt(args[0], self.encounter):
                     self.OOBSelection(self.encounter)
                     return
 
@@ -766,7 +766,7 @@ class unmark(Command):
                     npc.marked = False
                     npc.note = ""
             else:
-                if not isValidInt(args[0], self.encounter.data):
+                if not isValidInt(args[0], self.encounter):
                     self.OOBSelection(self.encounter)
                     return
 
