@@ -145,6 +145,7 @@ class Command(ABC):
     def __init__(self):
         self.names: list[str] = ['command', 'test']
         self.description: str = "This command has no defined description yet."
+        self.details: str | None = None
         self.usageStr: str = "This command has no defined usage yet."
 
     def usage(self) -> None:
@@ -217,6 +218,9 @@ class displayHelp(Command):
                     if args[0].lower() in command.names:
                         print(command.description)
                         command.usage()
+                        if command.details is not None:
+                            print()
+                            print(command.details)
                         found = True
                         break
 
