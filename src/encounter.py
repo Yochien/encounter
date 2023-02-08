@@ -261,21 +261,21 @@ class displayMenu(Command):
     def execute(self, args = []):
         numArgs = len(args)
 
-        if numArgs == 1 and args[0] != "all":
-            list = findList(args[0], self.referenceLists)
-
-            if list is not None:
-                print(list.toMenu())
-            else:
-                print("Unknown list selected.")
-        else:
+        if numArgs <= 1:
             if numArgs == 0 or args[0].lower() == "all":
                 for list in self.referenceLists:
                     print(list.toMenu())
                     if list is not self.referenceLists[-1]:
-                        print()
+                        print()  # Print newline between all lists
             else:
-                self.usage()
+                list = findList(args[0], self.referenceLists)
+
+                if list is not None:
+                    print(list.toMenu())
+                else:
+                    print("Unknown list selected.")
+        else:
+            self.usage()
 
 
 def isInt(string: str) -> bool:
