@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from textwrap import dedent
 
 
 class NPC:
@@ -247,7 +248,14 @@ class displayMenu(Command):
         super().__init__()
         self.names = ['list', 'display', 'show']
         self.referenceLists = referenceLists
-        self.description = "Displays a list of NPCs."
+        self.description = "Displays the selected list of NPCs."
+        self.details = dedent("""\
+                              The list command can be called using the aliases "display" and "show".
+
+                              The selected list can be any valid alias for their respective list.
+                              Allowed aliases for "bestiary" are "book" and "b".
+                              Allowed aliases for "encounter" are "e", "combat", and "c".
+                              """).strip()
         self.usageStr = "list [all | bestiary | encounter]"
 
     def execute(self, args = []):
