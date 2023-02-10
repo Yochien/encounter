@@ -201,7 +201,6 @@ class load(Command):
                         npc = NPC(line[0], int(line[1]), int(line[2]))
                         self.bestiary.data.append(npc)
                 bestiaryFile.close()
-                print("Bestiary loaded.")
         else:
             self.usage()
 
