@@ -220,7 +220,7 @@ class displayHelp(Command):
                         print(command.description)
                         command.usage()
                         if command.details is not None:
-                            print()
+                            print("\nNote:")
                             print(command.details)
                         found = True
                         break
