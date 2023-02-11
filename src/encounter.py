@@ -317,6 +317,11 @@ class addNPC(Command):
         self.names = ['add']
         self.referenceLists = referenceLists
         self.description = "Adds an NPC to the encounter."
+        self.details = dedent("""\
+                              Reference entries in the bestiary by number.
+                              Multiple NPCs (even multiple of the same type) can be added at the same time
+                              in a comma separated list without spaces.
+                              """).strip()
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
