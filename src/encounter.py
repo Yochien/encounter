@@ -350,7 +350,7 @@ class clearNPCList(Command):
         super().__init__()
         self.names = ['clear']
         self.referenceLists = referenceLists
-        self.description = "Clears a list of NPCs."
+        self.description = "Removes all NPCs from a list."
         self.usageStr = "clear {all | bestiary | encounter}"
 
     def execute(self, args = []):
@@ -378,7 +378,7 @@ class removeNPC(Command):
         super().__init__()
         self.names = ['remove']
         self.encounter = encounter
-        self.description = "Removes an NPC from the encounter."
+        self.description = "Removes selected NPC(s) from the encounter."
         self.usageStr = "remove <index,...>"
 
     def execute(self, args = []):
@@ -494,7 +494,7 @@ class damage(Command):
         super().__init__()
         self.names = ['damage']
         self.encounter = encounter
-        self.description = "Directly subtracts from an NPC's health."
+        self.description = "Directly subtracts from selected NPCs' health."
         self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
