@@ -548,6 +548,11 @@ class smite(Command):
         self.names = ['smite', 'kill']
         self.encounter = encounter
         self.description = "Immediately kills an NPC."
+        self.details = dedent("""\
+                              The smite command can be called using the alias "kill".
+
+                              Supports the all selector, i.e. "kill all" will smite all NPCs in the encounter.
+                              """).strip()
         self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
