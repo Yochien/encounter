@@ -708,7 +708,6 @@ class make(Command):
                 self.usage()
                 return
             self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
-            print(self.bestiary.toMenu())
         else:
             self.usage()
 
