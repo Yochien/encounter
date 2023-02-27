@@ -417,6 +417,10 @@ class attack(Command):
         self.names = ['attack']
         self.encounter = encounter
         self.description = "Initiantiates D&D like combat with an NPC."
+        self.details = dedent("""\
+                              The attack command is interactive meaning if you leave out
+                              a required field you will be asked for the data instead of
+                              the command throwing an error state.""").strip()
         self.usageStr = "attack <index> [hit] [damage]"
 
     def execute(self, args = []):
