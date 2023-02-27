@@ -377,6 +377,9 @@ class removeNPC(Command):
         self.names = ['remove']
         self.encounter = encounter
         self.description = "Removes selected NPC(s) from the encounter."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "remove <index,...>"
 
     def execute(self, args = []):
@@ -498,6 +501,9 @@ class damage(Command):
         self.names = ['damage']
         self.encounter = encounter
         self.description = "Directly subtracts from selected NPCs' health."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
@@ -598,6 +604,9 @@ class heal(Command):
         self.names = ['heal']
         self.encounter = encounter
         self.description = "Directly adds to an NPC's health."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "heal <encounter_index,...> <amount>"
 
     def __healNPC(self, npc: NPC, amount: int) -> int:
@@ -645,6 +654,10 @@ class status(Command):
         self.names = ['status']
         self.encounter = encounter
         self.description = "Displays an NPC's current stats."
+        self.details = dedent("""\
+                              Displays the current health of the selected NPC in the encounter.
+                              Supports the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "status <encounter_index,...>"
 
     def execute(self, args = []):
@@ -699,7 +712,11 @@ class make(Command):
         super().__init__()
         self.names = ['make']
         self.bestiary = bestiary
-        self.description = "Creates an NPC for the bestiary."
+        self.description = "Creates an NPC and adds it to the bestiary."
+        self.details = dedent("""\
+                              Entries added in this manner are temporary and will
+                              not persist across reloads of the program.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
@@ -718,6 +735,11 @@ class name(Command):
         self.names = ['name', 'nick']
         self.encounter = encounter
         self.description = "Gives a specific name to an NPC in the encounter."
+        self.details = dedent("""\
+                              Nicknames work on a per NPC basis. Multiple NPCs may have the
+                              same nickname. The nickname does not replace the NPCs original
+                              name and will still be displayed alongside it.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "name <index> <nickname>"
 
     def execute(self, args=[]) -> None:
@@ -743,6 +765,12 @@ class mark(Command):
         self.names = ['mark', 'note']
         self.encounter = encounter
         self.description = "Mark an NPC with a symbol and note."
+        self.details = dedent("""\
+                              Can be used with the all selector. Will place an '*' next to the
+                              NPC's name in any list display of NPCs. If this command is run on the same
+                              NPC again the new note will overwrite their old note. This can be used
+                              to delete a note entirely by replacing it with an empty note.
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
@@ -783,6 +811,9 @@ class unmark(Command):
         self.names = ['unmark']
         self.encounter = encounter
         self.description = "Remove mark and symbol from an NPC."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
