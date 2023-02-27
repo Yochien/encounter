@@ -173,11 +173,10 @@ class load(Command):
         self.details = dedent("""\
                               Searches the absolute address provided for a valid bestiary file.
                               The correct format for a file is provided in an example file "bestiary.txt".
-
                               If the provided file cannot be loaded the current list will be kept.
                               If the current list is empty and a new list cannot be found
-                              then some primitive entries will be generated.
-                              """).strip()
+                              then some primitive entries will be generated.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "load <file_name>"
 
     def execute(self, args = []):
@@ -258,11 +257,10 @@ class displayMenu(Command):
         self.description = "Displays the selected list of NPCs."
         self.details = dedent("""\
                               The list command can be called using the aliases "display" and "show".
-
                               The selected list can be any valid alias for their respective list.
                               Allowed aliases for "bestiary" are "book" and "b".
-                              Allowed aliases for "encounter" are "e", "combat", and "c".
-                              """).strip()
+                              Allowed aliases for "encounter" are "e", "combat", and "c".\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "list [all | bestiary | encounter]"
 
     def execute(self, args = []):
@@ -320,8 +318,8 @@ class addNPC(Command):
         self.details = dedent("""\
                               Reference entries in the bestiary by number.
                               Multiple NPCs (even multiple of the same type) can be added at the same time
-                              in a comma separated list without spaces.
-                              """).strip()
+                              in a comma separated list without spaces.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
@@ -420,7 +418,8 @@ class attack(Command):
         self.details = dedent("""\
                               The attack command is interactive meaning if you leave out
                               a required field you will be asked for the data instead of
-                              the command throwing an error state.""").strip()
+                              the command throwing an error state.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "attack <index> [hit] [damage]"
 
     def execute(self, args = []):
@@ -554,9 +553,8 @@ class smite(Command):
         self.description = "Immediately kills an NPC."
         self.details = dedent("""\
                               The smite command can be called using the alias "kill".
-
-                              Supports the all selector, i.e. "kill all" will smite all NPCs in the encounter.
-                              """).strip()
+                              Supports the all selector, i.e. "kill all" will smite all NPCs in the encounter.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
