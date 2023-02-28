@@ -3,6 +3,8 @@ from textwrap import dedent
 
 
 class NPC:
+    REQUIRED_PARAMETERS = 3
+
     def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
@@ -196,8 +198,12 @@ class load(Command):
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
                     if not (line.startswith("#") or line.isspace()):
-                        line = line.rstrip("\n").split(",")
-                        npc = NPC(line[0], int(line[1]), int(line[2]))
+                        parameters = line.rstrip("\n").split(",")
+                        if len(parameters) < NPC.REQUIRED_PARAMETERS:
+                            raise AttributeError("Missing parameters for line below. Expected "
+                                                 + str(NPC.REQUIRED_PARAMETERS) + " but got "
+                                                 + str(len(parameters)) + "\n" + line + "")
+                        npc = NPC(parameters[0], int(parameters[1]), int(parameters[2]))
                         self.bestiary.data.append(npc)
                 bestiaryFile.close()
         else:
