@@ -592,7 +592,7 @@ class smite(Command):
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
                     if npc.currentHP <= 0:
-                        print("Enemy already defeated.")
+                        print(npc.nick + " already defeated.")
                         return
                     else:
                         npc.currentHP = 0
