@@ -545,6 +545,7 @@ class damage(Command):
 
                     if npc.currentHP <= 0:
                         print(npc.nick + " already defeated.")
+                        continue
 
                     npc.currentHP = max(0, npc.currentHP - int(args[1]))
 
