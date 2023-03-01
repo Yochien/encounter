@@ -580,7 +580,6 @@ class smite(Command):
                 for npc in self.encounter.data:
                     if npc.currentHP > 0:
                         npc.currentHP = 0
-                print("All enemies have been defeated.")
             else:
                 selected = args[0].split(",")
                 selected = list(set(selected))  # Remove duplicates from the selection
@@ -597,7 +596,6 @@ class smite(Command):
                         return
                     else:
                         npc.currentHP = 0
-                        print(npc.nick + " was defeated.")
 
                         if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
