@@ -663,6 +663,7 @@ class status(Command):
         self.description = "Displays an NPC's current stats."
         self.details = dedent("""\
                               Displays the current health of the selected NPC in the encounter.
+                              Additionally displays the contents of notes if any.
                               Supports the all selector.\
                               """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "status <encounter_index,...>"
