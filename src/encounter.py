@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from textwrap import dedent
 
 
 class NPC:
+    REQUIRED_PARAMETERS = 3
+
     def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
@@ -86,8 +89,9 @@ class NPC:
             status += " [Dead]"
 
         if self.marked:
-            status += "\nNote:\n"
+            status += "\n  Note:\n"
             if not self.note.isspace() and len(self.note) > 0:
+                status += "    "
                 status += self.note
             else:
                 status += "EMPTY"
@@ -116,6 +120,9 @@ class NPCList:
         self.name = names[0]
         self.data: list[NPC] = []
 
+    def __len__(self):
+        return len(self.data)
+
     def toMenu(self):
         info = self.name.upper() + ":\n"
 
@@ -139,12 +146,20 @@ def findList(name: str, referenceLists: list[NPCList]) -> NPCList | None:
 
 class Command(ABC):
     def __init__(self):
-        self.names: list[str] = ['Command', 'Test']
-        self.description: str = "This Command has no defined description yet."
+        self.names: list[str] = ['command', 'test']
+        self.description: str = "This command has no defined description yet."
+        self.details: str | None = None
         self.usageStr: str = "This command has no defined usage yet."
 
     def usage(self) -> None:
         print("Usage: " + self.usageStr)
+
+    def encounterEmpty(self) -> None:
+        print("The encounter is empty. Add some NPCs to it and try again.")
+
+    def OOBSelection(self, referenceList: NPCList) -> None:
+        print("Your selection contains values out of range for the " + referenceList.name)
+        print("Adjust your selection and try again.")
 
     @abstractmethod
     def execute(self, args = []) -> None:
@@ -156,7 +171,14 @@ class load(Command):
         super().__init__()
         self.names = ['load']
         self.bestiary = bestiary
-        self.description = "Replaces the default bestiary."
+        self.description = "Replaces the loaded bestiary."
+        self.details = dedent("""\
+                              Searches the absolute address provided for a valid bestiary file.
+                              The correct format for a file is provided in an example file "bestiary.txt".
+                              If the provided file cannot be loaded the current list will be kept.
+                              If the current list is empty and a new list cannot be found
+                              then some primitive entries will be generated.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "load <file_name>"
 
     def execute(self, args = []):
@@ -167,7 +189,7 @@ class load(Command):
                 bestiaryFile = open(args[0].strip())
             except FileNotFoundError:
                 print("Selected bestiary file could not be found.")
-                if len(self.bestiary.data) == 0:
+                if len(self.bestiary) == 0:
                     print("Loading placeholder bestiary.")
                     self.bestiary.data.append(NPC("Human", 5, 12))
                     self.bestiary.data.append(NPC("Animal", 3, 10))
@@ -176,11 +198,14 @@ class load(Command):
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
                     if not (line.startswith("#") or line.isspace()):
-                        line = line.rstrip("\n").split(",")
-                        npc = NPC(line[0], int(line[1]), int(line[2]))
+                        parameters = line.rstrip("\n").split(",")
+                        if len(parameters) < NPC.REQUIRED_PARAMETERS:
+                            raise AttributeError("Missing parameters for line below. Expected "
+                                                 + str(NPC.REQUIRED_PARAMETERS) + " but got "
+                                                 + str(len(parameters)) + "\n" + line + "")
+                        npc = NPC(parameters[0], int(parameters[1]), int(parameters[2]))
                         self.bestiary.data.append(npc)
                 bestiaryFile.close()
-                print("Bestiary loaded.")
         else:
             self.usage()
 
@@ -206,6 +231,9 @@ class displayHelp(Command):
                     if args[0].lower() in command.names:
                         print(command.description)
                         command.usage()
+                        if command.details is not None:
+                            print("\nNote:")
+                            print(command.details)
                         found = True
                         break
 
@@ -232,27 +260,33 @@ class displayMenu(Command):
         super().__init__()
         self.names = ['list', 'display', 'show']
         self.referenceLists = referenceLists
-        self.description = "Displays a list of NPCs."
+        self.description = "Displays the selected list of NPCs."
+        self.details = dedent("""\
+                              The list command can be called using the aliases "display" and "show".
+                              The selected list can be any valid alias for their respective list.
+                              Allowed aliases for "bestiary" are "book" and "b".
+                              Allowed aliases for "encounter" are "e", "combat", and "c".\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "list [all | bestiary | encounter]"
 
     def execute(self, args = []):
         numArgs = len(args)
 
-        if numArgs == 1 and args[0] != "all":
-            list = findList(args[0], self.referenceLists)
-
-            if list is not None:
-                print(list.toMenu())
-            else:
-                print("Unknown list selected.")
-        else:
-            if numArgs == 0 or args[0] == "all":
+        if numArgs <= 1:
+            if numArgs == 0 or args[0].lower() == "all":
                 for list in self.referenceLists:
                     print(list.toMenu())
                     if list is not self.referenceLists[-1]:
-                        print()
+                        print()  # Print newline between all lists
             else:
-                self.usage()
+                list = findList(args[0], self.referenceLists)
+
+                if list is not None:
+                    print(list.toMenu())
+                else:
+                    print("Unknown list selected.")
+        else:
+            self.usage()
 
 
 def isInt(string: str) -> bool:
@@ -267,10 +301,10 @@ def isInt(string: str) -> bool:
             return True
 
 
-def isValidInt(selector: str, list: list[NPC]) -> bool:
+def isValidInt(selector: str, referencList: NPCList) -> bool:
     selected = selector.split(",")
     for index in selected:
-        if not isInt(index) or int(index) <= 0 or int(index) > len(list):
+        if not isInt(index) or int(index) <= 0 or int(index) > len(referencList):
             return False
     return True
 
@@ -287,23 +321,30 @@ class addNPC(Command):
         self.names = ['add']
         self.referenceLists = referenceLists
         self.description = "Adds an NPC to the encounter."
+        self.details = dedent("""\
+                              Reference entries in the bestiary by number.
+                              Multiple NPCs (even multiple of the same type) can be added at the same time
+                              in a comma separated list without spaces.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
         bestiary = findList("bestiary", self.referenceLists)
+        if bestiary is None:
+            raise TypeError("Bestiary list must be an NPCList.")
         encounter = findList("encounter", self.referenceLists)
+        if encounter is None:
+            raise TypeError("Encounter list must be an NPCList.")
 
         if len(args) == 1:
+            if not isValidInt(args[0], bestiary):
+                self.OOBSelection(bestiary)
+                return
+
             selected = args[0].split(",")
 
             for index in selected:
-                if not isInt(index) or int(index) > len(bestiary.data) or int(index) <= 0:
-                    self.usage()
-                    return
-
-            for index in selected:
                 copyNPC(bestiary.data, int(index), encounter.data)
-            print(encounter.toMenu())
         else:
             self.usage()
 
@@ -313,7 +354,7 @@ class clearNPCList(Command):
         super().__init__()
         self.names = ['clear']
         self.referenceLists = referenceLists
-        self.description = "Clears a list of NPCs."
+        self.description = "Removes all NPCs from a list."
         self.usageStr = "clear {all | bestiary | encounter}"
 
     def execute(self, args = []):
@@ -341,33 +382,37 @@ class removeNPC(Command):
         super().__init__()
         self.names = ['remove']
         self.encounter = encounter
-        self.description = "Removes an NPC from the encounter."
+        self.description = "Removes selected NPC(s) from the encounter."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "remove <index,...>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
-            if args[0] == "all":
+            if args[0].lower() == "all":
                 self.encounter.data.clear()
-                print(self.encounter.toMenu())
             else:
+                if not isValidInt(args[0], self.encounter):
+                    self.OOBSelection(self.encounter)
+                    return
+
                 selected = args[0].split(",")
-
-                for index in selected:
-                    if not isValidInt(index, self.encounter.data):
-                        return
-
                 # Remove duplicates and reverse sort the input
                 selected = sorted(list(set(selected)), reverse = True)
 
                 for index in selected:
                     self.encounter.data.pop(int(index) - 1)
-                print(self.encounter.toMenu())
         else:
             self.usage()
 
 
-def areAllDefeated(encounter):
-    for npc in encounter:
+def areAllDefeated(encounter: NPCList):
+    for npc in encounter.data:
         if npc.currentHP > 0:
             return False
     return True
@@ -379,9 +424,18 @@ class attack(Command):
         self.names = ['attack']
         self.encounter = encounter
         self.description = "Initiantiates D&D like combat with an NPC."
+        self.details = dedent("""\
+                              The attack command is interactive meaning if you leave out
+                              a required field you will be asked for the data instead of
+                              the command throwing an error state.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "attack <index> [hit] [damage]"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         lenArgs = len(args)
         npc = None
 
@@ -389,8 +443,8 @@ class attack(Command):
             self.usage()
             return
 
-        if not isValidInt(args[0], self.encounter.data):
-            self.usage()
+        if not isValidInt(args[0], self.encounter):
+            self.OOBSelection(self.encounter)
             return
 
         npc = self.encounter.data[int(args[0]) - 1]
@@ -443,7 +497,7 @@ class attack(Command):
         if npc is not None:
             if npc.currentHP <= 0:
                 print(npc.nick + " has been defeated.")
-                if areAllDefeated(self.encounter.data):
+                if areAllDefeated(self.encounter):
                     print("Party has defeated all enemies.")
 
 
@@ -452,26 +506,54 @@ class damage(Command):
         super().__init__()
         self.names = ['damage']
         self.encounter = encounter
-        self.description = "Directly subtracts from an NPC's health."
-        self.usageStr = "damage <index> <amount>"
+        self.description = "Directly subtracts from selected NPCs' health."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], self.encounter.data) is True:
-                npc = self.encounter.data[int(args[0]) - 1]
-
-                if npc.currentHP <= 0:
-                    print("Enemy already defeated.")
+            elif int(args[1]) < 1:
+                print("Amount must be more than zero.")
+                return
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    if npc.currentHP > 0:
+                        npc.currentHP = max(0, npc.currentHP - int(args[1]))
+                        if npc.currentHP <= 0:
+                            print(npc.nick + " has been defeated.")
+                            if areAllDefeated(self.encounter):
+                                print("Party has defeated all enemies.")
+            else:
+                if not isValidInt(args[0], self.encounter):
+                    self.OOBSelection(self.encounter)
                     return
 
-                npc.currentHP = max(0, npc.currentHP - int(args[1]))
-                if npc.currentHP <= 0:
-                    print(npc.nick + " has been defeated.")
-                    if areAllDefeated(self.encounter.data):
-                        print("Party has defeated all enemies.")
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+
+                    if npc.currentHP <= 0:
+                        print(npc.nick + " already defeated.")
+                        continue
+
+                    npc.currentHP = max(0, npc.currentHP - int(args[1]))
+
+                    if npc.currentHP <= 0:
+                        print(npc.nick + " has been defeated.")
+                        if areAllDefeated(self.encounter):
+                            print("Party has defeated all enemies.")
+                            return
         else:
             self.usage()
 
@@ -482,26 +564,43 @@ class smite(Command):
         self.names = ['smite', 'kill']
         self.encounter = encounter
         self.description = "Immediately kills an NPC."
-        self.usageStr = "smite <bestiary_index>"
+        self.details = dedent("""\
+                              The smite command can be called using the alias "kill".
+                              Supports the all selector, i.e. "kill all" will smite all NPCs in the encounter.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
-        if len(self.encounter.data) > 0:
-            if len(args) == 1:
-                if isValidInt(args[0], self.encounter.data) is True:
-                    npc = self.encounter.data[int(args[0]) - 1]
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
+        if len(args) == 1:
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    if npc.currentHP > 0:
+                        npc.currentHP = 0
+            else:
+                selected = args[0].split(",")
+                selected = list(set(selected))  # Remove duplicates from the selection
+
+                for index in selected:
+                    if not isValidInt(args[0], self.encounter):
+                        self.OOBSelection(self.encounter)
+                        return
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
                     if npc.currentHP <= 0:
-                        print("Enemy already defeated.")
+                        print(npc.nick + " already defeated.")
                         return
                     else:
                         npc.currentHP = 0
-                        print(npc.nick + " was defeated.")
 
-                        if areAllDefeated(self.encounter.data):
+                        if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
-            else:
-                self.usage()
         else:
-            print("Encounter is empty. There is no one to smite.")
+            self.usage()
 
 
 class heal(Command):
@@ -510,25 +609,46 @@ class heal(Command):
         self.names = ['heal']
         self.encounter = encounter
         self.description = "Directly adds to an NPC's health."
-        self.usageStr = "heal <index> <amount>"
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "heal <encounter_index,...> <amount>"
+
+    def __healNPC(self, npc: NPC, amount: int) -> int:
+        originalHP = npc.currentHP
+        npc.currentHP = originalHP + amount
+        npc.currentHP = min(npc.maxHP, npc.currentHP)
+        return npc.currentHP - originalHP
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not isInt(args[1]):
                 self.usage()
                 return
-            if isValidInt(args[0], self.encounter.data):
-                npc = self.encounter.data[int(args[0]) - 1]
-                origHP = npc.currentHP
+            if int(args[1]) < 1:
+                print("Amount must be more than zero.")
+                return
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    healedAmt = self.__healNPC(npc, int(args[1]))
+                    output = "{} was healed {} points.".format(npc.nick, healedAmt)
+                    print(output)
+            else:
+                if not isValidInt(args[0], self.encounter):
+                    self.OOBSelection(self.encounter)
+                    return
 
-                npc.currentHP = npc.currentHP + int(args[1])
+                selected = args[0].split(",")
+                selected = list(set(selected))
 
-                if npc.currentHP > npc.maxHP:
-                    npc.currentHP = npc.maxHP
-
-                healedAmt = npc.currentHP - origHP
-
-                print(npc.nick + " was healed " + str(healedAmt) + " points.")
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    healedAmt = self.__healNPC(npc, int(args[1]))
+                    print(npc.nick + " was healed " + str(healedAmt) + " points.")
         else:
             self.usage()
 
@@ -539,20 +659,34 @@ class status(Command):
         self.names = ['status']
         self.encounter = encounter
         self.description = "Displays an NPC's current stats."
-        self.usageStr = "status <index>"
+        self.details = dedent("""\
+                              Displays the current health of the selected NPC in the encounter.
+                              Additionally displays the contents of notes if any.
+                              Supports the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "status <encounter_index,...>"
 
     def execute(self, args = []):
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
-            if isinstance(args[0], str) and args[0].lower() == "all":
+            if args[0].lower() == "all":
                 print("Status:")
                 for npc in self.encounter.data:
                     print(npc.combatStatus())
-            elif isValidInt(args[0], self.encounter.data):
-                npc = self.encounter.data[int(args[0]) - 1]
+            elif isValidInt(args[0], self.encounter):
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
                 print("Status:")
-                print(npc.combatStatus())
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+
+                    print(npc.combatStatus())
             else:
-                self.usage()
+                self.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -568,9 +702,11 @@ class info(Command):
     def execute(self, args = []):
         if len(args) == 1:
             if isInt(args[0]):
-                if isValidInt(args[0], self.bestiary.data):
+                if isValidInt(args[0], self.bestiary):
                     print("INFO:")
                     print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
+                else:
+                    self.OOBSelection(self.bestiary)
             else:
                 self.usage()
         else:
@@ -582,7 +718,11 @@ class make(Command):
         super().__init__()
         self.names = ['make']
         self.bestiary = bestiary
-        self.description = "Creates an NPC for the bestiary"
+        self.description = "Creates an NPC and adds it to the bestiary."
+        self.details = dedent("""\
+                              Entries added in this manner are temporary and will
+                              not persist across reloads of the program.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
@@ -591,7 +731,6 @@ class make(Command):
                 self.usage()
                 return
             self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
-            print(self.bestiary.toMenu())
         else:
             self.usage()
 
@@ -601,18 +740,27 @@ class name(Command):
         super().__init__()
         self.names = ['name', 'nick']
         self.encounter = encounter
-        self.description = "Gives a specific name to an NPC in the encounter"
+        self.description = "Gives a specific name to an NPC in the encounter."
+        self.details = dedent("""\
+                              Nicknames work on a per NPC basis. Multiple NPCs may have the
+                              same nickname. The nickname does not replace the NPCs original
+                              name and will still be displayed alongside it.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
         self.usageStr = "name <index> <nickname>"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 2:
             if not args[0].isnumeric():
                 self.usage()
                 return
-            if isValidInt(args[0], self.encounter.data) is True:
+            if isValidInt(args[0], self.encounter):
                 self.encounter.data[int(args[0]) - 1].nick = args[1]
             else:
-                self.usage()
+                self.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -622,22 +770,43 @@ class mark(Command):
         super().__init__()
         self.names = ['mark', 'note']
         self.encounter = encounter
-        self.description = "Mark an NPC with a symbol and note"
-        self.usageStr = "mark <index> [note]"
+        self.description = "Mark an NPC with a symbol and note."
+        self.details = dedent("""\
+                              Can be used with the all selector. Will place an '*' next to the
+                              NPC's name in any list display of NPCs. If this command is run on the same
+                              NPC again the new note will overwrite their old note. This can be used
+                              to delete a note entirely by replacing it with an empty note.
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) >= 1:
-            if not args[0].isnumeric():
-                self.usage()
-                return
-            if isValidInt(args[0], self.encounter.data) is True:
-                self.encounter.data[int(args[0]) - 1].marked = True
-                if len(args) > 1:
-                    self.encounter.data[int(args[0]) - 1].note = " ".join(args[1:])
-                else:
-                    self.encounter.data[int(args[0]) - 1].note = ""
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    npc.marked = True
+                    if len(args) > 1:
+                        npc.note = " ".join(args[1:])
+                    else:
+                        npc.note = ""
             else:
-                self.usage()
+                if not isValidInt(args[0], self.encounter):
+                    self.OOBSelection(self.encounter)
+                    return
+
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    npc.marked = True
+                    if len(args) > 1:
+                        npc.note = " ".join(args[1:])
+                    else:
+                        npc.note = ""
         else:
             self.usage()
 
@@ -647,19 +816,34 @@ class unmark(Command):
         super().__init__()
         self.names = ['unmark']
         self.encounter = encounter
-        self.description = "Remove mark and symbol from an NPC"
-        self.usageStr = "unmark <index>"
+        self.description = "Remove mark and symbol from an NPC."
+        self.details = dedent("""\
+                              Can be used with the all selector.\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
         if len(args) == 1:
-            if not args[0].isnumeric():
-                self.usage()
-                return
-            if isValidInt(args[0], self.encounter.data) is True:
-                self.encounter.data[int(args[0]) - 1].marked = False
-                self.encounter.data[int(args[0]) - 1].note = ""
+            if args[0].lower() == "all":
+                for npc in self.encounter.data:
+                    npc.marked = False
+                    npc.note = ""
             else:
-                self.usage()
+                if not isValidInt(args[0], self.encounter):
+                    self.OOBSelection(self.encounter)
+                    return
+
+                selected = args[0].split(",")
+                selected = list(set(selected))
+
+                for index in selected:
+                    npc = self.encounter.data[int(index) - 1]
+                    npc.marked = False
+                    npc.note = ""
         else:
             self.usage()
 
