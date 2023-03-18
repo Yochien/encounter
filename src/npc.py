@@ -51,8 +51,14 @@ class NPC:
 
         if self.currentHP <= 0:
             output += " [X]"
+        else:
+            if self.currentRank > 0:
+                output = "(" + str(self.currentRank) + ") " + output
 
         return output
+
+    def __lt__(self, other):
+        return self.currentRank < other.currentRank
 
     def equals(self: "NPC", other: Optional["NPC"]) -> bool:
         if self == other:

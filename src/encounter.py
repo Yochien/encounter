@@ -23,6 +23,7 @@ def initialize_commands() -> list[cmd.Command]:
     commands.append(cmd.name(encounter))
     commands.append(cmd.mark(encounter))
     commands.append(cmd.unmark(encounter))
+    commands.append(cmd.rank(encounter))
     commands.append(cmd.displayHelp(commands))
     return commands
 
