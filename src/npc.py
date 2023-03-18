@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class NPC:
     REQUIRED_PARAMETERS = 3
 
@@ -51,7 +54,7 @@ class NPC:
 
         return output
 
-    def equals(self, other):
+    def equals(self: "NPC", other: Optional["NPC"]) -> bool:
         if self == other:
             return True
         if other is None:
