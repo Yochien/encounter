@@ -26,13 +26,15 @@ def initialize_commands() -> list[cmd.Command]:
     commands.append(cmd.displayHelp(commands))
     return commands
 
-    # Load default bestiary
-    commands[0].execute(["bestiary.txt"])
 
     print("Type help or ? to get a list of availible commands.")
 def main():
     commands = initialize_commands()
 
+    for command in commands:
+        if "load" in command.names:
+            command.execute("bestiary.txt")
+            break
     while True:
         print()
         usrRequest = input("Type a command: ").split(" ")
