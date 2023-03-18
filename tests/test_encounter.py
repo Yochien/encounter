@@ -1,6 +1,6 @@
 import unittest
-from src.encounter import isInt
-from src.encounter import NPC
+from src.commands import isInt
+from src.npc import NPC
 
 
 class TestSubMethods(unittest.TestCase):
