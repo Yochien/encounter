@@ -34,6 +34,7 @@ class NPC:
             self.nick = nick
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
+        self.maxRank = self.currentRank = 0
 
     def __str__(self):
         output = ""
@@ -66,6 +67,10 @@ class NPC:
         if self.ac != other.ac:
             return False
         if self.note != other.note:
+            return False
+        if self.maxRank != other.maxRank:
+            return False
+        if self.currentRank != other.currentRank:
             return False
         return True
 
