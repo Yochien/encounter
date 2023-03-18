@@ -32,7 +32,7 @@ def main():
 
     for command in commands:
         if "load" in command.names:
-            command.execute("bestiary.txt")
+            command.execute(["bestiary.txt"])
             break
 
     prompt = "\nType a command: "
