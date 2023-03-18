@@ -2,38 +2,37 @@ import commands as cmd
 from npc import NPCList
 
 
-def main():
+def initialize_commands() -> list[cmd.Command]:
     bestiary = NPCList(['bestiary', 'book', 'b'])
     encounter = NPCList(['encounter', 'e', 'combat', 'c'])
     referenceLists = [bestiary, encounter]
 
-    # Instantiate commands
-    commands = [
-        cmd.load(bestiary),
-        cmd.displayMenu(referenceLists),
-        cmd.addNPC(referenceLists),
-        cmd.removeNPC(encounter),
-        cmd.clearNPCList(referenceLists),
-        cmd.smite(encounter),
-        cmd.damage(encounter),
-        cmd.attack(encounter),
-        cmd.heal(encounter),
-        cmd.status(encounter),
-        cmd.info(bestiary),
-        cmd.make(bestiary),
-        cmd.name(encounter),
-        cmd.mark(encounter),
-        cmd.unmark(encounter)
-    ]
-
+    commands = []
+    commands.append(cmd.load(bestiary))
+    commands.append(cmd.displayMenu(referenceLists))
+    commands.append(cmd.addNPC(referenceLists))
+    commands.append(cmd.removeNPC(encounter))
+    commands.append(cmd.clearNPCList(referenceLists))
+    commands.append(cmd.smite(encounter))
+    commands.append(cmd.damage(encounter))
+    commands.append(cmd.attack(encounter))
+    commands.append(cmd.heal(encounter))
+    commands.append(cmd.status(encounter))
+    commands.append(cmd.info(bestiary))
+    commands.append(cmd.make(bestiary))
+    commands.append(cmd.name(encounter))
+    commands.append(cmd.mark(encounter))
+    commands.append(cmd.unmark(encounter))
     commands.append(cmd.displayHelp(commands))
+    return commands
 
     # Load default bestiary
     commands[0].execute(["bestiary.txt"])
 
     print("Type help or ? to get a list of availible commands.")
+def main():
+    commands = initialize_commands()
 
-    # command loop
     while True:
         print()
         usrRequest = input("Type a command: ").split(" ")
