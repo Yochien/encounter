@@ -27,7 +27,6 @@ def initialize_commands() -> list[cmd.Command]:
     return commands
 
 
-    print("Type help or ? to get a list of availible commands.")
 def main():
     commands = initialize_commands()
 
@@ -35,9 +34,13 @@ def main():
         if "load" in command.names:
             command.execute("bestiary.txt")
             break
+
+    prompt = "\nType a command: "
+    print("Type help or ? to get a list of availible commands.")
+
     while True:
-        print()
-        usrRequest = input("Type a command: ").split(" ")
+        usrRequest = input(prompt).split(" ")
+        prompt = "\ncmd: "
 
         action = None
 
