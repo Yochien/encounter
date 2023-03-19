@@ -40,27 +40,23 @@ def main():
     print("Type help or ? to get a list of availible commands.")
 
     while True:
-        usrRequest = input(prompt).split(" ")
-        prompt = "\ncmd: "
+        userInput = input(prompt).split(" ")
+        userInput = [token for token in userInput if not token.isspace() and not token == '']
 
-        action = None
+        if not len(userInput) > 0:
+            prompt = "\nType a command: "
+            continue
+        else:
+            prompt = "\ncmd: "
 
-        if usrRequest != ['']:
-            action = usrRequest[0].lower()
-
-        if action in ['quit', 'q', 'exit']:
+        userCommand = userInput.pop(0).lower()
+        if userCommand in ['quit', 'q', 'exit']:
             break
-
-        args = []
-
-        if (len(usrRequest) > 1):
-            for index in range(1, len(usrRequest)):
-                args.append(usrRequest[index])
 
         found = False
         for command in commands:
-            if action in command.names:
-                command.execute(args)
+            if userCommand in command.names:
+                command.execute(userInput)
                 found = True
                 break
 
