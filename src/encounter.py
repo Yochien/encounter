@@ -3,8 +3,8 @@ from src.npc import NPCList
 
 
 def initialize_commands() -> list[cmd.Command]:
-    bestiary = NPCList(['bestiary', 'book', 'b'])
-    encounter = NPCList(['encounter', 'e', 'combat', 'c'])
+    bestiary = NPCList(["bestiary", "book", "b"])
+    encounter = NPCList(["encounter", "e", "combat", "c"])
     referenceLists = [bestiary, encounter]
 
     commands = []
@@ -41,7 +41,7 @@ def main():
 
     while True:
         userInput = input(prompt).split(" ")
-        userInput = [token for token in userInput if not token.isspace() and not token == '']
+        userInput = [token for token in userInput if not token.isspace() and not token == ""]
 
         if not len(userInput) > 0:
             prompt = "\nType a command: "
@@ -50,7 +50,7 @@ def main():
             prompt = "\ncmd: "
 
         userCommand = userInput.pop(0).lower()
-        if userCommand in ['quit', 'q', 'exit']:
+        if userCommand in ["quit", "q", "exit"]:
             break
 
         found = False

@@ -6,7 +6,7 @@ from src.npc import NPC, NPCList, findList
 
 class Command(ABC):
     def __init__(self):
-        self.names: list[str] = ['command', 'test']
+        self.names: list[str] = ["command", "test"]
         self.description: str = "This command has no defined description yet."
         self.details: str | None = None
         self.usageStr: str = "This command has no defined usage yet."
@@ -29,7 +29,7 @@ class Command(ABC):
 class load(Command):
     def __init__(self, bestiary):
         super().__init__()
-        self.names = ['load']
+        self.names = ["load"]
         self.bestiary = bestiary
         self.description = "Replaces the loaded bestiary."
         self.details = dedent("""\
@@ -38,7 +38,7 @@ class load(Command):
                               If the provided file cannot be loaded the current list will be kept.
                               If the current list is empty and a new list cannot be found
                               then some primitive entries will be generated.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "load <file_name>"
 
     def execute(self, args = []):
@@ -73,7 +73,7 @@ class load(Command):
 class displayHelp(Command):
     def __init__(self, commands: list[Command]):
         super().__init__()
-        self.names = ['help', '?']
+        self.names = ["help", "?"]
         self.commands = commands
         self.description = "Prints a list of availible commands."
         self.usageStr = "help [command_name]"
@@ -118,7 +118,7 @@ class displayHelp(Command):
 class displayMenu(Command):
     def __init__(self, referenceLists: list[NPCList]):
         super().__init__()
-        self.names = ['list', 'display', 'show']
+        self.names = ["list", "display", "show"]
         self.referenceLists = referenceLists
         self.description = "Displays the selected list of NPCs."
         self.details = dedent("""\
@@ -126,7 +126,7 @@ class displayMenu(Command):
                               The selected list can be any valid alias for their respective list.
                               Allowed aliases for "bestiary" are "book" and "b".
                               Allowed aliases for "encounter" are "e", "combat", and "c".\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "list [all | bestiary | encounter]"
 
     def execute(self, args = []):
@@ -178,14 +178,14 @@ def copyNPC(bestiary: NPCList, index: int, other: NPCList) -> None:
 class addNPC(Command):
     def __init__(self, referenceLists):
         super().__init__()
-        self.names = ['add']
+        self.names = ["add"]
         self.referenceLists = referenceLists
         self.description = "Adds an NPC to the encounter."
         self.details = dedent("""\
                               Reference entries in the bestiary by number.
                               Multiple NPCs (even multiple of the same type) can be added at the same time
                               in a comma separated list without spaces.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "add <bestiary_index,...>"
 
     def execute(self, args = []):
@@ -212,7 +212,7 @@ class addNPC(Command):
 class clearNPCList(Command):
     def __init__(self, referenceLists):
         super().__init__()
-        self.names = ['clear']
+        self.names = ["clear"]
         self.referenceLists = referenceLists
         self.description = "Removes all NPCs from a list."
         self.usageStr = "clear {all | bestiary | encounter}"
@@ -240,12 +240,12 @@ class clearNPCList(Command):
 class removeNPC(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['remove']
+        self.names = ["remove"]
         self.encounter = encounter
         self.description = "Removes selected NPC(s) from the encounter."
         self.details = dedent("""\
                               Can be used with the all selector.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "remove <index,...>"
 
     def execute(self, args = []):
@@ -281,14 +281,14 @@ def areAllDefeated(encounter: NPCList):
 class attack(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['attack']
+        self.names = ["attack"]
         self.encounter = encounter
         self.description = "Initiantiates D&D like combat with an NPC."
         self.details = dedent("""\
                               The attack command is interactive meaning if you leave out
                               a required field you will be asked for the data instead of
                               the command throwing an error state.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "attack <index> [hit] [damage]"
 
     def execute(self, args = []):
@@ -364,12 +364,12 @@ class attack(Command):
 class damage(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['damage']
+        self.names = ["damage"]
         self.encounter = encounter
         self.description = "Directly subtracts from selected NPCs' health."
         self.details = dedent("""\
                               Can be used with the all selector.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "damage <encounter_index,...> <amount>"
 
     def execute(self, args = []):
@@ -421,13 +421,13 @@ class damage(Command):
 class smite(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['smite', 'kill']
+        self.names = ["smite", "kill"]
         self.encounter = encounter
         self.description = "Immediately kills an NPC."
         self.details = dedent("""\
                               The smite command can be called using the alias "kill".
                               Supports the all selector, i.e. "kill all" will smite all NPCs in the encounter.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "smite <encounter_index,...>"
 
     def execute(self, args = []):
@@ -466,12 +466,12 @@ class smite(Command):
 class heal(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['heal']
+        self.names = ["heal"]
         self.encounter = encounter
-        self.description = "Directly adds to an NPC's health."
+        self.description = "Directly adds to selected NPCs' health."
         self.details = dedent("""\
                               Can be used with the all selector.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "heal <encounter_index,...> <amount>"
 
     def __healNPC(self, npc: NPC, amount: int) -> int:
@@ -516,14 +516,14 @@ class heal(Command):
 class status(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['status']
+        self.names = ["status"]
         self.encounter = encounter
         self.description = "Displays an NPC's current stats."
         self.details = dedent("""\
                               Displays the current health of the selected NPC in the encounter.
                               Additionally displays the contents of notes if any.
                               Supports the all selector.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "status <encounter_index,...>"
 
     def execute(self, args = []):
@@ -554,7 +554,7 @@ class status(Command):
 class info(Command):
     def __init__(self, bestiary):
         super().__init__()
-        self.names = ['info', 'details']
+        self.names = ["info", "details"]
         self.bestiary = bestiary
         self.description = "Displays detailed stats for a bestiary entry."
         self.usageStr = "info <index>"
@@ -576,13 +576,13 @@ class info(Command):
 class make(Command):
     def __init__(self, bestiary):
         super().__init__()
-        self.names = ['make']
+        self.names = ["make"]
         self.bestiary = bestiary
         self.description = "Creates an NPC and adds it to the bestiary."
         self.details = dedent("""\
                               Entries added in this manner are temporary and will
                               not persist across reloads of the program.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
@@ -598,14 +598,14 @@ class make(Command):
 class name(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['name', 'nick']
+        self.names = ["name", "nick"]
         self.encounter = encounter
         self.description = "Gives a specific name to an NPC in the encounter."
         self.details = dedent("""\
                               Nicknames work on a per NPC basis. Multiple NPCs may have the
                               same nickname. The nickname does not replace the NPCs original
                               name and will still be displayed alongside it.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "name <index> <nickname>"
 
     def execute(self, args=[]) -> None:
@@ -628,15 +628,15 @@ class name(Command):
 class mark(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['mark', 'note']
+        self.names = ["mark", "note"]
         self.encounter = encounter
         self.description = "Mark an NPC with a symbol and note."
         self.details = dedent("""\
-                              Can be used with the all selector. Will place an '*' next to the
+                              Can be used with the all selector. Will place an "*" next to the
                               NPC's name in any list display of NPCs. If this command is run on the same
                               NPC again the new note will overwrite their old note. This can be used
                               to delete a note entirely by replacing it with an empty note.
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "mark <encounter_index,...> [note]"
 
     def execute(self, args=[]) -> None:
@@ -674,12 +674,12 @@ class mark(Command):
 class unmark(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ['unmark']
+        self.names = ["unmark"]
         self.encounter = encounter
         self.description = "Remove mark and symbol from an NPC."
         self.details = dedent("""\
                               Can be used with the all selector.\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "unmark <encounter_index,...>"
 
     def execute(self, args=[]) -> None:
@@ -711,14 +711,14 @@ class unmark(Command):
 class rank(Command):
     def __init__(self, encounter: NPCList):
         super().__init__()
-        self.names = ['rank', 'initiative']
+        self.names = ["rank", "initiative"]
         self.encounter = encounter
         self.description = "Orders NPCs by value."
         self.details = dedent("""\
                               NPCs order within the encounter will be determined by their rank.
                               NPCs with a higher value will appear higher in the list.
                               This command can also be called with the alias "initiative".\
-                              """).strip().replace('\n', ' ').replace('\r', '')
+                              """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "rank <encounter_index,...> <rank>"
 
     def execute(self, args=[]) -> None:
