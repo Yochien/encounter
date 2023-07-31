@@ -57,12 +57,12 @@ class load(Command):
             else:
                 self.bestiary.data.clear()
                 for line in bestiaryFile:
-                    if not (line.startswith("#") or line.isspace()):
+                    if not line.startswith("#") and not line.isspace():
                         parameters = line.rstrip("\n").split(",")
                         if len(parameters) < NPC.REQUIRED_PARAMETERS:
                             raise AttributeError("Missing parameters for line below. Expected "
                                                  + str(NPC.REQUIRED_PARAMETERS) + " but got "
-                                                 + str(len(parameters)) + "\n" + line + "")
+                                                 + str(len(parameters)) + "\n" + line)
                         npc = NPC(parameters[0], int(parameters[1]), int(parameters[2]))
                         self.bestiary.data.append(npc)
                 bestiaryFile.close()
@@ -297,11 +297,15 @@ class attack(Command):
             return
 
         lenArgs = len(args)
-        npc = None
 
         if lenArgs > 3 or lenArgs < 1:
             self.usage()
             return
+
+        for i in range(lenArgs):
+            if not isInt(args[i]):
+                self.usage()
+                return
 
         if not isValidInt(args[0], self.encounter):
             self.OOBSelection(self.encounter)
@@ -313,20 +317,12 @@ class attack(Command):
             return
 
         if lenArgs == 3:
-            if not isInt(args[1]) or not isInt(args[2]):
-                self.usage()
-                return
-
             if int(args[1]) >= npc.ac:
                 npc.currentHP = max(0, npc.currentHP - int(args[2]))
                 print(npc.nick + " took " + args[2] + " damage.")
             else:
                 print("Attack misses " + npc.nick + ".")
         elif lenArgs == 2:
-            if not isInt(args[1]):
-                self.usage()
-                return
-
             if int(args[1]) >= npc.ac:
                 damage = input("Roll for damage: ")
                 if damage.isnumeric() is True:
@@ -377,11 +373,8 @@ class damage(Command):
             self.encounterEmpty()
             return
 
-        if len(args) == 2:
-            if not isInt(args[1]):
-                self.usage()
-                return
-            elif int(args[1]) < 1:
+        if len(args) == 2 and isInt(args[1]):
+            if int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
             if args[0].lower() == "all":
@@ -485,10 +478,7 @@ class heal(Command):
             self.encounterEmpty()
             return
 
-        if len(args) == 2:
-            if not isInt(args[1]):
-                self.usage()
-                return
+        if len(args) == 2 and isInt(args[1]):
             if int(args[1]) < 1:
                 print("Amount must be more than zero.")
                 return
@@ -560,15 +550,12 @@ class info(Command):
         self.usageStr = "info <index>"
 
     def execute(self, args = []):
-        if len(args) == 1:
-            if isInt(args[0]):
-                if isValidInt(args[0], self.bestiary):
-                    print("INFO:")
-                    print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
-                else:
-                    self.OOBSelection(self.bestiary)
+        if len(args) == 1 and isInt(args[0]):
+            if isValidInt(args[0], self.bestiary):
+                print("INFO:")
+                print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
             else:
-                self.usage()
+                self.OOBSelection(self.bestiary)
         else:
             self.usage()
 
@@ -586,10 +573,7 @@ class make(Command):
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
-        if len(args) == 3:
-            if args[0].isnumeric() or not isInt(args[1]) or not isInt(args[2]):
-                self.usage()
-                return
+        if len(args) == 3 and not args[0].isnumeric() and isInt(args[1]) and isInt(args[2]):
             self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
         else:
             self.usage()
@@ -613,10 +597,7 @@ class name(Command):
             self.encounterEmpty()
             return
 
-        if len(args) == 2:
-            if not args[0].isnumeric():
-                self.usage()
-                return
+        if len(args) == 2 and args[0].isnumeric():
             if isValidInt(args[0], self.encounter):
                 self.encounter.data[int(args[0]) - 1].nick = args[1]
             else:
@@ -726,11 +707,7 @@ class rank(Command):
             self.encounterEmpty()
             return
 
-        if len(args) == 2:
-            if not isValidInt(args[0], self.encounter) or not isInt(args[1]):
-                self.usage()
-                return
-
+        if len(args) == 2 and isValidInt(args[0], self.encounter) and isInt(args[1]):
             rank = int(args[1])
             npc = self.encounter.data[int(args[0]) - 1]
             if npc.currentHP > 0:
