@@ -582,13 +582,14 @@ class make(Command):
 class name(Command):
     def __init__(self, encounter):
         super().__init__()
-        self.names = ["name", "nick"]
+        self.names = ["nickname", "name", "nn"]
         self.encounter = encounter
         self.description = "Gives a specific name to an NPC in the encounter."
         self.details = dedent("""\
                               Nicknames work on a per NPC basis. Multiple NPCs may have the
                               same nickname. The nickname does not replace the NPCs original
-                              name and will still be displayed alongside it.\
+                              name and will still be displayed alongside it.
+                              Can be called with the alias "name" or "nn".\
                               """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "name <index> <nickname>"
 
