@@ -41,28 +41,27 @@ def main():
 
     while True:
         userInput = input(prompt).split(" ")
-        userInput = [token for token in userInput if not token.isspace() and not token == ""]
+        userInput = [token for token in userInput if not token.isspace() and token != ""]
 
         if not len(userInput) > 0:
             prompt = "\nType a command: "
-            continue
         else:
             prompt = "\ncmd: "
 
-        userCommand = userInput.pop(0).lower()
-        if userCommand in ["quit", "q", "exit"]:
-            break
-
-        found = False
-        for command in commands:
-            if userCommand in command.names:
-                command.execute(userInput)
-                found = True
+            userCommand = userInput.pop(0).lower()
+            if userCommand in ["quit", "q", "exit"]:
                 break
 
-        if not found:
-            print("Unrecognized command.")
-            print("Type help or ? to learn how to use availible commands.")
+            found = False
+            for command in commands:
+                if userCommand in command.names:
+                    command.execute(userInput)
+                    found = True
+                    break
+
+            if not found:
+                print("Unrecognized command.")
+                print("Type help or ? to learn how to use availible commands.")
 
 
 if __name__ == "__main__":
