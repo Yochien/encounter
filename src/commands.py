@@ -508,7 +508,7 @@ class status(Command):
         super().__init__()
         self.names = ["status"]
         self.encounter = encounter
-        self.description = "Displays an NPC's current stats."
+        self.description = "Displays selected NPCs' current stats."
         self.details = dedent("""\
                               Displays the current health of the selected NPC in the encounter.
                               Additionally displays the contents of notes if any.
