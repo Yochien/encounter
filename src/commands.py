@@ -109,7 +109,7 @@ class displayHelp(Command):
                 print("quit".ljust(spacing) + ": " + "Exits the program.")
                 for command in self.commands:
                     print(command.names[0].ljust(spacing) + ": " + command.description)
-                print("")
+                print()
                 print("For more detailed information > Usage: " + self.usageStr)
             else:
                 self.usage()
@@ -695,10 +695,11 @@ class rank(Command):
         super().__init__()
         self.names = ["rank", "initiative"]
         self.encounter = encounter
-        self.description = "Orders NPCs by value."
+        self.description = "Assigns NPCs a rank order."
         self.details = dedent("""\
                               NPCs order within the encounter will be determined by their rank.
                               NPCs with a higher value will appear higher in the list.
+                              Assigning an NPC a rank of 0 or below removes their ranking.
                               This command can also be called with the alias "initiative".\
                               """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "rank <encounter_index,...> <rank>"
@@ -709,7 +710,7 @@ class rank(Command):
             return
 
         if len(args) == 2 and isValidInt(args[0], self.encounter) and isInt(args[1]):
-            rank = int(args[1])
+            rank = max(int(args[1]), 0)
             npc = self.encounter.data[int(args[0]) - 1]
             if npc.currentHP > 0:
                 npc.currentRank = rank
