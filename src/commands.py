@@ -378,6 +378,7 @@ class attack(Command):
                 print("Accuracy must be a number.")
 
         if npc is not None and npc.currentHP <= 0:
+            npc.currentRank = 0
             print(npc.nick + " has been defeated.")
             if areAllDefeated(self.encounter):
                 print("Party has defeated all enemies.")
@@ -408,6 +409,7 @@ class damage(Command):
                     if npc.currentHP > 0:
                         npc.currentHP = max(0, npc.currentHP - int(args[1]))
                         if npc.currentHP <= 0:
+                            npc.currentRank = 0
                             print(npc.nick + " has been defeated.")
                             if areAllDefeated(self.encounter):
                                 print("Party has defeated all enemies.")
@@ -429,6 +431,7 @@ class damage(Command):
                     npc.currentHP = max(0, npc.currentHP - int(args[1]))
 
                     if npc.currentHP <= 0:
+                        npc.currentRank = 0
                         print(npc.nick + " has been defeated.")
                         if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
@@ -458,6 +461,7 @@ class smite(Command):
             if args[0].lower() == "all":
                 for npc in self.encounter.data:
                     npc.currentHP = 0
+                    npc.currentRank = 0
             else:
                 selected = args[0].split(",")
                 selected = list(set(selected))  # Remove duplicates from the selection
@@ -474,6 +478,7 @@ class smite(Command):
                         return
                     else:
                         npc.currentHP = 0
+                        npc.currentRank = 0
 
                         if areAllDefeated(self.encounter):
                             print("Party has defeated all enemies.")
@@ -509,6 +514,7 @@ class heal(Command):
                 return
             if args[0].lower() == "all":
                 for npc in self.encounter.data:
+                    npc.currentRank = npc.maxRank
                     healedAmt = self.__healNPC(npc, int(args[1]))
                     if healedAmt > 0:
                         print(f"{npc.nick} was healed {healedAmt} points.")
@@ -522,6 +528,7 @@ class heal(Command):
 
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
+                    npc.currentRank = npc.maxRank
                     healedAmt = self.__healNPC(npc, int(args[1]))
                     print(npc.nick + " was healed " + str(healedAmt) + " points.")
         else:
@@ -739,8 +746,9 @@ class rank(Command):
             npc = self.encounter.data[int(args[0]) - 1]
             if npc.currentHP > 0:
                 npc.currentRank = rank
-            npc.maxRank = rank
-
+                npc.maxRank = rank
+            else:
+                npc.maxRank = rank
         else:
             self.usage()
 
