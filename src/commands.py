@@ -58,6 +58,7 @@ class load(Command):
                     self.bestiary.data.append(NPC("Enemy", 10, 13))
             else:
                 self.bestiary.data.clear()
+                num_npc_loaded = 0
                 with bestiary_text:
                     try:
                         file = yaml.load(bestiary_text, Loader=yaml.BaseLoader)
@@ -81,6 +82,8 @@ class load(Command):
                                 print(attr_err)
                             else:
                                 self.bestiary.data.append(npc)
+                                num_npc_loaded += 1
+                print(f"Successfully loaded {num_npc_loaded}/{len(file.items())} NPCs")
         else:
             self.usage()
 
