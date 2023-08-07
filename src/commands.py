@@ -350,11 +350,10 @@ class attack(Command):
             else:
                 print("Accuracy must be a number.")
 
-        if npc is not None:
-            if npc.currentHP <= 0:
-                print(npc.nick + " has been defeated.")
-                if areAllDefeated(self.encounter):
-                    print("Party has defeated all enemies.")
+        if npc is not None and npc.currentHP <= 0:
+            print(npc.nick + " has been defeated.")
+            if areAllDefeated(self.encounter):
+                print("Party has defeated all enemies.")
 
 
 class damage(Command):
@@ -431,8 +430,7 @@ class smite(Command):
         if len(args) == 1:
             if args[0].lower() == "all":
                 for npc in self.encounter.data:
-                    if npc.currentHP > 0:
-                        npc.currentHP = 0
+                    npc.currentHP = 0
             else:
                 selected = args[0].split(",")
                 selected = list(set(selected))  # Remove duplicates from the selection
