@@ -41,9 +41,10 @@ class NPC:
         rank = f"({self.currentRank}) " if (self.currentRank > 0) else ""
         name = (self.name if (self.nick == self.name)
                 else f"{self.nick} ({self.name})")
+        mark = "*" if self.marked else ""
         is_dead = " [X]" if (self.currentHP == 0) else ""
 
-        return f"{rank}{name}{is_dead}"
+        return f"{rank}{name}{mark}{is_dead}"
 
     def __lt__(self, other):
         return self.currentRank < other.currentRank
