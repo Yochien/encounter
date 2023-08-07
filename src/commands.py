@@ -16,10 +16,12 @@ class Command(ABC):
     def usage(self) -> None:
         print("Usage: " + self.usageStr)
 
-    def encounterEmpty(self) -> None:
+    @staticmethod
+    def encounterEmpty() -> None:
         print("The encounter is empty. Add some NPCs to it and try again.")
 
-    def OOBSelection(self, referenceList: NPCList) -> None:
+    @staticmethod
+    def OOBSelection(referenceList: NPCList) -> None:
         print("Your selection contains values out of range for the " + referenceList.name)
         print("Adjust your selection and try again.")
 
@@ -223,7 +225,7 @@ class addNPC(Command):
                 self.usage()
                 return
             elif not isValidInt(args[0], bestiary):
-                self.OOBSelection(bestiary)
+                Command.OOBSelection(bestiary)
                 return
             else:
                 selected = args[0].split(",")
@@ -275,7 +277,7 @@ class removeNPC(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 1:
@@ -283,7 +285,7 @@ class removeNPC(Command):
                 self.encounter.data.clear()
             else:
                 if not isValidInt(args[0], self.encounter):
-                    self.OOBSelection(self.encounter)
+                    Command.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -318,7 +320,7 @@ class attack(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         lenArgs = len(args)
@@ -333,7 +335,7 @@ class attack(Command):
                 return
 
         if not isValidInt(args[0], self.encounter):
-            self.OOBSelection(self.encounter)
+            Command.OOBSelection(self.encounter)
             return
 
         npc = self.encounter.data[int(args[0]) - 1]
@@ -394,7 +396,7 @@ class damage(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 2 and isInt(args[1]):
@@ -411,7 +413,7 @@ class damage(Command):
                                 print("Party has defeated all enemies.")
             else:
                 if not isValidInt(args[0], self.encounter):
-                    self.OOBSelection(self.encounter)
+                    Command.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -449,7 +451,7 @@ class smite(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 1:
@@ -462,7 +464,7 @@ class smite(Command):
 
                 for index in selected:
                     if not isValidInt(args[0], self.encounter):
-                        self.OOBSelection(self.encounter)
+                        Command.OOBSelection(self.encounter)
                         return
 
                 for index in selected:
@@ -498,7 +500,7 @@ class heal(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 2 and isInt(args[1]):
@@ -512,7 +514,7 @@ class heal(Command):
                     print(output)
             else:
                 if not isValidInt(args[0], self.encounter):
-                    self.OOBSelection(self.encounter)
+                    Command.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -541,7 +543,7 @@ class status(Command):
 
     def execute(self, args = []):
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 1:
@@ -559,7 +561,7 @@ class status(Command):
 
                     print(npc.combatStatus())
             else:
-                self.OOBSelection(self.encounter)
+                Command.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -578,7 +580,7 @@ class info(Command):
                 print("INFO:")
                 print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
             else:
-                self.OOBSelection(self.bestiary)
+                Command.OOBSelection(self.bestiary)
         else:
             self.usage()
 
@@ -618,14 +620,14 @@ class name(Command):
 
     def execute(self, args=[]) -> None:
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 2 and args[0].isnumeric():
             if isValidInt(args[0], self.encounter):
                 self.encounter.data[int(args[0]) - 1].nick = args[1]
             else:
-                self.OOBSelection(self.encounter)
+                Command.OOBSelection(self.encounter)
         else:
             self.usage()
 
@@ -646,7 +648,7 @@ class mark(Command):
 
     def execute(self, args=[]) -> None:
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) >= 1:
@@ -659,7 +661,7 @@ class mark(Command):
                         npc.note = ""
             else:
                 if not isValidInt(args[0], self.encounter):
-                    self.OOBSelection(self.encounter)
+                    Command.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -689,7 +691,7 @@ class unmark(Command):
 
     def execute(self, args=[]) -> None:
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 1:
@@ -699,7 +701,7 @@ class unmark(Command):
                     npc.note = ""
             else:
                 if not isValidInt(args[0], self.encounter):
-                    self.OOBSelection(self.encounter)
+                    Command.OOBSelection(self.encounter)
                     return
 
                 selected = args[0].split(",")
@@ -729,7 +731,7 @@ class rank(Command):
 
     def execute(self, args=[]) -> None:
         if (len(self.encounter) < 1):
-            self.encounterEmpty()
+            Command.encounterEmpty()
             return
 
         if len(args) == 2 and isValidInt(args[0], self.encounter) and isInt(args[1]):
