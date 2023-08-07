@@ -1,11 +1,15 @@
 # encounter
 
-A script that manages a combat encounter for tabletop rpgs.
-Run with python command in your shell environment.
-Enter help in the program to view a list of available commands and their functions.
+An interactive command-line script that manages a combat encounter for tabletop rpgs.
+Run from the highest level directory (the one containing bestiary.txt) using the python command in your terminal.
+
+* Install with pip to run from anywhere.
+
+Enter `help` once the program has started to view a list of available commands and their functions.
+
+* Create your own NPCs to add to your encounter. See the `make` command to create them dynamically or check the provided bestiary.yaml file for the proper format.
 
 ## Dependencies
 
-* Python 3.10 or higher
-* Recommended to have a "bestiary.txt" file. An example bestiary file with its associated formatting is included.
-  * If no bestiary file is found the program loads some generic entries.
+* Python 3.11 or higher
+* PyYAML
