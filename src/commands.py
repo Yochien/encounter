@@ -510,8 +510,8 @@ class heal(Command):
             if args[0].lower() == "all":
                 for npc in self.encounter.data:
                     healedAmt = self.__healNPC(npc, int(args[1]))
-                    output = "{} was healed {} points.".format(npc.nick, healedAmt)
-                    print(output)
+                    if healedAmt > 0:
+                        print(f"{npc.nick} was healed {healedAmt} points.")
             else:
                 if not isValidInt(args[0], self.encounter):
                     Command.OOBSelection(self.encounter)
