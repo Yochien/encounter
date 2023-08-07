@@ -2,8 +2,6 @@ from typing import Optional
 
 
 class NPC:
-    REQUIRED_PARAMETERS = 3
-
     def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
@@ -31,31 +29,18 @@ class NPC:
         self.marked = False
         self.note = ""
         self.name = name
-        if nick is None:
-            self.nick = name
-        else:
-            self.nick = nick
+        self.nick = name if (nick is None) else nick
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
         self.maxRank = self.currentRank = 0
 
     def __str__(self):
-        output = ""
-        if self.nick is not self.name:
-            output += self.nick + " (" + self.name + ")"
-        else:
-            output += self.name
+        rank = f"({self.currentRank}) " if (self.currentRank > 0) else ""
+        name = self.name if (self.nick == self.name) else self.nick
+        mark = "*" if self.marked else ""
+        is_dead = " [X]" if (self.currentHP == 0) else ""
 
-        if self.marked:
-            output += "*"
-
-        if self.currentHP <= 0:
-            output += " [X]"
-        else:
-            if self.currentRank > 0:
-                output = "(" + str(self.currentRank) + ") " + output
-
-        return output
+        return f"{rank}{name}{mark}{is_dead}"
 
     def __lt__(self, other):
         return self.currentRank < other.currentRank
@@ -84,29 +69,20 @@ class NPC:
         return True
 
     def combatStatus(self) -> str:
-        status = ""
-        if self.currentHP > 0:
-            if self.name is not self.nick:
-                status += self.nick + " (" + self.name + ")"
-            else:
-                status += self.name
-            status += " [" + str(self.currentHP) + "/" + str(self.maxHP) + "]"
-        else:
-            if self.name is not self.nick:
-                status += self.nick + " (" + self.name + ")"
-            else:
-                status += self.name
-            status += " [Dead]"
+        name = (self.name if (self.nick == self.name)
+                else f"{self.nick} ({self.name})")
+        health = " [Dead]" if (self.currentHP == 0) else f" [{self.currentHP}/{self.maxHP}]"
 
         if self.marked:
-            status += "\n  Note:\n"
+            note = "\n> Note: "
             if not self.note.isspace() and len(self.note) > 0:
-                status += "    "
-                status += self.note
+                note += self.note
             else:
-                status += "EMPTY"
+                note += "EMPTY"
+        else:
+            note = ""
 
-        return status
+        return f"{name}{health}{note}"
 
     def detailedInfo(self) -> str:
         info = ""
