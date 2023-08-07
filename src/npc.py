@@ -2,8 +2,6 @@ from typing import Optional
 
 
 class NPC:
-    REQUIRED_PARAMETERS = 3
-
     def __init__(self, name: str, maxHP: int, ac: int, nick: str | None = None):
         # Type assertions
         if type(name) != str:
