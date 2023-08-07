@@ -1,5 +1,5 @@
-import commands as cmd
-from npc import NPCList
+import src.commands as cmd
+from src.npc import NPCList
 
 
 def initialize_commands() -> list[cmd.Command]:

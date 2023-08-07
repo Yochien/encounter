@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from textwrap import dedent
-from npc import NPC, NPCList, findList
+
+from src.npc import NPC, NPCList, findList
 
 
 class Command(ABC):
