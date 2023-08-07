@@ -741,7 +741,6 @@ class rank(Command):
                 npc.currentRank = rank
             npc.maxRank = rank
 
-            self.encounter.data.sort(reverse = True)
         else:
             self.usage()
 
