@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from textwrap import dedent
-from npc import NPC, NPCList, findList
+
+from src.npc import NPC, NPCList, findList
 
 
 class Command(ABC):
@@ -703,6 +704,40 @@ class unmark(Command):
                     npc = self.encounter.data[int(index) - 1]
                     npc.marked = False
                     npc.note = ""
+        else:
+            self.usage()
+
+
+class rank(Command):
+    def __init__(self, encounter: NPCList):
+        super().__init__()
+        self.names = ['rank', 'initiative']
+        self.encounter = encounter
+        self.description = "Orders NPCs by value."
+        self.details = dedent("""\
+                              NPCs order within the encounter will be determined by their rank.
+                              NPCs with a higher value will appear higher in the list.
+                              This command can also be called with the alias "initiative".\
+                              """).strip().replace('\n', ' ').replace('\r', '')
+        self.usageStr = "rank <encounter_index,...> <rank>"
+
+    def execute(self, args=[]) -> None:
+        if (len(self.encounter) < 1):
+            self.encounterEmpty()
+            return
+
+        if len(args) == 2:
+            if not isValidInt(args[0], self.encounter) or not isInt(args[1]):
+                self.usage()
+                return
+
+            rank = int(args[1])
+            npc = self.encounter.data[int(args[0]) - 1]
+            if npc.currentHP > 0:
+                npc.currentRank = rank
+            npc.maxRank = rank
+
+            self.encounter.data.sort(reverse = True)
         else:
             self.usage()
 

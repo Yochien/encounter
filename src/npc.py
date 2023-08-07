@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class NPC:
     REQUIRED_PARAMETERS = 3
 
@@ -34,6 +37,7 @@ class NPC:
             self.nick = nick
         self.maxHP = self.currentHP = maxHP
         self.ac = int(ac)
+        self.maxRank = self.currentRank = 0
 
     def __str__(self):
         output = ""
@@ -47,10 +51,16 @@ class NPC:
 
         if self.currentHP <= 0:
             output += " [X]"
+        else:
+            if self.currentRank > 0:
+                output = "(" + str(self.currentRank) + ") " + output
 
         return output
 
-    def equals(self, other):
+    def __lt__(self, other):
+        return self.currentRank < other.currentRank
+
+    def equals(self: "NPC", other: Optional["NPC"]) -> bool:
         if self == other:
             return True
         if other is None:
@@ -66,6 +76,10 @@ class NPC:
         if self.ac != other.ac:
             return False
         if self.note != other.note:
+            return False
+        if self.maxRank != other.maxRank:
+            return False
+        if self.currentRank != other.currentRank:
             return False
         return True
 
