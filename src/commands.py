@@ -190,7 +190,7 @@ def isValidInt(selector: str, referencList: NPCList) -> bool:
 
 
 def copyNPC(bestiary: NPCList, index: int, other: NPCList) -> None:
-    npc = bestiary.data[index - 1]
+    npc = bestiary.data[index]
     copy = NPC(npc.name, npc.maxHP, npc.ac)
     other.data.append(copy)
 
@@ -231,7 +231,7 @@ class addNPC(Command):
                 selected = args[0].split(",")
 
                 for index in selected:
-                    copyNPC(bestiary, int(index), encounter)
+                    copyNPC(bestiary, int(index) - 1, encounter)
         else:
             self.usage()
 
