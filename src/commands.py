@@ -199,7 +199,8 @@ class addNPC(Command):
         self.details = dedent("""\
                               Reference entries in the bestiary by number.
                               Multiple NPCs (even multiple of the same type) can be added at the same time
-                              in a comma separated list without spaces.\
+                              in a comma separated list without spaces.
+                              Can be used with the all selector.\
                               """).strip().replace("\n", " ").replace("\r", "")
         self.usageStr = "add <bestiary_index,...>"
 
@@ -212,14 +213,20 @@ class addNPC(Command):
             raise TypeError("Encounter list must be an NPCList.")
 
         if len(args) == 1:
-            if not isValidInt(args[0], bestiary):
+            if args[0].lower() == "all":
+                for index, _ in enumerate(bestiary.data):
+                    copyNPC(bestiary, index, encounter)
+            elif not isInt(args[0]):
+                self.usage()
+                return
+            elif not isValidInt(args[0], bestiary):
                 self.OOBSelection(bestiary)
                 return
+            else:
+                selected = args[0].split(",")
 
-            selected = args[0].split(",")
-
-            for index in selected:
-                copyNPC(bestiary, int(index), encounter)
+                for index in selected:
+                    copyNPC(bestiary, int(index), encounter)
         else:
             self.usage()
 
