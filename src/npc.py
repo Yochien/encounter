@@ -40,22 +40,12 @@ class NPC:
         self.maxRank = self.currentRank = 0
 
     def __str__(self):
-        output = ""
-        if self.nick is not self.name:
-            output += self.nick + " (" + self.name + ")"
-        else:
-            output += self.name
+        rank = f"({self.currentRank}) " if (self.currentRank > 0) else ""
+        name = (self.name if (self.nick == self.name)
+                else f"{self.nick} ({self.name})")
+        is_dead = " [X]" if (self.currentHP == 0) else ""
 
-        if self.marked:
-            output += "*"
-
-        if self.currentHP <= 0:
-            output += " [X]"
-        else:
-            if self.currentRank > 0:
-                output = "(" + str(self.currentRank) + ") " + output
-
-        return output
+        return f"{rank}{name}{is_dead}"
 
     def __lt__(self, other):
         return self.currentRank < other.currentRank
