@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from textwrap import dedent
 
+import yaml
+
 from src.npc import NPC, NPCList, findList
 
 
@@ -46,7 +48,7 @@ class load(Command):
 
         if numArgs == 1:
             try:
-                bestiaryFile = open(args[0].strip())
+                bestiary_text = open(args[0].strip())
             except FileNotFoundError:
                 print("Selected bestiary file could not be found.")
                 if len(self.bestiary) == 0:
@@ -56,16 +58,29 @@ class load(Command):
                     self.bestiary.data.append(NPC("Enemy", 10, 13))
             else:
                 self.bestiary.data.clear()
-                for line in bestiaryFile:
-                    if not line.startswith("#") and not line.isspace():
-                        parameters = line.rstrip("\n").split(",")
-                        if len(parameters) < NPC.REQUIRED_PARAMETERS:
-                            raise AttributeError("Missing parameters for line below. Expected "
-                                                 + str(NPC.REQUIRED_PARAMETERS) + " but got "
-                                                 + str(len(parameters)) + "\n" + line)
-                        npc = NPC(parameters[0], int(parameters[1]), int(parameters[2]))
-                        self.bestiary.data.append(npc)
-                bestiaryFile.close()
+                with bestiary_text:
+                    try:
+                        file = yaml.load(bestiary_text, Loader=yaml.BaseLoader)
+                    except yaml.YAMLError:
+                        print("Something is wrong the syntax of your bestiary file.")
+                        print("Try validating the YAML file?")
+                        exit()
+                    else:
+                        for npc, attributes in file.items():
+                            name = npc
+                            try:
+                                hp = int(attributes["hp"])
+                                ac = int(attributes["ac"])
+                                npc = NPC(name, hp, ac)
+                            except KeyError as key:
+                                print(f"NPC \"{name}\" is missing the {key} attribute!")
+                            except TypeError:
+                                print(f"Formatting of NPC \"{name}\" is incorrect somehow!")
+                            except ValueError as attr_err:
+                                print(f"The NPC \"{name}\" has an invalid attribute!")
+                                print(attr_err)
+                            else:
+                                self.bestiary.data.append(npc)
         else:
             self.usage()
 

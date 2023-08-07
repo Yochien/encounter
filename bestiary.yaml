@@ -1,0 +1,33 @@
+# Example bestiary file for an encounter
+
+# Creatures
+Wolf:
+    hp: 11
+    ac: 13
+Fox:
+    hp: 3
+    ac: 12
+    comment: this note will be ignored
+Spider:
+    hp: 1
+    ac: 12
+    description: A tiny creepy crawley creature
+
+# Fantasy
+Skeleton:
+    hp: 13
+    ac: 13
+Zombie:
+    hp: 16
+    ac: 15
+Dragon:
+    hp: 150
+    ac: 18
+
+# Human
+Townsfolk:
+    hp: 9
+    ac: 12
+Guard:
+    hp: 25
+    ac: 13

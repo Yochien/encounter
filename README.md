@@ -7,8 +7,9 @@ Run from the highest level directory (the one containing bestiary.txt) using the
 
 Enter `help` once the program has started to view a list of available commands and their functions.
 
-* Create your own NPCs to add to your encounter. See the make command to create them dynamically or check the provided bestiary.txt file for the csv-like file format.
+* Create your own NPCs to add to your encounter. See the `make` command to create them dynamically or check the provided bestiary.yaml file for the proper format.
 
 ## Dependencies
 
 * Python 3.11 or higher
+* PyYAML

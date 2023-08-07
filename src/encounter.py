@@ -33,7 +33,7 @@ def main():
 
     for command in commands:
         if "load" in command.names:
-            command.execute(["bestiary.txt"])
+            command.execute(["bestiary.yaml"])
             break
 
     prompt = "\nType a command: "
