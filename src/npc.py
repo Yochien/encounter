@@ -5,11 +5,11 @@ from typing import Type
 class NPC(ABC):
     def __init__(self, name: str, maxHP: int, ac: int):
         # Type assertions
-        if type(name) != str:
+        if not isinstance(name, str):
             raise TypeError("Name must be a string.")
-        if type(maxHP) != int:
+        if not isinstance(maxHP, int):
             raise TypeError("HP must be an integer.")
-        if type(ac) != int:
+        if not isinstance(ac, int):
             raise TypeError("AC must be an integer.")
 
         # Value assertions
@@ -25,7 +25,7 @@ class NPC(ABC):
         # Value assignment
         self.name = name
         self.maxHP = maxHP
-        self.ac = int(ac)
+        self.ac = ac
 
     def __str__(self):
         return self.name
