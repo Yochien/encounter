@@ -105,8 +105,12 @@ class CombatNPC(NPC):
 class NPCList:
     def __init__(self, names: list[str], npc_type: Type[NPC]):
         # Error Checking
-        if type(names) != list:
+        if not isinstance(names, list):
             raise TypeError("Names must be a list of strings.")
+        if not all(isinstance(name, str) for name in names):
+            raise TypeError("Name entries must all be strings.")
+        if any((name.isspace() or len(name) == 0) for name in names):
+            raise ValueError("No name may be empty.")
         if len(names) < 1:
             raise ValueError("List must contain at least one entry.")
         if not issubclass(npc_type, NPC):

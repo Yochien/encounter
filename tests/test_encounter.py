@@ -70,6 +70,23 @@ class TestNPCs(unittest.TestCase):
         npc = BookNPC("Mulligan", 10, 0, "description")
         self.assertEquals("NAME: Mulligan\nMAX HP: 10\nAC: 0\nDESCRIPTION: description", npc.detailedInfo())
 
+
+class TestNPCList(unittest.TestCase):
+    def test_npc_list(self):
+        self.assertRaises(TypeError, NPCList, "Norm", BookNPC)
+        self.assertRaises(TypeError, NPCList, ["Norm"], str)
+        self.assertRaises(ValueError, NPCList, [""], BookNPC)
+
+        try:
+            NPCList(["Book"], BookNPC)
+        except TypeError:
+            self.fail("NPCList can have type BookNPC")
+        try:
+            NPCList(["Book"], CombatNPC)
+        except TypeError:
+            self.fail("NPCList can have type BookNPC")
+
+
 # Allows for running the file directly to test
 if __name__ == "__main__":
     unittest.main()
