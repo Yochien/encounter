@@ -38,6 +38,9 @@ class NPC(ABC):
 class BookNPC(NPC):
     def __init__(self, name: str, maxHP: int, ac: int, description: str | None = None):
         super().__init__(name, maxHP, ac)
+        if description is not None:
+            if not isinstance(description, str):
+                raise TypeError("Description must be a string.")
         self.description = description
 
     def detailedInfo(self) -> str:
