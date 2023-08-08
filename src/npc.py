@@ -58,7 +58,7 @@ class CombatNPC(NPC):
                 raise ValueError("Nickname must be at least length 1.")
             if nick.isspace():
                 raise ValueError("Nickname must not be blank.")
-        self.nick = name if (nick is None) else nick
+        self.nick = nick
         self.marked = False
         self.note = ""
         self.currentHP = self.maxHP
@@ -66,7 +66,7 @@ class CombatNPC(NPC):
 
     def __str__(self):
         rank = f"({self.currentRank}) " if (self.currentRank > 0) else ""
-        name = self.name if (self.nick == self.name) else self.nick
+        name = self.name if (self.nick is None) else self.nick
         mark = "*" if self.marked else ""
         is_dead = " [X]" if (self.currentHP == 0) else ""
 
@@ -76,8 +76,7 @@ class CombatNPC(NPC):
         return self.currentRank < other.currentRank
 
     def detailedInfo(self) -> str:
-        name = (self.name if (self.nick == self.name)
-                else f"{self.nick} ({self.name})")
+        name = self.name if (self.nick is None) else f"{self.nick} ({self.name})"
         health = " [Dead]" if (self.currentHP == 0) else f" [{self.currentHP}/{self.maxHP}]"
 
         if self.marked:
