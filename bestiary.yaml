@@ -7,19 +7,25 @@ Wolf:
 Fox:
     hp: 3
     ac: 12
-    comment: this note will be ignored
+    comment: This note will be ignored.
 Spider:
     hp: 1
     ac: 12
-    description: A tiny creepy crawley creature
+    description: A tiny creepy crawley creature.
 
 # Fantasy
 Skeleton:
     hp: 13
     ac: 13
+    description: >
+        An undead creature, once a zombie
+        all of its living flesh has rotted away.
 Zombie:
     hp: 16
     ac: 15
+    description: >
+        A creature reanimated from the dead
+        by some sinister magic.
 Dragon:
     hp: 150
     ac: 18
@@ -31,3 +37,4 @@ Townsfolk:
 Guard:
     hp: 25
     ac: 13
+    description: A town's foot soldier.
