@@ -586,12 +586,18 @@ class info(Command):
         self.usageStr = "info <index>"
 
     def execute(self, args = []):
-        if len(args) == 1 and isInt(args[0]):
-            if isValidInt(args[0], self.bestiary):
+        if len(args) == 1:
+            if isInt(args[0]):
+                if isValidInt(args[0], self.bestiary):
+                    print("INFO:")
+                    print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
+                else:
+                    Command.OOBSelection(self.bestiary)
+            elif args[0].lower() == "all":
                 print("INFO:")
-                print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
-            else:
-                Command.OOBSelection(self.bestiary)
+                for entry in self.bestiary.data[:-1]:
+                    print(entry.detailedInfo() + "\n")
+                print(self.bestiary.data[-1].detailedInfo())
         else:
             self.usage()
 
