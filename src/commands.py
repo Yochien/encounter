@@ -293,8 +293,7 @@ class removeNPC(Command):
                     return
 
                 selected = args[0].split(",")
-                # Remove duplicates and reverse sort the input
-                selected = sorted(list(set(selected)), reverse = True)
+                selected = sorted(list(set(selected)), reverse = True)  # Remove duplicates and reverse sort the input
 
                 for index in selected:
                     self.encounter.data.pop(int(index) - 1)
@@ -464,13 +463,12 @@ class smite(Command):
                     npc.currentHP = 0
                     npc.currentRank = 0
             else:
+                if not isValidInt(args[0], self.encounter):
+                    Command.OOBSelection(self.encounter)
+                    return
+
                 selected = args[0].split(",")
                 selected = list(set(selected))  # Remove duplicates from the selection
-
-                for index in selected:
-                    if not isValidInt(args[0], self.encounter):
-                        Command.OOBSelection(self.encounter)
-                        return
 
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
