@@ -596,6 +596,19 @@ class info(Command):
                 for entry in self.bestiary.data[:-1]:
                     print(entry.detailedInfo() + "\n")
                 print(self.bestiary.data[-1].detailedInfo())
+            else:
+                if not isValidInt(args[0], self.bestiary):
+                    Command.OOBSelection(self.bestiary)
+                    return
+
+                selected = args[0].split(",")
+                selected = sorted(list(set(selected)))
+
+                print("INFO:")
+                for index in selected[:-1]:
+                    entry = self.bestiary.data[int(index) - 1]
+                    print(entry.detailedInfo() + "\n")
+                print(self.bestiary.data[int(selected[-1]) - 1].detailedInfo())
         else:
             self.usage()
 
