@@ -38,7 +38,7 @@ class load(Command):
         self.description = "Replaces the loaded bestiary."
         self.details = dedent("""\
                               Searches the absolute address provided for a valid bestiary file.
-                              The correct format for a file is provided in an example file "bestiary.txt".
+                              The correct format for a file is provided in an example file "bestiary.yaml".
                               If the provided file cannot be loaded the current list will be kept.
                               If the current list is empty and a new list cannot be found
                               then some primitive entries will be generated.\
