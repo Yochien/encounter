@@ -1,9 +1,9 @@
 import src.commands as cmd
-from src.npc import NPCList
+from src.npc import BookNPC, CombatNPC, NPCList
 
 
 def initialize_commands(encounter: NPCList) -> list[cmd.Command]:
-    bestiary = NPCList(["bestiary", "book", "b"])
+    bestiary = NPCList(["bestiary", "book", "b"], BookNPC)
     referenceLists = [bestiary, encounter]
 
     commands = []
@@ -28,7 +28,7 @@ def initialize_commands(encounter: NPCList) -> list[cmd.Command]:
 
 
 def main():
-    encounter = NPCList(["encounter", "e", "combat", "c"])
+    encounter = NPCList(["encounter", "e", "combat", "c"], CombatNPC)
     commands = initialize_commands(encounter)
 
     for command in commands:
@@ -40,7 +40,7 @@ def main():
     print("Type help or ? to get a list of availible commands.")
 
     while True:
-        encounter.data.sort(reverse = True)
+        encounter.data.sort(key = lambda npc: npc.currentRank, reverse = True)
 
         userInput = input(prompt).strip().split(" ")
         userInput = [token for token in userInput if not token.isspace() and token != ""]

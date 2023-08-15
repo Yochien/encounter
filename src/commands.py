@@ -3,7 +3,7 @@ from textwrap import dedent
 
 import yaml
 
-from src.npc import NPC, NPCList, findList
+from src.npc import NPC, BookNPC, CombatNPC, NPCList, findList
 
 
 class Command(ABC):
@@ -55,9 +55,9 @@ class load(Command):
                 print("Selected bestiary file could not be found.")
                 if len(self.bestiary) == 0:
                     print("Loading placeholder bestiary.")
-                    self.bestiary.data.append(NPC("Human", 5, 12))
-                    self.bestiary.data.append(NPC("Animal", 3, 10))
-                    self.bestiary.data.append(NPC("Enemy", 10, 13))
+                    self.bestiary.data.append(BookNPC("Human", 5, 12, "Common townsfolk."))
+                    self.bestiary.data.append(BookNPC("Animal", 3, 10))
+                    self.bestiary.data.append(BookNPC("Enemy", 10, 13))
             else:
                 self.bestiary.data.clear()
                 num_npc_loaded = 0
@@ -74,7 +74,11 @@ class load(Command):
                             try:
                                 hp = int(attributes["hp"])
                                 ac = int(attributes["ac"])
-                                npc = NPC(name, hp, ac)
+                                try:
+                                    description = attributes["description"]
+                                except KeyError:
+                                    description = None
+                                npc = BookNPC(name, hp, ac, description)
                             except KeyError as key:
                                 print(f"NPC \"{name}\" is missing the {key} attribute!")
                             except TypeError:
@@ -189,10 +193,10 @@ def isValidInt(selector: str, referencList: NPCList) -> bool:
     return True
 
 
-def copyNPC(bestiary: NPCList, index: int, other: NPCList) -> None:
+def copyNPC(bestiary: NPCList, index: int, encounter: NPCList) -> None:
     npc = bestiary.data[index]
-    copy = NPC(npc.name, npc.maxHP, npc.ac)
-    other.data.append(copy)
+    npc_instance = CombatNPC(npc.name, npc.maxHP, npc.ac)
+    encounter.data.append(npc_instance)
 
 
 class addNPC(Command):
@@ -289,8 +293,7 @@ class removeNPC(Command):
                     return
 
                 selected = args[0].split(",")
-                # Remove duplicates and reverse sort the input
-                selected = sorted(list(set(selected)), reverse = True)
+                selected = sorted(list(set(selected)), reverse = True)  # Remove duplicates and reverse sort the input
 
                 for index in selected:
                     self.encounter.data.pop(int(index) - 1)
@@ -299,10 +302,7 @@ class removeNPC(Command):
 
 
 def areAllDefeated(encounter: NPCList):
-    for npc in encounter.data:
-        if npc.currentHP > 0:
-            return False
-    return True
+    return all(npc.currentHP > 0 for npc in encounter.data)
 
 
 class attack(Command):
@@ -463,13 +463,12 @@ class smite(Command):
                     npc.currentHP = 0
                     npc.currentRank = 0
             else:
+                if not isValidInt(args[0], self.encounter):
+                    Command.OOBSelection(self.encounter)
+                    return
+
                 selected = args[0].split(",")
                 selected = list(set(selected))  # Remove duplicates from the selection
-
-                for index in selected:
-                    if not isValidInt(args[0], self.encounter):
-                        Command.OOBSelection(self.encounter)
-                        return
 
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
@@ -498,6 +497,9 @@ class heal(Command):
         self.usageStr = "heal <encounter_index,...> <amount>"
 
     def __healNPC(self, npc: NPC, amount: int) -> int:
+        if not isinstance(npc, CombatNPC):
+            raise TypeError()
+
         originalHP = npc.currentHP
         npc.currentHP = originalHP + amount
         npc.currentHP = min(npc.maxHP, npc.currentHP)
@@ -557,7 +559,7 @@ class status(Command):
             if args[0].lower() == "all":
                 print("Status:")
                 for npc in self.encounter.data:
-                    print(npc.combatStatus())
+                    print(npc.detailedInfo())
             elif isValidInt(args[0], self.encounter):
                 selected = args[0].split(",")
                 selected = list(set(selected))
@@ -566,7 +568,7 @@ class status(Command):
                 for index in selected:
                     npc = self.encounter.data[int(index) - 1]
 
-                    print(npc.combatStatus())
+                    print(npc.detailedInfo())
             else:
                 Command.OOBSelection(self.encounter)
         else:
@@ -582,12 +584,31 @@ class info(Command):
         self.usageStr = "info <index>"
 
     def execute(self, args = []):
-        if len(args) == 1 and isInt(args[0]):
-            if isValidInt(args[0], self.bestiary):
+        if len(args) == 1:
+            if isInt(args[0]):
+                if isValidInt(args[0], self.bestiary):
+                    print("INFO:")
+                    print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
+                else:
+                    Command.OOBSelection(self.bestiary)
+            elif args[0].lower() == "all":
                 print("INFO:")
-                print(self.bestiary.data[int(args[0]) - 1].detailedInfo())
+                for entry in self.bestiary.data[:-1]:
+                    print(entry.detailedInfo() + "\n")
+                print(self.bestiary.data[-1].detailedInfo())
             else:
-                Command.OOBSelection(self.bestiary)
+                if not isValidInt(args[0], self.bestiary):
+                    Command.OOBSelection(self.bestiary)
+                    return
+
+                selected = args[0].split(",")
+                selected = sorted(list(set(selected)))
+
+                print("INFO:")
+                for index in selected[:-1]:
+                    entry = self.bestiary.data[int(index) - 1]
+                    print(entry.detailedInfo() + "\n")
+                print(self.bestiary.data[int(selected[-1]) - 1].detailedInfo())
         else:
             self.usage()
 
@@ -605,8 +626,9 @@ class make(Command):
         self.usageStr = "make <name> <max hp> <armor class>"
 
     def execute(self, args=[]) -> None:
-        if len(args) == 3 and not args[0].isnumeric() and isInt(args[1]) and isInt(args[2]):
-            self.bestiary.data.append(NPC(args[0], int(args[1]), int(args[2])))
+        if len(args) >= 3 and not args[0].isnumeric() and isInt(args[1]) and isInt(args[2]):
+            description = " ".join(args[3:]) if (len(args) > 3) else None
+            self.bestiary.data.append(BookNPC(args[0], int(args[1]), int(args[2]), description))
         else:
             self.usage()
 
@@ -744,6 +766,9 @@ class rank(Command):
         if len(args) == 2 and isValidInt(args[0], self.encounter) and isInt(args[1]):
             rank = max(int(args[1]), 0)
             npc = self.encounter.data[int(args[0]) - 1]
+            if not isinstance(npc, CombatNPC):
+                raise TypeError()
+
             if npc.currentHP > 0:
                 npc.currentRank = rank
                 npc.maxRank = rank
