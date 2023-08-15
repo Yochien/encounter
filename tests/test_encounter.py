@@ -1,14 +1,33 @@
 import unittest
 
-from src.commands import isInt
+from src.commands import isInt, areAllDefeated
 from src.npc import BookNPC, CombatNPC, NPCList
 
 
 class TestSubMethods(unittest.TestCase):
-    def test_Encounter(self):
+    def test_IsInt(self):
         self.assertFalse(isInt("e"))
         self.assertTrue(isInt("1"))
         self.assertTrue(isInt("11"))
+
+    def test_AreAllDefeated(self):
+        # Setup
+        npcs = NPCList(["combat"], CombatNPC)
+        npc1 = CombatNPC("NPC1", 1, 1)
+        npc2 = CombatNPC("NPC2", 1, 1)
+        npc3 = CombatNPC("NPC3", 1, 1)
+        npcs.data.append(npc1)
+        npcs.data.append(npc2)
+        npcs.data.append(npc3)
+        self.assertFalse(areAllDefeated(npcs))
+
+        npc1.currentHP = 0
+        self.assertFalse(areAllDefeated(npcs))
+
+        npc1.currentHP = 0
+        npc2.currentHP = 0
+        npc3.currentHP = 0
+        self.assertTrue(areAllDefeated(npcs))
 
 
 class TestNPCs(unittest.TestCase):

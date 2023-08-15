@@ -302,7 +302,7 @@ class removeNPC(Command):
 
 
 def areAllDefeated(encounter: NPCList):
-    return all(npc.currentHP > 0 for npc in encounter.data)
+    return all(npc.currentHP <= 0 for npc in encounter.data)
 
 
 class attack(Command):
