@@ -221,13 +221,10 @@ class addNPC(Command):
         if encounter is None:
             raise TypeError("Encounter list must be an NPCList.")
 
-        if len(args) == 1:
+        if len(args) >= 1:
             if args[0].lower() == "all":
                 for index, _ in enumerate(bestiary.data):
                     copyNPC(bestiary, index, encounter)
-            elif not isInt(args[0]):
-                self.usage()
-                return
             elif not isValidInt(args[0], bestiary):
                 Command.OOBSelection(bestiary)
                 return
